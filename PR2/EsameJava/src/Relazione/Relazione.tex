@@ -1,0 +1,364 @@
+\documentclass[10pt, italian, openany]{book}
+
+% Set page margins
+\usepackage[top=100pt,bottom=100pt,left=68pt,right=66pt]{geometry}
+
+\usepackage[]{graphicx}
+% If multiple images are to be added, a folder (path) with all the images can be added here 
+\graphicspath{ {images/} }
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+ 
+% All page numbers positioned at the bottom of the page
+\usepackage{fancyhdr}
+\fancyhf{} % clear all header and footers
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\pagestyle{fancy}
+
+% Changes the style of chapter headings
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
+
+% Change distance between chapter header and text
+\titlespacing{\chapter}{0pt}{50pt}{2\baselineskip}
+\usepackage{titlesec}
+\titleformat{\section}
+  [hang] % <shape>
+  {\normalfont\bfseries\Large} % <format>
+  {} % <label>
+  {0pt} % <sep>
+  {} % <before code>
+\renewcommand{\thesection}{} % Remove section references...
+\renewcommand{\thesubsection}{\arabic{subsection}} %... from subsections
+
+% Numbered subsections
+\setcounter{secnumdepth}{3}
+
+% Prevents LaTeX from filling out a page to the bottom
+\raggedbottom
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{amsmath}
+% Code Listings
+\definecolor{vgreen}{RGB}{104,180,104}
+\definecolor{vblue}{RGB}{49,49,255}
+\definecolor{vorange}{RGB}{255,143,102}
+\definecolor{vlightgrey}{RGB}{245,245,245}
+\lstdefinestyle{bash} {
+	language=bash,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{vblue},
+	identifierstyle=\color{black},
+	commentstyle=\color{vgreen},
+	tabsize=4,
+	backgroundcolor = \color{vlightgrey},
+	literate=*{:}{:}1
+}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{codeStyle}{
+	language=Java,
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\begin{document}
+
+\begin{titlepage}
+	\clearpage\thispagestyle{empty}
+	\centering
+	\vspace{1cm}
+
+    \includegraphics[scale=0.60]{unipi-logo.png}
+    
+	{\normalsize \noindent Dipartimento di Informatica \\
+	             Corso di Laurea in Informatica \par}
+	
+	\vspace{2cm}
+	{\Huge \textbf{Relazione progetto Java} \par}
+	\vspace{1cm}
+	{\large Programmazione II}
+	\vspace{5cm}
+
+    \begin{minipage}[t]{0.47\textwidth}
+    	{\large{ Prof. Gianluigi Ferrari}}
+    \end{minipage}\hfill\begin{minipage}[t]{0.47\textwidth}\raggedleft
+    	{\large {Giacomo Trapani \\ 600124 - Corso A\\ }}
+    \end{minipage}
+
+    \vspace{4cm}
+
+	{\normalsize Anno Accademico 2020/2021 \par}
+
+	\pagebreak
+
+\end{titlepage}
+
+\chapter*{Relazione}
+
+% A * after the section/chapter command indicates an unnumbered header which will not be added to the table of contents
+\section{Dettagli sul metodo di sviluppo}
+Il progetto \`e stato sviluppato con il supporto del text editor \textit{VSCode}, senza tuttavia l'utilizzo di strumenti esterni quali \textit{Maven} per la compilazione o \textit{JUnit} per la creazione dei tests, che invece sono stati scritti a mano. Di conseguenza, l'esecuzione \`e possibile utilizzando semplicemente i comandi messi a disposizione dal JDK. Ad esempio:
+\begin{lstlisting}[style=bash]
+cd src
+javac *.java
+java -ea Main
+\end{lstlisting}
+In alternativa si pu\`o utilizzare il bash script in allegato:
+\begin{lstlisting}[style=bash]
+cd src
+chmod +x run.sh
+./run.sh
+\end{lstlisting}
+
+\section{Dettagli implementativi}
+Il progetto consiste nello sviluppo di una componente software di supporto alla gestione e l'analisi di un social network denominato \textbf{MicroBlog}. Nella rete sociale \`e consentito inviare messaggi di testo composti da al pi\`u 140 caratteri, chiamati \textbf{Post}. Agli utenti \`e consentito seguire i Post (implementato con un meccanismo di Like) e segnalarli. 
+
+\subsection{Parte 1}
+Il tipo di dato \textbf{MyPost} rappresenta una collezione immutabile di dati e implementa l'interfaccia \textbf{Post}. Un MyPost \`e definito dai seguenti elementi:
+\begin{lstlisting}[style=codeStyle]
+private final long ID; // identificatore univoco del Post
+private final String Author; // autore del Post
+private final String Text; // contenuto del Post
+private final String Timestamp; // timestamp del Post
+\end{lstlisting}
+I parametri vengono implementati come \textit{final} per vietarne la modifica; sono privati ed accessibili attraverso dei getter specifici dichiarati nell'interfaccia \textbf{Post}.
+Sui parametri valgono le condizioni indicate nell'invariante di rappresentazione:
+\begin{gather*}
+    ID \geq 0 \ \wedge \ Author \neq null \ \wedge \ Text \neq null \ \wedge \ Timestamp \neq null \\
+    \wedge \ \neg (Author \in \ "/\backslash A\backslash s*\backslash z/") \ \wedge \ \neg (Author.isEmpty())  \ \wedge \ \neg (Text.isEmpty()).
+\end{gather*}
+A garantire l'unicit\`a dell'identificatore univoco \textit{ID} non \`e la classe MyPost - che rappresenta solamente un contenitore di dati - bens\'i la classe che lavora sui Post: \textbf{MySocialNetwork}.
+
+\subsection{Parte 2}
+Il tipo di dato \textbf{MySocialNetwork} rappresenta una collezione mutabile di dati e implementa l'interfaccia \textbf{SocialNetwork}. La progettazione richiede per\`o l'utilizzo di un tipo di dato \textbf{Like}:
+in questa implementazione questo viene considerato un \textbf{Post} istanziato con un testo del tipo "\(Like: \langle id \rangle\)" con id definito come l'identificativo del Post a cui l'autore aggiunge un Like.
+Da questo punto in poi l'insieme dei Post viene considerato come formato dall'unione degli insiemi \textbf{textualPosts} (ossia i Post che non sono Like) e \textbf{likePosts} (ossia i Post che sono Like).
+Su ogni elemento di likePosts vale la seguente condizione:
+\[ (\forall Post \ p \in likePosts. \ (\exists Post \ q \in textualPosts \ | \ q.getID() = ReferencedID(p.getText()))). \]
+La funzione \(ReferencedID(String \ s)\) \`e banalmente definita come la funzione che estrae la stringa che corrisponde all'identificativo a cui il testo del Post fa riferimento.
+
+Per fare in modo che un Post l sia considerabile un Like valido deve inoltre verificarsi la seguente condizione:
+\begin{gather*}
+(\exists Post \ p \in textualPosts \ | \ getReferencedID(l.getText()) = p.getID() \ \wedge \ p.getAuthor() \neq l.getAuthor()) \\
+\ \wedge \ \neg(\exists Post \ q \in likePosts \ | \ getReferencedID(q.getText()) = getReferencedID(l.getText()) \\
+\ \wedge \ q.getAuthor() = l.getAuthor())
+\end{gather*}
+
+Nonostante \(Post \ p \in textualPosts\) e \(Post \ q \in likePosts\) siano implementati dallo stesso tipo di dato, i metodi che lavorano sul contenuto dei Post ignorano \textit{q} che non si ritiene rilevante.
+
+\subsubsection*{MySocialNetwork}
+Il tipo di dato MySocialNetwork \`e definito dalle seguenti variabili di istanza:
+\begin{lstlisting}[style=codeStyle]
+// contatore per i Post istanziati all'interno del social network
+private long postsNum; 
+// Follows[a] = insieme degli utenti seguiti da a
+protected Map<String, Set<String>> Follows;
+// insieme textualPosts
+private Set<Post> textualPosts;
+// insieme likePosts
+private Set<Post> likePosts;
+// Followers[a] = insieme degli utenti che seguono a
+protected Map<String, Set<String>> Followers;
+\end{lstlisting}
+Sulla classe vale il seguente invariante di rappresentazione:
+\begin{gather*}
+Follows \neq null \ \wedge \ textualPosts \neq null \ \wedge \ likePosts \neq null  \ \wedge \ Followers \neq null \\
+\ \wedge \ postsNum =  textualPosts.size() + likePosts.size() \\
+\ \wedge \ ( \forall String \ i \in [0; Follows.size()]. \ i \neq null \ \wedge \ Follows[i] \neq null ) \\
+\ \wedge \ ( \forall Integer \ i \in [0; Followers.size()]. \ i \neq null \ \wedge \  Followers[i] \neq null) \\
+\ \wedge \ (\forall Post \ p \in textualPosts. \ p \neq null) \\
+\ \wedge \ (\forall Post \ p \in likePosts. \ p \neq null) \\
+\ \wedge \ ( \forall Pair \ \langle k, v \rangle \in Follows.Entry. \ (\forall String \ u \in v. \ (\exists Post \ p \ | \ p \in textualPosts \ \wedge \ p.getAuthor() = u \\
+\ \wedge \ ( \exists Post \ q \ | \ q \in likePosts \ \wedge \ q.getAuthor = k \ \wedge \ getReferencedID(q.getText()) = p.getID())))) \\
+\ \wedge \ ( \forall Pair \ \langle k, v \rangle \in Followers.Entry. \ (\forall String \ u \in v. \ (\exists Post \ p \ | \ p \in textualPosts \ \wedge \ p.getAuthor() = k \\
+\ \wedge \ ( \exists Post \ q \ | \ q \in likePosts \ \wedge \ q.getAuthor = u \ \wedge \ getReferencedID(q.getText()) = p.getID())))). \\
+\end{gather*}
+L'invariante assicura - oltre all'assenza di parametri di valore \textit{null} - che siano verificate tutte le condizioni necessarie nel meccanismo 
+di follows implementato: un Utente (identificato in modo univoco da un parametro di tipo \textbf{String}) u segue un Utente v se e solo se 
+esiste (almeno) un Like di u a un Post di v; viene mantenuto (per induzione) da due chiamate alla funzione \textit{maintainIR} (una per la mappa dei \textit{Follows}, l'altra per i \textit{Followers}) ogni volta che \textit{this} viene modificato:
+\begin{lstlisting}[style=codeStyle]
+private static void maintainIR(Map<String, Set<String>> map, String author, String s)
+{
+    Set<String> tmp = new HashSet<>();
+    if (map.get(s) != null)
+        tmp = map.get(s);
+    if (!tmp.contains(author))
+    {
+        tmp.add(author);
+        map.put(s, tmp);
+    }
+}
+\end{lstlisting}
+La funzione viene chiamata ogni volta che viene creato un Like, aggiunge \textit{author} all'insieme dei valori mappati dalla chiave\textit{s}.
+
+Viene scelto di dividere in due sottoinsiemi i Post presenti in MySocialNetwork per ridurre la complessit\`a del metodo addPost:
+\begin{lstlisting}[style=codeStyle]
+public Post addPost(String author, String text)
+    throws NullPointerException, Post.IllegalPostException
+{
+    Post p = null;
+    try
+    {
+        p = new MyPost(postsNum, author, text);
+    }
+    catch (NullPointerException | Post.IllegalPostException e)
+    {
+        throw e;
+    }
+    if (SocialNetwork.LikePattern(text))
+    {
+        try
+        {
+            return createLike(p);
+        }
+        catch (Post.IllegalPostException e)
+        {
+            throw e;
+        }
+    }
+    if (textualPosts.add(p))
+    {
+        postsNum++;
+        SocialNetwork.initializeUser(Follows, Followers, p.getAuthor());
+    }
+    return p;
+}
+\end{lstlisting}
+Nel caso in cui il Post che si vuole aggiungere all'insieme dei Post presenti nella rete non segue il formato di un Like questo metodo ha complessit\`a \( O(LikePattern(text))\) 
+(ossia un tempo costante); nel caso contrario, la complessit\`a del metodo (al caso pessimo) diventa \(O(textualPosts.size()) + O(likePosts.size())\) 
+poich\'e vengono vietate le operazioni di Like su un proprio Post, uno non presente nel Social, uno a cui lo si \`e gi\`a messo, o su un altro Like - reputate illogiche.
+In entrambi i casi alla complessit\`a del metodo va aggiunto anche il tempo necessario per mantenere l'invariante della classe.
+
+Si sceglie di mantenere la variabile di istanza \textit{Followers} - corrispondente all'inversa della Map \textit{Follows} - per ridurre al minimo la complessit\`a del metodo influencers:
+\begin{lstlisting}[style=codeStyle]
+public List<String> influencers()
+{
+    List<Entry<String, Set<String>>> list = new LinkedList<>(Followers.entrySet());
+    Collections.sort(list, new Comparator<Entry<String, Set<String>>>()
+    {
+        public int compare(Entry<String, Set<String>> e1, Entry<String, Set<String>> e2)
+        { return Integer.compare(e1.getValue().size(), e2.getValue().size()); }
+    });
+    List<String> res = new LinkedList<>();
+    for (Entry<String, Set<String>> l: list) res.add(l.getKey());
+    Collections.reverse(res); // now it is in a descending order
+    return res;
+}
+\end{lstlisting}
+Con questa implementazione il metodo \textit{influencers} non deve andare a operare sull'insieme dei Post o sulla Map dei Follows: diventa un metodo di sorting con complessit\`a \(O(n \times \log n), \ con \ n := Followers.entrySet().size()\).
+
+Nel Social Network \`e presente anche un meccanismo di \textbf{tagging}: \`e possibile menzionare altri utenti presenti nel Social Network all'interno di un generico \(Post \ p \ | \ p \in textualPosts\) con testo contenente una sottostringa del tipo \(@Username \ | \ Username \in Users \ \wedge \ p.getAuthor() \neq Username, \ con \ Users := Follows.keySet()\) (con la funzione \(getTagged()\) che banalmente restituisce il nome utente dell'utente menzionato); non viene proibita la creazione di un \(Post \ q \ | \ q.getAuthor() = q.getTagged()\), in casi di questo tipo nel testo non sar\`a rilevata alcuna menzione. 
+Questo meccanismo \`e implementato dai metodi che vanno a restituire l'insieme degli utenti menzionati all'interno dei Post; se ne riporta un valido esempio:
+\begin{lstlisting}[style=codeStyle]
+private Set<String> detectMention(Post p)
+    throws NullPointerException
+{
+    if (p == null)
+        throw new NullPointerException("Post cannot be null.\n");
+    Set<String> res = new HashSet<>();
+    String delims = "[ ]";
+    String[] tokens = p.getText().split(delims);
+    for (String t : tokens)
+        if (t.startsWith("@")) 
+            if (!(p.getAuthor().equals(t.substring(1))) && Follows.containsKey(t.substring(1)))
+                res.add(t.substring(1));
+    return res;
+}
+
+public Set<String> getMentionedUsers()
+{
+    Set<String> res = new HashSet<>();
+    for (Post p : textualPosts)
+        res.addAll(detectMention(p));
+    return res;
+}
+\end{lstlisting}
+
+\subsection{Parte 3}
+Il tipo di dato \textbf{MyKiddiesSocialNetwork} - collezione mutabile di dati - rappresenta una estensione gerarchica del tipo di dato \textbf{MySocialNetwork} in cui viene implementato un meccanismo di \textbf{Report} (o \textbf{Segnalazione}) e implementa l'interfaccia \textbf{KiddiesSocialNetwork}. La progettazione richiede per\`o l'utilizzo di un tipo di dato \textbf{Report}:
+in questa implementazione questo viene considerato un \textbf{Post} istanziato con un testo del tipo: "\(Segnalazione: \langle id \rangle\)" con id definito come l'identificativo del Post che l'autore vuole segnalare.
+Da questo punto in poi l'insieme dei Post viene considerato come formato dall'unione degli insiemi \textbf{textualPosts} (ossia i Post che non sono n\'e Like n\'e Report), \textbf{likePosts} (ossia i Post che sono Like) e \textbf{reportPosts}.
+Su ogni elemento di reportPosts vale la seguente condizione:
+\[ (\forall Post \ p \in reportPosts. \ (\exists Post \ q \in textualPosts \ | \ q.getID() = ReferencedID(p.getText()))). \]
+Per fare in modo che un Post r sia considerabile un Report valido deve inoltre verificarsi la seguente condizione:
+\begin{gather*}
+(\exists Post \ p \in textualPosts \ | \ getReferencedID(l.getText()) = p.getID() \ \wedge \ \neg (p \in "^\wedge [A-Za-z]*") \\ 
+\ \wedge \ p.getAuthor() \neq l.getAuthor()) \\
+\ \wedge \ \neg(\exists Post \ q \in reportPosts \ | \ getReferencedID(q.getText()) = getReferencedID(l.getText()) \\
+\ \wedge \ q.getAuthor() = l.getAuthor()).
+\end{gather*}
+
+\subsubsection{MyKiddiesSocialNetwork}
+Il tipo di dato MyKiddiesSocialNetwork \`e definito dalla seguente variabile di istanza (a cui vanno aggiunte quelle di MySocialNetwork):
+\begin{lstlisting}[style=codeStyle]
+private Set<Post> reportPosts; // insieme reportPosts
+\end{lstlisting}
+Sulla classe vale il seguente invariante di rappresentazione:
+\[ super.IR() \ \wedge \ reportPosts \neq null \ \wedge \ (\forall Post \ p \in reportPosts. \ p \neq null). \]
+
+Poich\'e la specifica del progetto non prevede un meccanismo di gestione dei post che hanno ricevuto segnalazioni si sceglie di implementare sia un getter per i post segnalati sia per quelli "puliti":
+\begin{lstlisting}[style=codeStyle]
+public Set<Post> getReportedPosts()
+{
+    Set<Post> src = new HashSet<>(getPosts());
+    Set<Post> res = new HashSet<>();
+    for (Post p : getSegnalazioni())
+    {
+        for (Post q : src)
+            if (SocialNetwork.getReferencedID(p.getText()).equals(q.getID()))
+            {
+                src.remove(q);
+                res.add(q);
+                break;
+            }
+    }
+    return res;
+}
+
+public Set<Post> getFilteredPosts()
+{
+    Set<Post> res = new HashSet<>(getPosts());
+    res.removeAll(getReportedPosts());
+    return res;
+}
+\end{lstlisting}
+
+
+\section{Test}
+Il \textbf{file di test} \`e stato scritto a mano, senza l'utilizzo di framework esterni. Utilizza una stessa funzione per operare sulle due classi, 
+in modo da assicurare che il principio di sostituzione venga rispettato. Per ogni funzione, sono stati controllati anche i relativi \textbf{edge cases}, 
+utilizzando scenari limite per lanciare le varie eccezioni. L'esito di ogni test viene stampato nel file "out.txt" su cui viene reindirizzato l'output:
+in questo si possono vedere le linee in cui le eccezioni sono state correttamente lanciate e - alla fine del file - si troveranno dei commenti accompagnati da una spunta verde ("✅")
+nel caso in cui i test siano stati passati con successo.
+
+\end{document}
