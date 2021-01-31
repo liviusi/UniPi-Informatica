@@ -1,4 +1,6 @@
-# PROGRAMMAZIONE II – A.A. 2020 - 21 : Secondo Progetto Intermedio
+# PROGRAMMAZIONE II - A.A. 2020 - 21
+
+# Secondo Progetto Intermedio
 
 **Descrizione: Progettazione e sviluppo di un interprete in OCaml**
 
