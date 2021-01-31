@@ -65,22 +65,14 @@ insieme di operatori di natura “funzionale”.
 - Il progetto deve essere svolto e discusso col docente individualmente. Il confronto con colleghi
     mirante a valutare soluzioni alternative durante la fase di progetto è incoraggiato.
 - Il progetto deve essere costituito da
-
-```
-o i file sorgente contenenti il codice sviluppato e le corrispondenti batterie di test, ove tutto il
-codice deve essere adeguatamente commentato;
-```
-```
-o una relazione di massimo una pagina che descrive le principali scelte progettuali ed
+    i file sorgente contenenti il codice sviluppato e le corrispondenti batterie di test, ove tutto il
+codice deve essere adeguatamente commentato e
+    una relazione di massimo una pagina che descrive le principali scelte progettuali ed
 eventuali istruzioni per eseguire il codice.
-```
-- La consegna va fatta inviando per email tutti i file in un archivio entro le date previste. Per il corso
-    A, inviare l’email al Prof. Ferrari con oggetto “[PR2A] Consegna progetto 2”. Per il corso B, inviare
-    l’email al Prof.ssa Levi con oggetto contenente la stringa “[PR2B] Consegna progetto 2”.
+- La consegna va fatta inviando per email tutti i file in un archivio entro le date previste. Per il corso A, inviare l’email al Prof. Ferrari con oggetto “[PR2A] Consegna progetto 2”. Per il corso B, inviare l’email al Prof.ssa Levi con oggetto contenente la stringa “[PR2B] Consegna progetto 2”.
 
 **Altre informazioni**
 
-- Per quanto riguarda il progetto, i docenti risponderanno solo a eventuali domande riguardanti
-    l’interpretazione del testo, e non commenteranno soluzioni parziali prima della consegna.
+- Per quanto riguarda il progetto, i docenti risponderanno solo a eventuali domande riguardanti l’interpretazione del testo, e non commenteranno soluzioni parziali prima della consegna.
 
 
