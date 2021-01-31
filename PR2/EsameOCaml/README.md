@@ -51,7 +51,7 @@ insieme di operatori di natura “funzionale”.
     function(x) dove x appartiene a aSet.
 
 
-## 2
+## Parte 2
 
 1. Definire le regole operazionali per l’introduzione del tipo di dato set nel linguaggio didattico.
 2. Definire le regole operazionali per le classi di operazione previste dal tipo di dato set-
