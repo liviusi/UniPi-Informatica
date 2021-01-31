@@ -1,0 +1,279 @@
+\documentclass[10pt, italian, openany]{book}
+
+% Set page margins
+\usepackage[top=65pt,bottom=35pt,left=35pt,right=35pt]{geometry}
+
+\usepackage[]{graphicx}
+% If multiple images are to be added, a folder (path) with all the images can be added here 
+\graphicspath{ {images/} }
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+ 
+% All page numbers positioned at the bottom of the page
+\usepackage{fancyhdr}
+\fancyhf{} % clear all header and footers
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\pagestyle{fancy}
+
+% Changes the style of chapter headings
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
+
+% Change distance between chapter header and text
+\titlespacing{\chapter}{0pt}{35pt}{\baselineskip}
+\usepackage{titlesec}
+\titleformat{\section}
+  [hang] % <shape>
+  {\normalfont\bfseries\Large} % <format>
+  {} % <label>
+  {0pt} % <sep>
+  {} % <before code>
+\renewcommand{\thesection}{} % Remove section references...
+\renewcommand{\thesubsection}{\arabic{subsection}} %... from subsections
+\newcommand{\thickfrac}[2]{\genfrac{}{}{3pt}{}{#1}{#2}}
+
+% Numbered subsections
+\setcounter{secnumdepth}{3}
+
+% Prevents LaTeX from filling out a page to the bottom
+\raggedbottom
+
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage[stable]{footmisc}
+% Code Listings
+\definecolor{vgreen}{RGB}{104,180,104}
+\definecolor{vblue}{RGB}{49,49,255}
+\definecolor{vorange}{RGB}{255,143,102}
+\definecolor{vlightgrey}{RGB}{245,245,245}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\begin{document}
+
+\begin{titlepage}
+	\clearpage\thispagestyle{empty}
+	\centering
+	\vspace{1cm}
+
+    \includegraphics[scale=0.60]{unipi-logo.png}
+    
+	{\normalsize \noindent Dipartimento di Informatica \\
+	             Corso di Laurea in Informatica \par}
+	
+	\vspace{2cm}
+	{\Huge \textbf{Regole di semantica operazionale} \par}
+	\vspace{1cm}
+	{\large Programmazione II}
+	\vspace{5cm}
+
+    \begin{minipage}[t]{0.47\textwidth}
+    	{\large{ Prof. Gianluigi Ferrari}}
+    \end{minipage}\hfill\begin{minipage}[t]{0.47\textwidth}\raggedleft
+    	{\large {Giacomo Trapani \\ 600124 - Corso A\\ }}
+    \end{minipage}
+
+    \vspace{4cm}
+
+	{\normalsize Anno Accademico 2020/2021 \par}
+
+	\pagebreak
+
+\end{titlepage}
+
+\chapter*{Creazione di insiemi.\footnote{Per ragioni di spazio, alcune regole operazionali presentano premesse divise in pi\`u righe; si segnala che in questi casi l'unica e sola conclusione \`e definita dall'ultima riga.}}
+
+\section{Empty}
+
+\[
+\dfrac
+	{ (str \in \{"int", "string", "bool"\}) }
+	{env \rhd Empty(str) \Longrightarrow Set(str, \emptyset) }
+\]
+
+\section{Singleton}
+\[
+\dfrac
+	{ (\varGamma = (env \rhd aElem): str) \ \ (str \in \{"int", "string", "bool"\}) }
+	{env \rhd Singleton(aElem, str) \Longrightarrow Set(str, [env \rhd aElem] )}
+\]
+
+\section{Of}
+\[
+\dfrac
+	{ (str \in \{"int", "string", "bool"\}) \ \ (\forall L \in aLis. \ (\exists! M \in aLis \ | \ M = L))}
+	{\dfrac
+		{(\forall L \in aLis. \ \varGamma = (env \rhd L): str) \ \ (\forall L \in aLis. \ (env \rhd L) \in eLis)}
+		{env \rhd Of(str, aLis) \Longrightarrow Set(str, eLis)}
+	}
+\]
+
+
+{\let\clearpage\relax \chapter*{Operazioni su insiemi.}}
+\section{Add}
+\[
+\dfrac
+	{ (env \rhd aSet \Longrightarrow Set(str, eLis)) \ \ ((\varGamma = (env \rhd aElem): str) \Longrightarrow v = Set(str, [env \rhd aElem]) \cup (env \rhd aSet)) }
+	{\dfrac
+		{(\neg(\varGamma = (env \rhd aElem): str)) \Longrightarrow v = (env \rhd aSet)}
+		{env \rhd Add(aSet, aElem) \Longrightarrow v}
+	}
+\]
+
+\section{Remove}
+\[
+\dfrac
+	{ (env \rhd aSet \Longrightarrow Set(str, eLis)) }
+	{env \rhd Remove(aSet, aElem) \Longrightarrow ((env \rhd aSet) \setminus \{ env \rhd aElem \}) )}
+\]
+
+\section{IsEmpty}
+\[
+\dfrac
+	{(env \rhd aSet \Longrightarrow Set(str, eLis)) \ \ ((eLis \neq \emptyset ) \Longrightarrow v = false)}
+	{
+		\dfrac
+		{ (eLis = \emptyset) \Longrightarrow v = true}
+		{env \rhd IsEmpty(aSet) \Longrightarrow v}
+	}
+\]
+
+\section{BelongsTo}
+\[
+\dfrac
+	{(env \rhd aSet \Longrightarrow Set(str, eLis)) \ \ (\neg ((env \rhd aElem) \in eLis) \Longrightarrow v = false)}
+	{
+		\dfrac
+		{((env \rhd aElem) \in eLis) \Longrightarrow v = true}
+		{env \rhd BelongsTo(aSet, aElem) \Longrightarrow v}
+	}
+\]
+
+\section{IsSubset}
+\[
+\dfrac
+	{(env \rhd aSet1 \Longrightarrow Set(str1, eLis1)) \ \ (env \rhd aSet2 \Longrightarrow (str2, eLis2))}
+	{\dfrac
+		{ ((\forall L \in eLis1. \ L \in eLis2) \Longrightarrow v = true) \ \ ((\exists L \in eLis1 \ | \ L \notin  eLis2) \Longrightarrow v = false) }
+		{env \rhd IsSubset(aSet1, aSet2) \Longrightarrow v}
+	}
+\]
+
+\section{Maximum}
+\[
+\dfrac
+	{(env \rhd aSet \Longrightarrow Set(str, eLis) \ \ (eLis \neq \emptyset) \ \ (\exists L \in eLis \ | \ (\forall M \in eLis. \ L \geq M ) \Longrightarrow v = L)  )}
+	{env \rhd Maximum(aSet) \Longrightarrow v}
+\]
+
+\section{Minimum}
+\[
+\dfrac
+	{(env \rhd aSet \Longrightarrow Set(str, eLis) \ \ (eLis \neq \emptyset) \ \ (\exists L \in eLis \ | \ (\forall M \in eLis. \ L \leq M ) \Longrightarrow v = L)  )}
+	{env \rhd Minimum(aSet) \Longrightarrow v}
+\]
+
+{\let\clearpage\relax \chapter*{Operatori funzionali.\footnote{Si sceglie, per evitare di avere regole operazionali particolarmente lunghe e di difficile lettura, di dividere - quando necessario - le regole in pi\`u casi (nello specifico si distinguono le operazioni e i controlli da fare nel caso di operatori funzionali applicati a insiemi vuoti e non.)}}}
+\section*{For\_all}
+\subsection*{Caso 1: insiemi non vuoti}
+\[
+\dfrac
+	{(env \rhd predicate \Longrightarrow Closure(x, body, fDecEnv)) }
+	{\dfrac
+		{ (env \rhd aSet \Longrightarrow Set(str, eLis)) \ \ (eLis \neq \emptyset) }
+		{\dfrac
+			{((\forall L \in eLis. \ fDecEnv[ (env \rhd L) / x] \rhd body \Longrightarrow true) \Longrightarrow v = true)}
+			{\dfrac
+				{((\exists L \in eLis \ | \ fDecEnv[ (env \rhd L) / x] \rhd body \Longrightarrow false) \Longrightarrow v = false)}
+				{env \rhd For\_all(predicate, aSet) \Longrightarrow v}
+			}
+		}
+	}
+\]
+\subsection*{Caso 2: insiemi vuoti}
+\[
+\dfrac
+	{(env \rhd predicate \Longrightarrow Closure(x, body, fDecEnv)) }
+	{\dfrac
+		{ (env \rhd aSet \Longrightarrow Set(str, eLis) \ \ (eLis = \emptyset) }
+		{env \rhd For\_all(predicate, aSet) \Longrightarrow true}
+	}
+\]
+
+\section*{Exists}
+\subsection*{Caso 1: insiemi non vuoti}
+\[
+\dfrac
+	{(env \rhd predicate \Longrightarrow Closure(x, body, fDecEnv)) }
+	{\dfrac
+		{ (env \rhd aSet \Longrightarrow Set(str, eLis)) \ \ (eLis \neq \emptyset) }
+		{\dfrac
+			{((\exists L \in eLis\ | \ fDecEnv[ (env \rhd L) / x] \rhd body \Longrightarrow true) \Longrightarrow v = true)}
+			{\dfrac
+				{((\forall L \in eLis. \ fDecEnv[ (env \rhd L) / x] \rhd body \Longrightarrow false) \Longrightarrow v = false)}
+				{env \rhd Exists(predicate, aSet) \Longrightarrow v}
+			}
+		}
+	}
+\]
+\subsection*{Caso 2: insiemi vuoti}
+\[
+\dfrac
+	{(env \rhd predicate \Longrightarrow Closure(x, body, fDecEnv)) }
+	{\dfrac
+		{(env \rhd aSet \Longrightarrow Set(str, eLis)) \ \ (eLis = \emptyset)}
+		{env \rhd Exists(predicate, aSet) \Longrightarrow false}
+	}
+\]
+\section*{Filter}
+\subsection*{Caso 1: insiemi non vuoti}
+\[
+\dfrac
+	{(env \rhd predicate \Longrightarrow Closure(x, body, fDecEnv)) }
+	{\dfrac
+		{ (env \rhd aSet \Longrightarrow Set(str, eLis)) \ \ (eLis \neq \emptyset) }
+		{\dfrac
+			{(\forall L \in eLis. \ (fDecEnv[ (env \rhd L) / x] \rhd body \Longrightarrow true) \Longrightarrow L \in v)}
+			{env \rhd Filter(predicate, aSet) \Longrightarrow v, \ con \ \varGamma \vdash v: Set}
+		} 
+	}
+\]
+\subsection*{Caso 2: insiemi vuoti}
+\[
+\dfrac
+	{(env \rhd predicate \Longrightarrow Closure(x, body, fDecEnv)) }
+	{\dfrac
+		{ (env \rhd aSet \Longrightarrow Set(str, eLis) \ \ (eLis = \emptyset)}
+		{env \rhd Filter(predicate, aSet) \Longrightarrow \emptyset}
+	}
+\]
+
+\section*{Map}
+\[
+\dfrac
+	{(env \rhd predicate \Longrightarrow Closure(x, body, fDecEnv))}
+	{\dfrac
+		{ (env \rhd aSet \Longrightarrow Set(str, eLis)) \ \ (eLis \neq \emptyset) }
+		{\dfrac
+			{(\forall L \in eLis. \ (fDecEnv[ (env \rhd L) / x] \rhd body \Longrightarrow res) \Longrightarrow res \in v)}
+			{env \rhd Map(func, aSet) \Longrightarrow v, \ con \ \varGamma \vdash v: Set}
+		}
+	}
+\]
+
+\end{document}

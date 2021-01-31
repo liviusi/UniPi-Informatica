@@ -1,0 +1,149 @@
+\documentclass[10pt, italian, openany]{book}
+
+% Set page margins
+\usepackage[top=85pt,bottom=85pt,left=68pt,right=66pt]{geometry}
+
+\usepackage[]{graphicx}
+% If multiple images are to be added, a folder (path) with all the images can be added here 
+\graphicspath{ {images/} }
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+ 
+% All page numbers positioned at the bottom of the page
+\usepackage{fancyhdr}
+\fancyhf{} % clear all header and footers
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\pagestyle{fancy}
+
+% Changes the style of chapter headings
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
+
+% Change distance between chapter header and text
+\titlespacing{\chapter}{0pt}{35pt}{\baselineskip}
+\usepackage{titlesec}
+\titleformat{\section}
+  [hang] % <shape>
+  {\normalfont\bfseries\Large} % <format>
+  {} % <label>
+  {0pt} % <sep>
+  {} % <before code>
+\renewcommand{\thesection}{} % Remove section references...
+\renewcommand{\thesubsection}{\arabic{subsection}} %... from subsections
+
+% Numbered subsections
+\setcounter{secnumdepth}{3}
+
+% Prevents LaTeX from filling out a page to the bottom
+\raggedbottom
+
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{amsmath}
+% Code Listings
+\definecolor{vgreen}{RGB}{104,180,104}
+\definecolor{vblue}{RGB}{49,49,255}
+\definecolor{vorange}{RGB}{255,143,102}
+\definecolor{vlightgrey}{RGB}{245,245,245}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\begin{document}
+
+\begin{titlepage}
+	\clearpage\thispagestyle{empty}
+	\centering
+	\vspace{1cm}
+
+    \includegraphics[scale=0.60]{unipi-logo.png}
+    
+	{\normalsize \noindent Dipartimento di Informatica \\
+	             Corso di Laurea in Informatica \par}
+	
+	\vspace{2cm}
+	{\Huge \textbf{Relazione progetto OCaml} \par}
+	\vspace{1cm}
+	{\large Programmazione II}
+	\vspace{5cm}
+
+    \begin{minipage}[t]{0.47\textwidth}
+    	{\large{ Prof. Gianluigi Ferrari}}
+    \end{minipage}\hfill\begin{minipage}[t]{0.47\textwidth}\raggedleft
+    	{\large {Giacomo Trapani \\ 600124 - Corso A\\ }}
+    \end{minipage}
+
+    \vspace{4cm}
+
+	{\normalsize Anno Accademico 2020/2021 \par}
+
+	\pagebreak
+
+\end{titlepage}
+\section{Dettagli implementativi}
+Il progetto consiste nella progettazione e realizzazione di una estensione del linguaggio didattico funzionale presentato a lezione che permetta di manipolare insiemi. Un insieme \`e una collezione di valori, non ordinati, che non contiene valori duplicati.
+
+\subsection*{Creare un insieme.}
+Si riporta l'invariante di rappresentazione sugli insiemi (definiti come (\textbf{string} str, \textbf{evT list} elems)):
+\begin{gather*}
+(\forall evT \ e \in elems. \ typecheck(str,e) \ \wedge \ (\exists! evT \ i  \in elems \ | \ i \equiv e))  \ \wedge \\
+str \in \{"int", "bool", "string"\} \ \wedge \ (\#elems = 1\Longrightarrow elems=[Unbound]).
+\end{gather*}
+Si ricorda che due funzioni \textit{f} e \textit{g} sono uguali se e solo se \( dom(f) = dom(g) \ \wedge \ (\forall x \in dom(f). f(x) = g(x)), \) operazione computazionalmente costosa; per questo motivo si sceglie - nonostante si lavori con un linguaggio funzionale - di non permettere l'esistenza di insiemi di funzioni, che non avrebbero comunque trovato alcuna applicazione tra i metodi da implementare all'interno del progetto.
+Nel caso in cui la lista \textit{elems} coincida con la lista vuota, si inserisce il valore iniziale \textbf{evT} \textit{Unbound}.
+Si implementano i seguenti operatori:
+\begin{itemize}
+\item \textbf{Empty}(\textbf{string} type), che costruisce un insieme vuoto di tipo \textit{type} nel quale inserisce il valore \textit{Unbound};
+\item \textbf{Of}(\textbf{string} type, \textbf{exp list} elems), che costruisce un insieme di tipo \textit{type} e lo popola con i valori esprimibili risultanti dalla valutazione degli elementi di \textit{elems} a patto che siano (tra loro) distinti e di tipo \textit{type};
+\item \textbf{Singleton}(\textbf{exp} elem, \textbf{string} type), che costruisce un insieme di tipo \textit{type} contenente soltanto l'elemento risultante dalla valutazione di \textit{elem}.
+\end{itemize}
+
+
+
+\subsection*{Operazioni su insiemi.}
+Si implementano le seguenti operazioni su insiemi:
+\begin{itemize}
+\item \textbf{Add}(\textbf{exp} aSet, \textbf{exp} aElem), che restituisce il \textbf{Set} risultante dalla valutazione di \textit{aSet} a cui viene aggiunto l'elemento (risultante dalla valutazione di) \textit{aElem} mantenendo l'invariante su insiemi;
+\item \textbf{Remove}(\textbf{exp} aSet, \textbf{exp} aElem), che restituisce il \textbf{Set} risultante dalla valutazione di \textit{aSet} a cui viene rimosso l'elemento (risultante dalla valutazione di) \textit{aElem} mantenendo l'invariante su insiemi;
+\item \textbf{IsEmpty}(\textbf{exp} aSet), che restituisce \textbf{Bool(true)} se e solo se il Set risultante dalla valutazione di \textit{aSet} \`e formato dal solo elemento di valore \textit{Unbound}, \textbf{Bool(false)} altrimenti;
+\item \textbf{BelongsTo}(\textbf{exp} aSet, \textbf{exp} aElem), che restituisce \textbf{Bool(true)} se e solo vale la relazione di appartenenza tra i risultati della valutazione di \textit{aSet} (di tipo \textbf{Set}) e \textit{aElem};
+\item \textbf{IsSubset}(\textbf{exp} aSet1, \textbf{exp} aSet2), che restituisce \textbf{Bool(true)} se e solo se vale la relazione di inclusione tra i risultati della valutazione di \textit{aSet1} e \textit{aSet2} (entrambi di tipo \textbf{Set});
+\item \textbf{Maximum}(\textbf{exp} aSet), che restituisce il valore massimo nel Set risultante dalla valutazione di \textit{aSet};
+\item \textbf{Minimum}(\textbf{exp} aSet), che restituisce il valore minimo nel Set risultante dalla valutazione di \textit{aSet};
+\item \textbf{Union}(\textbf{exp}, \textbf{exp}), che restituisce il \textbf{Set} risultante dall'unione dei due insiemi risultanti dalla valutazione di \textit{aSet1} e di \textit{aSet2} formati da elementi dello stesso tipo;
+\item \textbf{Intersection}(\textbf{exp}, \textbf{exp}), che restituisce il \textbf{Set} risultante dall'intersezione dei due insiemi risultanti dalla valutazione di \textit{aSet1} e di \textit{aSet2} formati da elementi dello stesso tipo;
+\item \textbf{Difference}(\textbf{exp}, \textbf{exp}), che restituisce il \textbf{Set} risultante dalla differenza dei due insiemi risultanti dalla valutazione di \textit{aSet1} e di \textit{aSet2}.
+\end{itemize}
+Per ulteriori dettagli sulle implementazioni delle operazioni sopracitate si faccia riferimento alla semantica operazionale definita all'interno del file \textit{RegoleOperazionali.pdf}.
+
+\subsection*{Operatori funzionali.}
+Si implementano i seguenti operatori funzionali:
+\begin{itemize}
+\item \textbf{For\textunderscore all}(\textbf{exp} predicate, \textbf{exp} aSet), che verifica che la propriet\`a risultante dalla valutazione di \textit{predicate} valga su ogni elemento dell'insieme risultante dalla valutazione di \textit{aSet};
+\item \textbf{Exists}(\textbf{exp} predicate, \textbf{exp} aSet), che verifica che la propriet\`a risultante dalla valutazione di \textit{predicate} valga su almeno un elemento dell'insieme risultante dalla valutazione di \textit{aSet};
+\item \textbf{Filter}(\textbf{exp} predicate, \textbf{exp} aSet), che restituisce il \textbf{Set} formato da tutti gli elementi dell'insieme risultante dalla valutazione di \textit{aSet} su cui vale il risultato della valutazione di \textit{predicate};
+\item \textbf{Map}(\textbf{exp} func, \textbf{exp} aSet), che restituisce il \textbf{Set} formato dai risultati della valutazione di \textit{func} su ogni elemento di \textit{aSet}.
+\end{itemize}
+Nel caso in cui gli operatori funzionali vengano applicati su insiemi vuoti si sceglie di non implementare meccanismi di typechecking statico; lavorando con dei meccanismi di typechecking dinamico (scegliendo dunque un approccio \`a la \textbf{JavaScript}) il parametro funzionale necessita di un "valore" su cui essere applicato, cosa che l'insieme vuoto non fornisce in alcun modo. Per questa ragione:
+\begin{itemize}
+    \item \textbf{For\textunderscore all} su insieme vuoto restituisce sempre e solo il valore booleano true;
+    \item \textbf{Exists} su insieme vuoto restituisce sempre e solo il valore booleano false;
+    \item \textbf{Filter} su insieme vuoto restituisce l'insieme vuoto;
+    \item \textbf{Map} su insieme vuoto restituisce un errore poich\'e non si pu\`o conoscere il tipo restituito dalla funzione che avrebbe chiamato - nozione fondamentale per la creazione di un insieme.
+\end{itemize}
+
+\subsection*{Metodo di sviluppo.}
+Il progetto \`e stato sviluppato con il supporto del text editor \textit{VSCode} senza tuttavia l'utilizzo di strumenti esterni; \`e stato testato in un ambiente \textit{REPL} e - nello specifico - la batteria di test all'interno del file \textit{tests.ml} necessita di essere riportato linea per linea dopo in un ambiente in cui si \`e gi\`a valutato tutto ci\`o che \`e contenuto nel file \textit{eval.ml}. Entrambi i file contengono - tra i commenti - quello che ci si aspetta sia l'output del REPL in modo che si possa facilmente confrontare con l'output effettivo.
+\end{document}
