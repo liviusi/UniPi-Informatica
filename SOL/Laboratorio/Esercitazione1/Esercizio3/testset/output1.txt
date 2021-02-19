@@ -1,0 +1,1 @@
+nome-programma -n <numero> -s <stringa> -m <numero> -h
