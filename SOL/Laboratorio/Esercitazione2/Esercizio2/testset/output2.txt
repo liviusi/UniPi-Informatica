@@ -1,0 +1,2 @@
+-n: 10
+-m: richiede un parametro intero non opzionale.

@@ -1,0 +1,4 @@
+-n: 10
+-m: 42
+-o: lorem ipsum dolor
+-n <num. intero> -m <num. intero> -o <stringa> -h
