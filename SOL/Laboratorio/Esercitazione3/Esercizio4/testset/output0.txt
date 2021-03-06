@@ -1,0 +1,10 @@
+Result: 11
+Reentrant version: 11
+Result: 13
+Reentrant version: 13
+Result: 16
+Reentrant version: 16
+Result: 20
+Reentrant version: 20
+Result: 25
+Reentrant version: 25
