@@ -2,7 +2,7 @@
 ## Esercizio 1: libtokenizer.a
 Inserire in un file 'tokenizer.h' la dichiarazione di due funzioni 'tokenizer' e 'tokenizer_r' (vedere la soluzione proposta nell'Esercitazione 2). 'tokenizer' ha la stessa interfaccia di 'tokenizer_r' ma mentre la prima usa al suo interno 'strtok', la seconda usa 'strtok_r'. Inserire nel file 'tokenizer_lib.c' l'implementazione delle due funzioni (cioè la loro definizione). Creare quindi una librerie statica 'libtokenizer.a' che offre l'implementazione delle due funzioni. Scrivere un programma main (es. tokenizer_main.c) che utilizza una delle due (o entrambe le) funzioni, il programma includerà il file 'tokenizer.h' e verrà linkato alla libreria statica 'libtokenizer.a'.
 
-##Esercizio 2: libtokenizer.so
+## Esercizio 2: libtokenizer.so
 Come nell'Esercizio 1 però invece che una libreria statica creare una libreria condivisa ('libtokenizer.so'). Verificarne il corretto caricamento in memoria della libreria spostando il file 'libtokenizer.so' in una directory differente da quella corrente (es. ~/mylibdir). Provare ad usare sia l'opzione del linker -Wl, -rpath, che la variabile d'ambiente per il dynamic linker/loader LD_LIBRARY_PATH.
 
 ## Esercizio 3: macro
