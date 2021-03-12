@@ -1,0 +1,1 @@
+Given argument is not a positive and valid integer (N > 0 && N < 512).

@@ -1,0 +1,2 @@
+3 26 testset/files/1.txt
+File testset/files/t could not be opened in given mode <r>.

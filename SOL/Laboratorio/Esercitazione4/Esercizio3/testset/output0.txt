@@ -1,0 +1,1 @@
+A positional argument is required. Provide a valid file to read from.
