@@ -1,30 +1,3 @@
-| --- | DESCRITTORE DI P |
-| --- | --- |
-| Stato | Esecuzione |
-| PC | 5F80 |
-| PS | 16F2 |
-| SP | FA00 |
-| R1 | 56A9 |
-| R2 | 52BE |
-
-| --- | SIGNAL STACK DI P |
-| --- | --- |
-| 2A19 |  |
-| 2A18 |  |
-| 2A17 |  |
-| 2A16 |  |
-| 2A15 |  |
-| 2A14 |  |
-
-| --- | REGISTRI |
-| --- | --- |
-| PC | |
-| PS | |
-| STATO | |
-| SP | |
-| R1 | |
-| R2 | |
-
 # Punto 1
 | --- | DESCRITTORE DI P |
 | --- | --- |
