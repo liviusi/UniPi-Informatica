@@ -115,4 +115,4 @@
 | -- | -- |
 | PC | 2F00 |
 | PS | 16F2 |
-| Stato | Supervisore |
+| Stato | Utente |
