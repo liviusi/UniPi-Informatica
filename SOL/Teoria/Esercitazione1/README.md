@@ -8,7 +8,7 @@ di ingresso della funzione di servizio) e nel registro SP il valore attuale dell
 nucleo.
 Ogni funzione di servizio termina con l’istruzione **IRET**, che ripristina tutti i registri dallo stack del
 nucleo.
-I processi cositituiscono l’unica unità di schedulazione e la politica di gestione del processore è
+I processi costituiscono l’unica unità di schedulazione e la politica di gestione del processore è
 basata unicamente sulla **priorità dei processi**: quando il sistema è in stato utente, deve essere in
 esecuzione il processo non sospeso di priorità massima.
 Al tempo **t** sono presenti, tra gli altri, il processo **T1i**, in stato di esecuzione, e il processo **T2j**, che è
