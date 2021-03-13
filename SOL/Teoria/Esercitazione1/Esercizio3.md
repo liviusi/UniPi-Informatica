@@ -11,7 +11,7 @@
 | R4 | inv. | inv. |
 
 
-| --- | Stack del Nucleo |
+| --- | STACK DEL NUCLEO |
 | --- | --- |
 | ... | ... |
 | 1016 | 23BB |
@@ -32,7 +32,7 @@
 | R4 | inv. | inv. |
 
 
-| --- | Processore | 
+| --- | PROCESSORE | 
 | -- | -- |
 | PC | 0425 |
 | PS | 275E |
@@ -51,7 +51,7 @@
 | R4 | 73FF (R4 stato utente) | inv. |
 
 
-| --- | Stack del Nucleo |
+| --- | STACK DEL NUCLEO |
 | --- | --- |
 | ... | ... |
 | 1016 | inv. |
@@ -72,7 +72,7 @@
 | R4 | AA38 (R4 di Tj) | ?? |
 
 
-| --- | Processore | 
+| --- | PROCESSORE | 
 | -- | -- |
 | PC | 0425 + ?? |
 | PS | inv. |
@@ -90,7 +90,7 @@
 | R4 | inv. | inv. |
 
 
-| --- | Stack del Nucleo |
+| --- | STACK DEL NUCLEO |
 | --- | --- |
 | ... | ... |
 | 1016 | inv. |
