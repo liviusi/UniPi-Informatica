@@ -21,7 +21,7 @@
 | 1011 | |
 
 
-| | PROCESSORE | 
+| --- | PROCESSORE | 
 | -- | -- |
 | PC | 2900 (vettore delle interruzioni) |
 | PS | 275E (parola di stato del nucleo) |
@@ -68,7 +68,7 @@
 | R2 | inv. | inv. | A000 (R2 di T2j) |
 
 
-|  | STACK DEL NUCLEO |
+| --- | STACK DEL NUCLEO |
 | --- | --- |
 | ... | ... |
 | 1016 | 23BB |
