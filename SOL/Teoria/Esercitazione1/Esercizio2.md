@@ -1,5 +1,5 @@
 # Punto 1 
-| --- | DESCRITTORE DI T1i | DESCRITTORE DI T2j | |
+| --- | DESCRITTORE DI T1i | DESCRITTORE DI T2j | --- |
 | ------- | ----------- | ------------------  | ---- |
 | Stato  | Esecuzione | Bloccato | |
 | Priorità | 4 | 3 | |
@@ -28,7 +28,7 @@
 | Stato | Supervisore |
 
 # Punto 2
-| --- | DESCRITTORE DI T1i | DESCRITTORE DI T2j | |
+| --- | DESCRITTORE DI T1i | DESCRITTORE DI T2j | --- |
 | ------- | ----------- | ------------------  | ---- |
 | Stato  | Esecuzione | Pronto | |
 | Priorità | 4 | 3 | |
@@ -57,7 +57,7 @@
 | Stato | Supervisore |
 
 # Punto 3
-| --- | DESCRITTORE DI T1i | DESCRITTORE DI T2j | |
+| --- | DESCRITTORE DI T1i | DESCRITTORE DI T2j | --- |
 | ------- | ----------- | ------------------  | ---- |
 | Stato  | Pronto | Esecuzione | |
 | Priorità | 2 | 5 | |
