@@ -82,8 +82,8 @@ fase di estrazione dell’istruzione IRET con la quale termina la funzione di se
 - il contenuto dei descrittori, dei registri generali e speciali e dello stack del nucleo durante la
 fase di estrazione dell’istruzione eseguita subito dopo la IRET.
 ## Descrittori
-| DESCRITTORE DI Ti | DESCRITTORE DI TJ |
-| --- | --- |
+| --- | DESCRITTORE DI Ti | DESCRITTORE DI Tj |
+| --- | --- | --- |
 | Stato | Esecuzione | Pronto |
 | PC | 2E31 | A12C |
 | SP | 2873 | A275 |
