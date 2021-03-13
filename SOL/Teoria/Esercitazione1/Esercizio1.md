@@ -115,4 +115,4 @@
 | -- | -- |
 | PC | A12C (PC di T2j) |
 | PS | A6F2 (PS di T2j) |
-| Stato | Supervisore |
+| Stato | Utente |
