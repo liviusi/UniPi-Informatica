@@ -83,7 +83,7 @@
 ## Processore: registri speciali e stato
 | | | 
 | -- | -- |
-| PC | 2900 (vettore delle interruzioni) |
+| PC | 2900 (vettore delle interruzioni) + k |
 | PS | 275E (parola di stato del nucleo) |
 | Stato | Supervisore |
 
