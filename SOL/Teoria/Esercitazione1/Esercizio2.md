@@ -1,35 +1,5 @@
-## Descrittori 
-|  | DESCRITTORE DI T1i | DESCRITTORE DI T2j | |
-| ------- | ----------- | ------------------  | ---- |
-| Stato  | Esecuzione | Bloccato | |
-| Priorità | 4 | 3 | |
-| PC | 2E31 | A12C | |
-| PS | 26F2 | A6F2 | |
-| SP | 2873 | A275 | 2997 |
-| R1 | 2234 | A5CC | 2649 |
-| R2 | 26CC | A000 | 22CE |
-
-## Stack del Nucleo
-|  | |
-| --- | --- |
-| ... | ... |
-| 1016 | 23BB |
-| 1015 | |
-| 1014 | |
-| 1013 | |
-| 1012 | |
-| 1011 | |
-
-## Processore: registri speciali e stato
-| | | 
-| -- | -- |
-| PC | 2F00 |
-| PS | 16F2 |
-| Stato | Utente |
-
-# Punto 1
-## Descrittori 
-|  | DESCRITTORE DI T1i | DESCRITTORE DI T2j | |
+# Punto 1 
+| --- | DESCRITTORE DI T1i | DESCRITTORE DI T2j | |
 | ------- | ----------- | ------------------  | ---- |
 | Stato  | Esecuzione | Bloccato | |
 | Priorità | 4 | 3 | |
@@ -39,8 +9,8 @@
 | R1 | inv. | inv. | inv. |
 | R2 | inv. | inv. | inv. |
 
-## Stack del Nucleo
-|  | |
+
+| --- | STACK DEL NUCLEO |
 | --- | --- |
 | ... | ... |
 | 1016 | 23BB |
@@ -50,16 +20,15 @@
 | 1012 | |
 | 1011 | |
 
-## Processore: registri speciali e stato
-| | | 
+
+| --- | PROCESSORE | 
 | -- | -- |
 | PC | 2900 (vettore delle interruzioni) |
 | PS | 275E (parola di stato del nucleo) |
 | Stato | Supervisore |
 
 # Punto 2
-## Descrittori 
-|  | DESCRITTORE DI T1i | DESCRITTORE DI T2j | |
+| --- | DESCRITTORE DI T1i | DESCRITTORE DI T2j | |
 | ------- | ----------- | ------------------  | ---- |
 | Stato  | Esecuzione | Pronto | |
 | Priorità | 4 | 3 | |
@@ -69,8 +38,8 @@
 | R1 | inv. | inv. | inv. |
 | R2 | inv. | inv. | inv. |
 
-## Stack del Nucleo
-|  | |
+
+| --- | STACK DEL NUCLEO |
 | --- | --- |
 | ... | ... |
 | 1016 | inv. |
@@ -80,16 +49,15 @@
 | 1012 | |
 | 1011 | |
 
-## Processore: registri speciali e stato
-| | | 
+
+| --- | PROCESSORE | 
 | -- | -- |
 | PC | 2900 (vettore delle interruzioni) + k |
 | PS | 275E (parola di stato del nucleo) |
 | Stato | Supervisore |
 
 # Punto 3
-## Descrittori 
-|  | DESCRITTORE DI T1i | DESCRITTORE DI T2j | |
+| --- | DESCRITTORE DI T1i | DESCRITTORE DI T2j | |
 | ------- | ----------- | ------------------  | ---- |
 | Stato  | Pronto | Esecuzione | |
 | Priorità | 2 | 5 | |
@@ -99,8 +67,8 @@
 | R1 | inv. | inv. | 2649 |
 | R2 | inv. | inv. | 22CE |
 
-## Stack del Nucleo
-|  | |
+
+| --- | STACK DEL NUCLEO |
 | --- | --- |
 | ... | ... |
 | 1016 | 23BB |
@@ -110,9 +78,9 @@
 | 1012 | |
 | 1011 | |
 
-## Processore: registri speciali e stato
-| | | 
-| -- | -- |
+
+| --- | PROCESSORE | 
+| --- | --- |
 | PC | 2F00 |
 | PS | 16F2 |
 | Stato | Utente |
