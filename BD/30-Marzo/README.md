@@ -3,21 +3,21 @@
 Si consideri il seguente schema relazionale. Molte interrogazioni fanno riferimento al
 “numero di studenti”: si tratta dell’attributo NumStudenti della tabella Corsi.
 
-`Aule(IdA, Nome, Edificio, Capienza)`
+`Aule(IdA, Nome, Edificio, Capienza)`.
 
-`AuleCorsi(IdA*, IdC*, Ora, Giorno)`
+`AuleCorsi(IdA*, IdC*, Ora, Giorno)`.
 
-`Corsi(IdC, NomeC, AnnoAccademico, NumStudenti, IdD*)`
+`Corsi(IdC, NomeC, AnnoAccademico, NumStudenti, IdD*)`.
 
-`Docenti(IdD, Nome, Cognome, Dipartimento)`
+`Docenti(IdD, Nome, Cognome, Dipartimento)`.
 
 Scrivere le interrogazioni SQL che restituiscono, senza ripetizioni, le seguenti informazioni:
 ## Esercizio 1
 Per ogni Dipartimento con più di 30 docenti, riportare il nome del Dipartimento e il numero di
 docenti che vi appartengono.
 ## Esercizio 2
-Per ogni Dipartimento, riportare il nome del Dipartimento il numero di docenti che vi
-appartengono, il numero di Corsi che vengono insegnati dai docenti di quel dipartimento, e il
+Per ogni Dipartimento, riportare il nome del Dipartimento, il numero di docenti che vi
+appartengono, il numero di Corsi che vengono insegnati dai docenti di quel dipartimento e il
 numero totali di studenti di tali corsi.
 ## Esercizio 3
 Per ogni aula in cui si svolge un qualche corso con un numero di studenti maggiore della
