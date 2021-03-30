@@ -1,19 +1,17 @@
 -- ESERCIZIO 1
-
 SELECT DISTINCT
 	Docenti.Dipartimento, count(*)
 FROM
 	Docenti
 GROUP BY
-	Docenti.IdD
+	Docenti.Dipartimento
 HAVING
 	count(*) > 30
 
 
 -- ESERCIZIO 2
-
-SELECT DISTINCT 
-	DocentiCorsi.Dipartimento, count(DocentiCorsi.IdD), count(DocentiCorsi.NumeroCorsi), sum(DocentiCorsi.NumStudenti)
+SELECT DISTINCT
+	DocentiCorsi.Dipartimento, count(DISTINCT DocentiCorsi.IdD), count(DocentiCorsi.NumeroCorsi), sum(DocentiCorsi.NumStudenti)
 FROM
 	Docenti JOIN Corsi USING (IdD) as DocentiCorsi
 GROUP BY
@@ -21,14 +19,14 @@ GROUP BY
 
 
 -- ESERCIZIO 3
-
 SELECT DISTINCT
 	ACAC.IdA, ACAC.Nome, ACAC.Capienza, ACAC.Giorno, ACAC.NumStudenti
 FROM
 	(Aule JOIN AuleCorsi USING (IdA) as ACA)
 	JOIN
 	Corsi USING (IdC) as ACAC
-WHERE ACAC.NumStudenti > ACAC.Capienza
+WHERE
+	ACAC.NumStudenti > ACAC.Capienza
 
 
 -- ESERCIZIO 4
@@ -39,12 +37,12 @@ FROM
 
 
 -- ESERCIZIO 5
-SELECT DISTINCT
+SELECT
 	D1.Nome, D1.Cognome, D1.Dipartimento, D2.Nome, D2.Cognome, D2.Dipartimento
 FROM
 	Docenti D1, Docenti D2
 WHERE
-	D1.Nome = D2.Nome AND D1.Cognome = D2.Cognome AND D1.IdD <> D2.IdD
+	D1.Cognome = D2.Cognome AND D1.IdD < D2.IdD
 
 
 -- ESERCIZIO 6

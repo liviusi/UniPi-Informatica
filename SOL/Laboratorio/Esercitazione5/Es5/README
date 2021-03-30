@@ -1,0 +1,5 @@
+Per generare il grafico di confronto per il programma mycp eseguire make test. 
+E' necessario avere installato:
+gnuplot
+ps2pdf
+pdfcrop
