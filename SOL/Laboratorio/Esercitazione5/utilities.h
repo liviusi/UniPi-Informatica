@@ -18,30 +18,46 @@
 */
 #define SYSCALL(name, value, system_call, error_message, ...) \
 { \
-	if ((value = system_call) == -1) \
+	do \
 	{ \
-		perror(#name); \
-		int aux_errno = errno; \
-		print_errors(error_message, __VA_ARGS__); \
-		exit(aux_errno); \
-	} \
+		if ((value = system_call) == -1) \
+		{ \
+			perror(#name); \
+			int aux_errno = errno; \
+			print_errors(error_message, __VA_ARGS__); \
+			exit(aux_errno); \
+		} \
+	} while(0); \
+}
+
+// handling error in fopen
+#define FOPEN(fname, path, mode) \
+{ \
+	do \
+	{ \
+		if ((fname = fopen(path, mode)) == NULL) \
+		{ \
+			fprintf(stderr, "File %s could not be opened in given mode <%s>.\n", path, mode); \
+			return 1; \
+		} \
+	} while(0); \
 }
 
 static inline void print_errors(char* msg, ...)
 {
-	char[] tmp = "ERROR: ";
+	char tmp[] = "ERROR: ";
 	va_list args;
 	char* err = (char*) malloc(strlen(msg) + strlen(tmp) + MAX_ERROR_MSG_SIZE);
 	if (!err)
 	{
 		perror("malloc");
-		fprintf(stderr, "Allocazione fallita in print_errors.\n");
+		fprintf(stderr, "malloc failed in print_errors.\n");
 		return;
 	}
-	strncpy(err, tmp, strlen(tmp));
-	strncpy(err + strlen(tmp), msg, strlen(msg));
+	memcpy(err, tmp, strlen(tmp));
+	memcpy(err + strlen(tmp), msg, strlen(msg));
 	va_start (args, msg);
-	vprintf(stderr, err, args);
+	vfprintf(stderr, err, args);
 	va_end (args);
 	free(err);
 }
