@@ -3,7 +3,8 @@ AR = AR
 CFLAGS += -Wall -pedantic -g -std=c99 -O3
 INCLUDES = -I .
 TARGETS = Esercizio1/mycp_sc \
-	Esercizio1/mycp_std
+	Esercizio1/mycp_std \
+	Esercizio3/permessi
 
 
 .PHONY: all cleanall test
@@ -23,4 +24,4 @@ test : Esercizio1/mycp_sc Esercizio1/mycp_std
 	gnuplot Esercizio1/plot.gnp
 
 cleanall : 
-	-rm -f $(TARGETS) *.dat plot.eps plot.pdf Esercizio1/*.txt
+	-rm -f $(TARGETS) *.dat plot.eps plot.pdf
