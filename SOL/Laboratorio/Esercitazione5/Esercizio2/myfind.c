@@ -103,6 +103,7 @@ char find(const char* dir_name, const char* filename)
 					return -1;
 				if (strncmp(file->d_name, filename, strlen(file->d_name)) == 0)
 					fprintf(stdout, "%s/%s %s\n", buffer, file->d_name, ctime(&statbuf.st_mtime));
+				free(buffer);
 			}
 		}
 	}
