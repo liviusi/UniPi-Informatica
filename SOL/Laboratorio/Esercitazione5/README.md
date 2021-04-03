@@ -10,3 +10,17 @@ che cerca ricorsivamente il file `nomefile` nel sottoalbero radicato nella direc
 
 ## Esercizio 3
 Scrivere un programma C che dati come argomenti una lista di file o directories stampa per ogni argomento: il nome del file/directory, il numero dell'inodo associato, il tipo di file (-,l,d,s,…) i bit di protezione (es. rw-r–r–), l'user identifier (uid), il group identifier (gid), la size del file ed il timestamp dell'ultima modifica. Per convertire il tempo di ultima modifica in un formato stampabile usare la funzione di libreria ctime. Usare getpwuid e getgrgid per convertire uid e gid nei nomi corrispondenti agli id.
+
+## Esercizio 4
+Scrivere un programma C chiamato 'lsdir' che, dato come argomento un nome di directory, visita ricorsivamente tutto il sottoalbero di directory che ha come radice la directory passata come argomento. Per ogni directory, il programma deve stampare sullo standard output le informazioni sui file nel seguente formato:
+```
+Directory: <nomedir1>
+file1     size    permessi
+file2     size    permessi
+------------------
+Directory: <nomedir2>
+file3     size    permessi
+file4     size    permessi
+------------------
+```
+dove la directory 'nomedir1' contiene i file 'file1' e 'file2' e la directory 'nomedir2'. Durante la visita dell'albero di directory non cosiderare le directories '.' (punto) e '..' (punto-punto).
