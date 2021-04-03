@@ -4,6 +4,7 @@ CFLAGS += -Wall -pedantic -g -std=c99 -O3
 INCLUDES = -I .
 TARGETS = Esercizio1/mycp_sc \
 	Esercizio1/mycp_std \
+	Esercizio2/myfind \
 	Esercizio3/permessi
 
 

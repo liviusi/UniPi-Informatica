@@ -55,6 +55,6 @@ int main(int argc, char* argv[])
 	return 0;
 
 	error_msg:
-		fprintf(stderr, "Usage: %s src dest [buffersize]", argv[0]);
+		fprintf(stderr, "Usage: %s src dest [buffersize]\n", argv[0]);
 		return 1;
 }
