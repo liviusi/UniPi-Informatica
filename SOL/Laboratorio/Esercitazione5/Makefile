@@ -1,11 +1,12 @@
 CC = gcc
 AR = AR
-CFLAGS += -Wall -pedantic -g -std=c99 -O3
+CFLAGS += -Wall -pedantic -g -std=c99 -O0
 INCLUDES = -I .
 TARGETS = Esercizio1/mycp_sc \
 	Esercizio1/mycp_std \
 	Esercizio2/myfind \
-	Esercizio3/permessi
+	Esercizio3/permessi \
+	Esercizio4/lsdir
 
 
 .PHONY: all cleanall test

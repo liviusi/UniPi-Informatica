@@ -106,6 +106,11 @@ char find(const char* dir_name, const char* filename)
 			}
 		}
 	}
+	if (errno != 0)
+	{
+		perror("readdir");
+		return -1;
+	}
 	closedir(dir);
 	return 1;
 }
