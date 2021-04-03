@@ -62,6 +62,7 @@ void free_list(struct char_list** lst)
 	{
 		struct char_list* tmp = *lst;
 		*lst = (*lst)->next;
+		free(tmp->name);
 		free(tmp);
 		free_list(lst);
 	}
