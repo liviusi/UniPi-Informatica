@@ -51,3 +51,30 @@ domande:
 - eventualmente, quali operazioni non possono essere eseguite e perché?
 - si raggiunge uno stallo?
 - eventualmente, con quale operazione si raggiunge lo stallo? 
+
+# Esercizio 3
+In un sistema con risorse R1, R2, R3, R4 e R5, tutte con molteplicità 2, sono presenti i processi P1, P2 e P3 che
+inizialmente non possiedono risorse e successivamente avanzano senza interagire reciprocamente e alternandosi nello
+stato di esecuzione con velocità arbitrarie.
+Nel corso della propria esistenza, ciascun processo esegue una propria sequenza di richieste, che si intercalano in modo
+arbitrario con quelle degli altri processi. Dopo aver ottenuto e utilizzato le risorse che richiede, ogni processo termina
+rilasciando tutte le risorse ottenute.
+Si considerino, in alternativa, le sequenze di richieste (semplici o multiple) sotto riportate:
+
+**Sequenza 1**:
+
+| Processo | Prima richiesta | Seconda richiesta | Terza richiesta | Quarta richiesta | Terminazione |
+| -------- | --------------- | ----------------- | --------------- | ---------------- | ------------ |
+| P1 | 2 istanze di R1 | 1 istanza di R3 | 1 istanza di R4 | 1 istanza di R5 | Rilascia |
+| P2 | 2 istanze di R2 | 1 istanza di R3 | 2 istanze di R4 | 1 istanza di R3 | Rilascia |
+| P3 | 2 istanze di R1 | 1 istanza di R3 | 1 istanza di R4 | 2 istanze di R5 | Rilascia |
+
+**Sequenza 2**:
+
+| Processo | Prima richiesta | Seconda richiesta | Terza richiesta | Quarta richiesta | Terminazione |
+| -------- | --------------- | ----------------- | --------------- | ---------------- | ------------ |
+| P1 | 2 istanze di R1 | 1 istanza di R3 | 1 istanza di R4 | 1 istanza di R5 | Rilascia |
+| P2 | 2 istanze di R2 | 1 istanza di R3 | 2 istanze di R4 | 1 istanza di R5 | Rilascia |
+| P3 | 2 istanze di R1 | 1 istanza di R2 | 1 istanza di R3 | 2 istanze di R5 | Rilascia |
+
+Per ogni sequenza, si chiede se i processi evitano la possibilità di stallo e la motivazione della risposta.
