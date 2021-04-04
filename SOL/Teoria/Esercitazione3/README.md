@@ -90,7 +90,7 @@ seguenti, che è uno stato sicuro:
 | B        | 2  |    |    | 1  |
 | C        |    | 3  | 2  |    |
 | D        | 1  | 1  |    |    |
-| E        | 2  | 1  |    |    |
+| E        | 2  | 1  |    | 2  |
 
 **Esigenza attuale**:
 | Processo | R1 | R2 | R3 | R4 | 
@@ -99,7 +99,7 @@ seguenti, che è uno stato sicuro:
 | B        | 2  | 2  |    | 1  |
 | C        | 3  | 1  | 1  | 2  |
 | D        | 4  | 5  | 4  | 3  | 
-| E        |    |    |    | 3  |
+| E        |    |    |    | 1  |
 
 **Vettore molteplicità**:
 | R1 | R2 | R3 | R4 |
@@ -117,3 +117,62 @@ Successivamente, i processi E e C eseguono in sequenza le seguenti richieste:
 
 Il gestore delle risorse applica l’algoritmo del banchiere per evitare lo stallo. Verificare se il gestore assegna le risorse
 richieste.
+
+# Esercizio 5
+
+Un sistema con processi A, B, C, D e risorse dei tipi R1, R2, R3, R4, rispettivamente di molteplicità [5, 6, 3, 6] adotta
+nei confronti dello stallo la politica di riconoscimento ed eliminazione. Ad un dato tempo t, quando le assegnazioni ai
+processi e la disponibilità delle risorse hanno i valori mostrati nella prima e nella terza parte della tabella, i processi
+avanzano nel modo seguente:
+- A richiede 1 istanza di R4 e si sospende;
+- B richiede, con richiesta multipla, 2 istanze di R3 e si sospende;
+- C richiede 1 istanza di R4 e si sospende;
+- D richiede 1 istanza di R4 e si sospende.
+
+Dopo l’ultima richiesta i processi hanno pendenti le richieste mostrati nella seconda parte della tabella e si raggiunge
+uno stallo: infatti i processi dell’insieme {A, B, C, D} sono in attesa di risorse nell’insieme {R3, R4} e tutte le risorse
+nell’insieme {R3, R4} sono assegnata a processi nell’insieme {A, B, C, D}.
+
+**Assegnazione attuale**:
+| Processo | R1 | R2 | R3 | R4 | 
+| -------- | -- | -- | -- | -- |
+| A        | 2  |    |    | 3  |
+| B        | 1  | 1  |    |    |
+| C        |    |    | 2  | 1  |
+| D        |    | 3  |    | 2  |
+
+**Richiesta pendente**:
+| Processo | R1 | R2 | R3 | R4 | 
+| -------- | -- | -- | -- | -- |
+| A        |    |    |    | 1  |
+| B        |    |    | 2  |    |
+| C        |    |    |    | 1  |
+| D        |    |    |    | 1  | 
+
+**Vettore molteplicità**:
+| R1 | R2 | R3 | R4 |
+| -- | -- | -- | -- |
+| 5  | 6  | 3  | 6  |
+
+**Vettore disponibilità**:
+| R1 | R2 | R3 | R4 |
+| -- | -- | -- | -- |
+| 2  | 2  | 1  | 0  |
+
+Al fine di eliminare lo stallo si eseguono, in alternativa, le seguenti azioni:
+- il processo A viene forzato a rilasciare 1 risorsa di tipo R1, che richiederà dopo l’eventuale riattivazione;
+- il processo C viene forzato a rilasciare 1 risorsa di tipo R4, che richiederà dopo l’eventuale riattivazione.
+
+Lo stallo si considera eliminato se valgono le seguenti due condizioni:
+- dopo il forzato rilascio si può soddisfare la richiesta pendente di almeno uno dei processi sospesi, che pertanto
+viene riattivato, e nel nuovo stato non si ha attesa circolare;
+- esiste la possibilità di soddisfare tutte le ulteriori richieste che ciascun processo effettua dopo la riattivazione
+conseguente al soddisfacimento della richiesta pendente (nel caso del processo che è stato forzato a rilasciare una
+risorsa, le ulteriori richieste comprendono anche quella della risorsa che è stata rilasciata). Queste richieste, che non
+sono note a priori, sono riportate nella terza parte della tabella inserita nello schema di soluzione. Si noti che la
+possibilità di soddisfare le ulteriori richieste può verificarsi o no, a seconda delle velocità di avanzamento dei
+processi. Per verificare la possibilità di soddifare le richieste successive, si consideri la sequenza di avanzamento
+più favorevole.
+
+
+Si chiede se le ipotesi a) oppure b) permettono di eliminare lo stallo.
