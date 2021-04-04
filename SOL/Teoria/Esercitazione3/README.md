@@ -34,16 +34,16 @@ alla sola condizione che la risorsa sia disponibile. Inizialmente tutte le risor
 Supponendo che, per effetto della concorrenza, le richieste e i rilasci vengano intercalate nel modo seguente
 1. A richiede Q;
 2. C richiede S;
-3. C richiede Q
+3. C richiede Q;
 4. B richiede R;
 5. B richiede S;
 6. A rilascia Q;
 7. A richiede S;
 8. C richiede R;
 9. A rilascia S;
-10. C rilascia Q
-11. B rilascia R
-12. C rilascia S
+10. C rilascia Q;
+11. B rilascia R;
+12. C rilascia S.
 
 mostrare come si evolve il sistema utilizzando la tabella riportata nello schema di soluzione, e rispondere alle seguenti
 domande:
@@ -78,3 +78,42 @@ Si considerino, in alternativa, le sequenze di richieste (semplici o multiple) s
 | P3 | 2 istanze di R1 | 1 istanza di R2 | 1 istanza di R3 | 2 istanze di R5 | Rilascia |
 
 Per ogni sequenza, si chiede se i processi evitano la possibilità di stallo e la motivazione della risposta.
+
+# Esercizio 4
+Un sistema con processi A, B, C, D, E e risorse dei tipi R1, R2, R3, R4, ha raggiunto lo stato mostrato nelle tabelle
+seguenti, che è uno stato sicuro:
+
+**Assegnazione attuale**:
+| Processo | R1 | R2 | R3 | R4 | 
+| -------- | -- | -- | -- | -- |
+| A        | 1  | 1  | 1  | 2  |
+| B        | 2  |    |    | 1  |
+| C        |    | 3  | 2  |    |
+| D        | 1  | 1  |    |    |
+| E        | 2  | 1  |    |    |
+
+**Esigenza attuale**:
+| Processo | R1 | R2 | R3 | R4 | 
+| -------- | -- | -- | -- | -- |
+| A        | 3  | 5  | 3  | 4  |
+| B        | 2  | 2  |    | 1  |
+| C        | 3  | 1  | 1  | 2  |
+| D        | 4  | 5  | 4  | 3  | 
+| E        |    |    |    | 3  |
+
+**Vettore molteplicità**:
+| R1 | R2 | R3 | R4 |
+| -- | -- | -- | -- |
+| 6  | 7  | 4  | 6  |
+
+**Vettore disponibilità**:
+| R1 | R2 | R3 | R4 |
+| -- | -- | -- | -- |
+| 0  | 1  | 1  | 1  |
+
+Successivamente, i processi E e C eseguono in sequenza le seguenti richieste:
+1. E richiede 2 istanze di R4 (richiesta multipla: deve essere soddisfatta integralmente);
+2. C richiede 1 istanza di R3.
+
+Il gestore delle risorse applica l’algoritmo del banchiere per evitare lo stallo. Verificare se il gestore assegna le risorse
+richieste.
