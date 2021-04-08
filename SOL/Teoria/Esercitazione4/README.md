@@ -33,3 +33,36 @@ completamento dell’esecuzione e il tempo di arrivo nel sistema) con le seguent
 - Politica Round-Robin con quanto di tempo pari a 5 msec.
 
 In entrambi i casi si ignori il tempo di commutazione di contesto.
+
+## Esercizio 3
+In un sistema vengono generati 6 processi (A,B,C,D,E,F), con i tempi di arrivo, le priorità e le durate
+(in millisecondi) sotto specificate:
+| Processo | Tempo di Arrivo | Priorità | Durata |
+|     -    |        -        |    -     |     -  |
+| A | 0 | 2 | 10 |
+| B | 8 | 1 | 24 |
+| C | 18 | 3 | 6 |
+| D | 28 | 4 | 10 |
+| E | 32 | 2 | 11 |
+| F | 36 | 3 | 7 |
+
+Lo scheduling del processore avviene con una politica a prorità (che assegna il processore al processo
+che ha il valore più elevato di priorità e a pari priorità, al processo arrivato per primo) e con prerilascio.
+Si suppone che, una volta in esecuzione, ogni processo avanzi senza mai sospendersi.
+Riempire la seguente tabella, utilizzando una riga per ogni evento che provoca la riassegnazione del
+processore e specificando, in ogni riga, il processo in esecuzione e la composizione della coda pronti
+subito dopo il verificarsi dell’evento.
+| Tempo | Evento | Processo in esecuzione | Coda pronti | Note |
+| - | - | - | - | - |
+| 0 | - | - | - | - |
+| 8 | - | - | - | - |
+| 10 | - | - | - | - |
+| 18 | - | - | - | - |
+| 24 | - | - | - | - |
+| 28 | - | - | - | - |
+| 32 | - | - | - | - |
+| 36 | - | - | - | - |
+| 38 | - | - | - | - |
+| 45 | - | - | - | - |
+| 56 | - | - | - | - |
+| 68 | - | - | - | - |
