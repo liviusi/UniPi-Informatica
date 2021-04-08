@@ -1,9 +1,4 @@
 # Esercizio 1
-A 25
-B 60
-C 5
-D 15
-E 10
 
 **Politica FIFO**:
 | Processo | Tempo di inizio esecuzione [ms] | Tempo di fine esecuzione [ms] | Tempo di permanenza nel sistema [ms] |
