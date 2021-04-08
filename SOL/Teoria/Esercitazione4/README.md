@@ -34,7 +34,7 @@ completamento dell’esecuzione e il tempo di arrivo nel sistema) con le seguent
 
 In entrambi i casi si ignori il tempo di commutazione di contesto.
 
-## Esercizio 3
+# Esercizio 3
 In un sistema vengono generati 6 processi (A,B,C,D,E,F), con i tempi di arrivo, le priorità e le durate
 (in millisecondi) sotto specificate:
 | Processo | Tempo di Arrivo | Priorità | Durata |
@@ -66,3 +66,19 @@ subito dopo il verificarsi dell’evento.
 | 45 | - | - | - | - |
 | 56 | - | - | - | - |
 | 68 | - | - | - | - |
+
+# Esercizio 4
+In un sistema vengono generati 5 processi (A,B,C,D,E), con i tempi di arrivo e le durate (in millisecondi) sotto specificate:
+| Processo | Durata | Tempo di arrivo |
+|     -    |   -    |        -        |
+| A | 45 | 0 |
+| B | 55 | 13 |
+| C | 15 | 21 |
+| D | 5 | 25 |
+| E | 15 | 29 |
+
+Si suppone che tutti i processi avanzino senza mai sospendersi.
+Lo scheduler adotta la politica Shortest Remaining Time First (SRTT), la quale seleziona per l’esecuzione il processo con
+minor tempo residuo in esecuzione e prevede il prerilascio.
+Calcolare il tempo di permanenza nel sistema di ogni processo (definito come differenza tra il tempo di completamento
+dell’esecuzione e il tempo di arrivo nel sistema).
