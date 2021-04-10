@@ -64,5 +64,5 @@ int main(int argc, char *argv[])
 	}   
 	doFib(arg, 1);
 	return 0;
-	}
+}
 ```
