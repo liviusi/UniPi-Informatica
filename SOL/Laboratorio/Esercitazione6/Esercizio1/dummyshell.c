@@ -11,7 +11,7 @@ static void execute (int, char**);
 int cmdexit(int, char**);
 int read_cmd_line(int*, char**);
 
-// N.B. da rivedere, valgrind segna troppe free per le malloc fatte.
+
 int main(void)
 {
 	int argc = 0;
@@ -50,7 +50,7 @@ static void execute(int argc, char* argv [])
 		case 0: // figlio
 		{
 			execvp(argv[0], argv);
-			perror("Cannot exec");
+			perror("exec");
 			exit(EXIT_FAILURE);
 		}
 		default: // padre
@@ -60,15 +60,16 @@ static void execute(int argc, char* argv [])
 				perror("waitpid");
 				exit(EXIT_FAILURE);
 			}
+			for (size_t i = 0; i < argc - 1; i++) free(argv[i]);
 		}
 	}
 }
 
 int cmdexit(int argc, char* argv[])
 {
-	if (argc == 1 && (strcmp(argv[0],"exit") == 0) )
+	if (argc == 1 && (strncmp(argv[0], "exit", strlen("exit")) == 0) )
 	{
-		for (size_t i = 0; i < argc; i++) free(argv[i]);
+		for (size_t i = 0; i <= argc; i++) free(argv[i]);
 		free(argv);
 		return 0;
 	}
@@ -77,17 +78,19 @@ int cmdexit(int argc, char* argv[])
 
 int read_cmd_line(int *argc, char* argv[])
 {
-	char buffer[MAXARG];
+	char* buffer = (char*) malloc(sizeof(char) * MAXARG);
 	int bufsize = MAXARG;
 	fgets(buffer, bufsize, stdin);
-	buffer[strlen(buffer)-1] = '\0';
-	if (strlen(buffer) > MAXARG) return -1;
-	char* s = strtok(buffer," "); 
+	buffer[MAXARG - 1] = '\0';
+	char* s = strtok(buffer, " "); 
 	while (s)
 	{
+		s[strcspn(s, "\n")] = '\0'; // rimuovo '\n'
 		argv[*argc] = s;
 		(*argc)++;
-		s = strtok(NULL," ");
+		s = strtok(NULL, " ");
 	}
+	argv[*argc] = (char*) NULL;
+	for (size_t i = 0; i <= *argc; i++) fprintf(stdout, "argv[%lu] = %s\n", i, argv[i]);
 	return 0;
 }
