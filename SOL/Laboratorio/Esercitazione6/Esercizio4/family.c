@@ -53,6 +53,7 @@ void print_family(unsigned int N)
 	{
 		_print_n_(N);
 		fprintf(stdout, " %d: creo un processo figlio\n", getpid());
+		fflush(stdout);
 		if (waitpid(pid, (int*)NULL, 0) == -1)
 		{
 			perror("wait");
@@ -60,5 +61,6 @@ void print_family(unsigned int N)
 		}
 		_print_n_(N);
 		fprintf(stdout, " %d: terminato con successo.\n", getpid());
+		fflush(stdout);
 	}
 }

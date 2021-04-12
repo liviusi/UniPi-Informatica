@@ -17,14 +17,11 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	int pid = 1;
 
 	for (size_t i = 0; i < N; i++)
-	{
-		if (pid != 0) pid = fork();
-	}
-
-	if (pid > 0) sleep(5);
+		if (fork() == 0) exit(EXIT_SUCCESS);
+	
+	sleep(15);
 
 	return 0;
 }

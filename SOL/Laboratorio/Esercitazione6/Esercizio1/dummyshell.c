@@ -1,96 +1,142 @@
+#define _POSIX_C_SOURCE 200112L
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <string.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/wait.h>
 
-#define MAXARG 512
+#define MAX_STRING 64 // stringa di lunghezza massima
+#define MAX_PARAMS 256 // massimo numero di parametri
+#define CHAR_MALLOC(ptr, size) \
+	if ((ptr = (char*) malloc(sizeof(char) * size)) == NULL) \
+	{ \
+		perror("malloc"); \
+		exit(EXIT_FAILURE); \
+	}
+#define print_dummyshell() \
+	do \
+	{ \
+		fprintf(stdout, "dummyshell >> "); \
+		fflush(stdout); \
+	} while (0);
 
-static void execute (int, char**);
-int cmdexit(int, char**);
-int read_cmd_line(int*, char**);
+char read_command_line(char*, char**);
+void free_argv(char**);
+char is_exit_command(char*);
 
-
-int main(void)
+int main()
 {
-	int argc = 0;
+	int pid;
+	int tmp;
+	int status;
+	char input_line[MAX_STRING];
 	char** argv;
-	argv = (char**) malloc(MAXARG * sizeof(char*));
 
 	while (1)
 	{
-		printf ("dummyshell >>> ");
-		if (read_cmd_line(&argc, argv) != -1)
+		print_dummyshell();
+		memset(input_line, 0, MAX_STRING);
+		argv = (char**) calloc(MAX_PARAMS, sizeof(char*));
+		tmp = read_command_line(input_line, argv);
+		// fprintf(stdout, "tmp = %d\n", tmp);
+		if (is_exit_command(input_line))
 		{
-			if (cmdexit(argc, argv) == 0) exit(EXIT_SUCCESS);
-			argv[sizeof(argv-1)] = NULL;
-			execute(argc, argv);
+			fprintf(stdout, "Closing shell...\n");
+			free_argv(argv);
+			exit(EXIT_SUCCESS);
 		}
-		else fprintf (stderr, "invalid command!\n");
-		for (size_t i = 0; i < argc; i++)
-			argv[i] = NULL;
-		argc = 0;
+		switch (tmp)
+		{
+			case 0:
+				pid = fork();
+				switch (pid)
+				{
+					case -1: // errore
+						perror("fork");
+						exit(EXIT_FAILURE);
+					case 0: // figlio
+						execvp(argv[0], &(argv[0]));
+						perror("execvp");
+						exit(errno);
+					default:
+						if ((pid = waitpid(-1, &status, 0)) == -1)
+						{
+							perror("waitpid");
+							exit(EXIT_FAILURE);
+						}
+						else if (pid != 0)
+						{
+							if (WIFEXITED(status))
+							{
+								fprintf(stdout, "Process %d terminated with status %d.\n", pid, WEXITSTATUS(status));
+								fflush(stdout);
+							}
+						}
+						free_argv(argv);
+				}
+				break;
+			case -1:
+				exit(tmp);
+			case 1:
+				fprintf(stdout, "No command has been entered.\n");
+				break;
+		}
 	}
 
-	return 1;
-}
-
-static void execute(int argc, char* argv [])
-{
-	pid_t pid;
-	int status;
-	switch (pid = fork())
-	{
-		case -1: // errore processo padre
-		{
-			perror("fork");
-			exit(EXIT_FAILURE);
-		}
-		case 0: // figlio
-		{
-			execvp(argv[0], argv);
-			perror("exec");
-			exit(EXIT_FAILURE);
-		}
-		default: // padre
-		{
-			if (waitpid(pid,&status,0) == -1)
-			{
-				perror("waitpid");
-				exit(EXIT_FAILURE);
-			}
-			for (size_t i = 0; i < argc - 1; i++) free(argv[i]);
-		}
-	}
-}
-
-int cmdexit(int argc, char* argv[])
-{
-	if (argc == 1 && (strncmp(argv[0], "exit", strlen("exit")) == 0) )
-	{
-		for (size_t i = 0; i <= argc; i++) free(argv[i]);
-		free(argv);
-		return 0;
-	}
-	else return 1;
-}
-
-int read_cmd_line(int *argc, char* argv[])
-{
-	char* buffer = (char*) malloc(sizeof(char) * MAXARG);
-	int bufsize = MAXARG;
-	fgets(buffer, bufsize, stdin);
-	buffer[MAXARG - 1] = '\0';
-	char* s = strtok(buffer, " "); 
-	while (s)
-	{
-		s[strcspn(s, "\n")] = '\0'; // rimuovo '\n'
-		argv[*argc] = s;
-		(*argc)++;
-		s = strtok(NULL, " ");
-	}
-	argv[*argc] = (char*) NULL;
-	for (size_t i = 0; i <= *argc; i++) fprintf(stdout, "argv[%lu] = %s\n", i, argv[i]);
 	return 0;
+}
+
+void free_argv(char** argv)
+{
+	size_t i = 0;
+	while (argv[i] != NULL)
+	{
+		free(argv[i]);
+		i++;
+	}
+	free(argv);
+	return;
+}
+
+char is_exit_command(char* command)
+{
+	if (strncmp(command, "exit", 4) == 0) return 1;
+	else return 0;
+}
+
+char read_command_line(char* input_line, char** argv)
+{
+	if (fgets(input_line, MAX_STRING,stdin) == NULL)
+	{
+		perror("fgets");
+		return -1;
+	}
+
+	char* tmp;
+	char* token = strtok_r(input_line, " ", &tmp);
+	size_t i = 0;
+	size_t len = strlen(token) + 1;
+	CHAR_MALLOC(argv[i], len);
+	strncpy(argv[i], token, len);
+	
+	while((token = strtok_r(NULL, " ", &tmp)) != NULL)
+	{
+		if (token[0] != '\0' && token[0] != '\n')
+		{
+			i++;
+			len = strlen(token) + 1;
+			CHAR_MALLOC(argv[i], len);
+			token[strcspn(token, "\n")] = '\0'; // rimuovo '\n'
+			strncpy(argv[i], token, len);
+		}
+		else continue;
+	}
+
+	if (i == 0) return 1; // non esistono comandi da eseguire
+	argv[i + 1] = NULL;
+	for (size_t j = 0; j <= i + 1; j++) fprintf(stdout, "argv[%lu] = %s\n", j, argv[j]);
+	
+	return 0; // successo
 }

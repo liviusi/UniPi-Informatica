@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <stdio.h>
+#include <sys/wait.h>
 #include <utilities.h>
 
 char isNumber(const char*, unsigned int*);
@@ -19,8 +20,22 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	sleep(time);
-	fprintf(stdout, "PID = %d\nPPID = %d\n", getpid(), getppid());
+	int pid = fork();
+	if (pid == 0) // figlio
+	{
+		if ((pid = fork()) == 0) // figlio
+		{
+			execl("/bin/sleep", "/bin/sleep", argv[1], NULL);
+			perror("execl");
+			exit(EXIT_FAILURE);
+		}
+		if (waitpid(pid, NULL, 0) == -1)
+		{
+			perror("waitpid");
+			exit(EXIT_FAILURE);
+		}
+		fprintf(stdout, "PID = %d\nPPID = %d\n", getpid(), getppid());
+	}
 	return 0;
 
 }
