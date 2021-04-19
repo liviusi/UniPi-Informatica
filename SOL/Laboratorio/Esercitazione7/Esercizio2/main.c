@@ -28,7 +28,7 @@ pthread_cond_t** condition;
 enum activity** philosopher_current_activity;
 unsigned int* N;
 
-int main(int argc, char* argv[]) // N.B. compila ma funziona male, da rifare.
+int main(int argc, char* argv[])
 {
 	if (argc != 2)
 	{
