@@ -105,7 +105,6 @@ static void* philosopher_routine(void* arg)
 	size_t position = *((size_t*) arg);
 	free(arg);
 	unsigned int seed = (unsigned int) time(NULL);
-	// struct thread_stats status = {0, 0};
 	struct timespec delay;
 	
 	while (true) // it needs to complete this cycle 100 times
@@ -134,9 +133,8 @@ static void* philosopher_routine(void* arg)
 			pthread_cond_signal(&((*condition)[modulo((int) position + 1, (*N))]));
 		}
 
-		// checking if the cycle has been executed 300 times
 		Pthread_mutex_unlock(&mutex);
-
+		// checking if the cycle has been executed 300 times
 		if (i == 300) break;
 
 		// else: sleep
@@ -171,6 +169,7 @@ static void* philosopher_routine(void* arg)
 		fflush(stdout);
 		i++;
 	}
+
 	fprintf(stdout, "philosopher[%lu] has completed their dinner.\n", position);
 	fflush(stdout);
 	// pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
