@@ -17,7 +17,7 @@ int main(void)
 {
 	char* buffer;
 	const char exit_cmd[] = "exit";
-	EXIT_IF_NULL(buffer, (char*) malloc((MAXSTRING + 1) * sizeof(char)), "malloc");
+	EXIT_IF_NULL(buffer, (char*) malloc(MAXSTRING * sizeof(char)), "malloc");
 	while (true)
 	{
 		memset(buffer, 0, MAXSTRING);
