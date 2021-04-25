@@ -1,0 +1,9 @@
+# Esercitazione 8
+## Esercizio 1
+Scrivere un programma C in cui si attivano M thread produttori ed N thread consumatori che condividono una coda (di capacità “infinita”). Il programma accetta come argomento anche un intero K che corrisponde al numero totale di messaggi che i produttori producono concorrentemente nella coda (ogni produttore produce K/M messaggi – se M divide K). I consumatori leggono i messaggi dalla coda in un ciclo infinito fino a quando non ricevono un messaggio speciale che li fa terminare. Implementare la coda concorrente, ed il protocollo di terminazione senza usare la cancellazione esplicita dei threads. Testare il programma al variare di M ed N. Controllare con valgrind che non ci siano problemi nell'accesso alle variabili del programma e che tutta la memoria allocata sia completamente rilasciata all'uscita del programma.
+## Esercizio 2
+Realizzare una semplice calcolatrice scientifica testuale. Il programma legge da tastiera una operazione alla volta, una per riga (es. sqrt(3) + 2/5), quindi per ogni richiesta forka ed esegue la calcolatrice testuale fornita dal sistema bc (tipicamente installato in /usr/bin – utilizzare i parametri -lq, cioè bc -lq) a cui, tramite pipe senza nome, passa l'operazione da svolgere e prende il risultato calcolato (ridirigere nella pipe sia lo standard output che lo standard error di 'bc'). Il risultato ottenuto verrà stampato sullo standard output secondo il seguente formato:
+Operazione: op
+Risultato : res
+
+(nota su utilizzo di bc -lq: riceve una formula dallo standard input, e stampa su standard output il risultato. Per “testarlo” da shell potete usare il comando echo in questo modo: echo “sqrt(3)+2/5” | bc -lq. Vedremo meglio piu' avanti il significato di questo comando. Ricordiamo inoltre che il comando bc rimane in attesa di nuove operazioni finche' non viene chiuso il suo standard input, o non viene passata la stringa 'quit'.)
