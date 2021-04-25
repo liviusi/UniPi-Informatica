@@ -185,7 +185,7 @@ static void* printing_routine(void* arg)
 		if (queue_is_empty(*token_queue)) token_empty = true;
 		Pthread_mutex_unlock(&mutex);
 		dummy[strcspn(dummy, "\n")] = 0;
-		if (dummy && dummy[0] != '\0')
+		if (dummy[0] != '\0')
 		{
 			char* str;
 			EXIT_IF_NULL(str, (char*) calloc(MAXTOKEN, sizeof(char)), "calloc");
@@ -205,8 +205,8 @@ static void* printing_routine(void* arg)
 				icl_hash_insert(table, str, (void*) str);
 			}
 			else free(str);
-			free(dummy);
 		}
+		free(dummy);
 	}
 
 	int k;
