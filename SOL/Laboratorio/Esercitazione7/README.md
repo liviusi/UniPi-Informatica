@@ -10,3 +10,6 @@ SUGGERIMENTO: Per evitare il deadlock nell'aquisizione delle forchette, una poss
 
 ## Esercizio 3 (pipeline concorrente)
 Scrivere un programma C che implementa una pipeline di tre threads. Il primo thread legge una riga alla volta da un file testuale (il cui nome e' passato come argomento al programma) ed invia al secondo thread ogni riga letta dal file. Il secondo thread “tokenizza” le parole dalla riga ricevuta dal primo thread (considerare come separatore solo lo spazio) ed invia al terzo thread le parole. Il terzo thread stampa tutte le parole sullo standard output. I tre stadi della pipeline devono lavorare in modo concorrente come in una “catena di montaggio”, il buffer di comunicazione tra due stadi della pipeline deve essere implementata con una coda FIFO (la scelta se usare una coda di capacita bounded o unbounded e' lasciata allo studente).
+
+## Esercizio 4
+Estendere l'esercizio 3 in modo che il terzo thread della pipeline, invece di stampare tutte le parole ricevute dallo stadio intermedio della pipeline, stampi sullo standard output ogni occorrenza di una parola una sola volta. A tale scopo utilizzare la seguente implementazione di struttura dati hash.
