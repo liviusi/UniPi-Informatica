@@ -1,4 +1,5 @@
 #include "logging.h"
+#include <../wrappers.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>

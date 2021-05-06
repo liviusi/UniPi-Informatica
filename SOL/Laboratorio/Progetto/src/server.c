@@ -11,43 +11,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#define EXIT_IF_NEQ(variable, expected_value, function_call, error_message) \
-	do \
-	{ \
-		if ((variable = function_call) != expected_value) \
-		{ \
-			errno = variable; \
-			perror(#error_message); \
-			exit(EXIT_FAILURE); \
-		} \
-	} while(0);
-
-#define EXIT_IF_EQ(variable, expected_value, function_call, error_message) \
-	do \
-	{ \
-		if ((variable = function_call) == expected_value) \
-		{ \
-			perror(#error_message); \
-			exit(EXIT_FAILURE); \
-		} \
-	} while(0);
-
-#define RETURN_IF_EQ(variable, expected_value, function_call, error_message) \
-	if ((variable = function_call) == expected_value) \
-	{ \
-		perror(#error_message); \
-		return variable; \
-	}
-
-#define EXIT_IF_NULL(variable, function_call, error_message) \
-	do \
-	{ \
-		if ((variable = function_call) == NULL) \
-		{ \
-				perror(#error_message); \
-				exit(EXIT_FAILURE); \
-		} \
-	} while(0);
+#include <wrappers.h>
 
 #define SOCKETNAME "FileStorageSocket"
 #define UNIX_PATH_MAX 108

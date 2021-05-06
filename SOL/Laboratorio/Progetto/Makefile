@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS += -std=c99 -Wall -g
-INCLUDES = -I ./src/includes/logging/ -I ./src/includes/parsing/
+INCLUDES = -I ./src/includes/logging/ -I ./src/includes/parsing/ -I ./src/includes/
 LDFLAGS = -L ./src/includes/
 OPTFLAGS = -O3
 LIBS = -lpthread
