@@ -8,8 +8,6 @@
 #include <sys/un.h>
 #include <ctype.h>
 #include <pthread.h>
-#include <stdlib.h>
-#include <errno.h>
 
 #include <wrappers.h>
 
@@ -30,10 +28,10 @@ int main(void)
 
 	while(true)
 	{
-			fprintf(stdout, "[SERVER] listening\n");
-			EXIT_IF_EQ(err, -1, listen(server_fd, SOCKETMAXQUEUESIZE), "listen");
-			EXIT_IF_EQ(client_fd, -1, accept(server_fd, NULL, 0), "accept");
-			fprintf(stdout, "[SERVER] accepted new client %d\n", client_fd);
+		fprintf(stdout, "[SERVER] listening\n");
+		EXIT_IF_EQ(err, -1, listen(server_fd, SOCKETMAXQUEUESIZE), "listen");
+		EXIT_IF_EQ(client_fd, -1, accept(server_fd, NULL, 0), "accept");
+		fprintf(stdout, "[SERVER] accepted new client %d\n", client_fd);
 	}
 
 	EXIT_IF_EQ(err, -1, close(server_fd), "close");

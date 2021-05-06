@@ -11,7 +11,6 @@
  * @param mode mode to open the file with.
 */
 #define FOPEN(file_ptr, filename, mode) \
-{ \
 	do \
 	{ \
 		if ((file_ptr = fopen(filename, mode)) == NULL) \
@@ -19,8 +18,7 @@
 			fprintf(stderr, "File %s could not be opened in given mode <%s>.\n", filename, mode); \
 			exit(EXIT_FAILURE); \
 		} \
-	} while(0); \
-}
+	} while(0);
 
 /**
  * @brief Exits with exit value 1 if variable is not equal to expected_value.
