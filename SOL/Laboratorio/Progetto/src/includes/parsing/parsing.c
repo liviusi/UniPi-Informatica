@@ -1,37 +1,36 @@
 #include "parsing.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
-#define BUFFERSIZE 128
-#define NEGATIVE_VALUE_ERROR_MESSAGE " is not a valid positive integer.\n"
-#define INVALID_FORMAT_ERROR_MESSAGE " does not follow the given format.\n"
+#define NOT_VALID_ERROR_MESSAGE " is not a valid value.\n"
 
-#define PARSE_AND_ASSIGN_SIZE_T(buffer, target, variable) \
+#define PARSE_AND_ASSIGN_SIZE_T(buffer, variable, error_message) \
 	do \
 	{ \
 		separator_position = strchr(buffer, separator); \
 		if (separator_position == NULL) \
 		{ \
-			fprintf(stderr, target FORMAT_ERROR_MESSAGE); \
+			fprintf(stderr, error_message); \
 			return -1; \
 		} \
 		*separator_position = '\0'; \
 		if (string_to_size_t(separator_position + 1, variable) != 0) \
 		{ \
-			fprintf(stderr, target NOT_VALID_ERROR_MESSAGE); \
+			fprintf(stderr, error_message); \
 			return -1; \
 		} \
 	} while(0)
 
-#define PARSE_AND_ASSIGN_STRING(buffer, target, variable) \
+#define PARSE_AND_ASSIGN_STRING(buffer, variable, error_message) \
 	do \
 	{ \
 		separator_position = strchr(buffer, separator); \
 		if (separator_position == NULL) \
 		{ \
-			fprintf(stderr, target FORMAT_ERROR_MESSAGE); \
+			fprintf(stderr, error_message); \
 			return -1; \
 		} \
 		*separator_position = '\0'; \
@@ -73,29 +72,24 @@ int parse_config(const char* config_filename, size_t* nworkers, size_t* nfiles, 
 	}
 	const char separator = '=';
 	char* separator_position = NULL;
-	const char str_numb_threadworkers[] = "NUMEROTHREADWORKERS";
-	const char str_numb_storablefiles[] = "FILEMEMORIZZABILI";
-	const char str_storagesize[] = "SPAZIODIMEMORIZZAZIONE";
-	const char str_socketfilename[] = "NOMESOCKETFILE";
-	const char str_logfilename[] = "NOMELOGFILE";
 	while ((buffer = fgets(buffer, BUFFERSIZE, config_file)) != NULL)
 	{
-		if (strncmp(buffer, str_numb_threadworkers, sizeof(str_numb_threadworkers)) == 0)
+		if (strncmp(buffer, NUMBER_THREADWORKERS, sizeof(NUMBER_THREADWORKERS)) == 0)
 		{
-			PARSE_AND_ASSIGN_SIZE_T(buffer, str_numb_threadworkers, nworkers);
+			PARSE_AND_ASSIGN_SIZE_T(buffer, nworkers, NUMBER_THREADWORKERS );
 			continue;
 		}
-		if (strncmp(buffer, str_numb_storablefiles, sizeof(str_numb_storablefiles)) == 0)
+		if (strncmp(buffer, NUMBER_STORABLEFILES, sizeof(NUMBER_STORABLEFILES)) == 0)
 		{
-			PARSE_AND_ASSIGN_SIZE_T(buffer, str_numb_storablefiles, nfiles);
+			PARSE_AND_ASSIGN_SIZE_T(buffer, nfiles, NUMBER_STORABLEFILES NOT_VALID_ERROR_MESSAGE);
 			continue;
 		}
-		if (strncmp(buffer, str_storagesize, sizeof(str_storagesize)) == 0)
+		if (strncmp(buffer, STORAGESIZE, sizeof(STORAGESIZE)) == 0)
 		{
-			PARSE_AND_ASSIGN_SIZE_T(buffer, str_storagesize, storage_size);
+			PARSE_AND_ASSIGN_SIZE_T(buffer, storage_size, STORAGESIZE NOT_VALID_ERROR_MESSAGE);
 			continue;
 		}
-		if (strncmp(buffer, str_socketfilename, sizeof(str_socketfilename)) == 0)
+		if (strncmp(buffer, SOCKETFILENAME, sizeof(SOCKETFILENAME)) == 0)
 		{
 			*socket_filename = (char*) calloc(BUFFERSIZE, sizeof(char));
 			if (*socket_filename == NULL)
@@ -103,10 +97,10 @@ int parse_config(const char* config_filename, size_t* nworkers, size_t* nfiles, 
 				fprintf(stderr, "[parse_config] Could not allocate buffer for socket's filename.\n");
 				return -1;
 			}
-			PARSE_AND_ASSIGN_STRING(buffer, str_socketfilename, (*socket_filename));
+			PARSE_AND_ASSIGN_STRING(buffer, (*socket_filename), SOCKETFILENAME NOT_VALID_ERROR_MESSAGE);
 			continue;
 		}
-		if (strncmp(buffer, str_logfilename, sizeof(str_logfilename)) == 0)
+		if (strncmp(buffer, LOGFILENAME, sizeof(LOGFILENAME)) == 0)
 		{
 			*log_filename = (char*) calloc(BUFFERSIZE, sizeof(char));
 			if (*log_filename == NULL)
@@ -114,7 +108,7 @@ int parse_config(const char* config_filename, size_t* nworkers, size_t* nfiles, 
 				fprintf(stderr, "[parse_config] Could not allocate buffer for log's filename.\n");
 				return -1;
 			}
-			PARSE_AND_ASSIGN_STRING(buffer, str_logfilename, (*log_filename));
+			PARSE_AND_ASSIGN_STRING(buffer, (*log_filename), LOGFILENAME NOT_VALID_ERROR_MESSAGE);
 			continue;
 		}
 	}
