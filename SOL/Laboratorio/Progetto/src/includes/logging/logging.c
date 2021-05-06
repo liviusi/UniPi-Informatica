@@ -1,8 +1,6 @@
 #include "logging.h"
 #include <../wrappers.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 
 FILE* init_logging(const char* log_filename)
 {
@@ -17,14 +15,12 @@ FILE* init_logging(const char* log_filename)
 char write_log(FILE* log_file, const char* buffer)
 {
 	size_t err;
-	mode_t old_mask = umask(033);
 	size_t len = strlen(buffer);
 	if ((err = fwrite(buffer, sizeof(char), len, log_file)) < len)
 	{
 		fprintf(stderr, "Error writing to log.\n");
 		return -1;
 	}
-	umask(old_mask);
 	return 0;
 }
 

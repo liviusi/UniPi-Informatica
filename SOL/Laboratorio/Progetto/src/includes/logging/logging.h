@@ -5,17 +5,25 @@
 #include <stdlib.h>
 
 /**
+ * @brief Initializes pointer to file used for logging.
  * @param log_filename log's filename.
- * @return pointer to FILE* used for logging on success, NULL on failure.
+ * @return pointer to FILE* used for logging, NULL on failure.
 */
 FILE* init_logging(const char*);
 
-// 0 successo
-// -1 altrimenti
+/**
+ * @brief Writes buffer in log.
+ * @param log_file pointer to initialized log file.
+ * @param buffer buffer of characters to write inside log.
+ * @return 0 on success, -1 on failure.
+*/
 char write_log(FILE*, const char*);
 
-// 0 successo
-// -1 altrimenti
+/**
+ * @brief Deallocate resources used for logging (i.e. closes file used for logging).
+ * @param log_file pointer to initialized log file.
+ * @return 0 on success, any other integer otherwise.
+*/
 int close_logging(FILE*);
 
 #endif
