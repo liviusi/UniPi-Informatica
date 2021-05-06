@@ -1,0 +1,6 @@
+NUMEROTHREADWORKERS = 
+FILEMEMORIZZABILI = 
+SPAZIODIMEMORIZZAZIONE = 
+NOMESOCKETFILE = 
+NOMELOGFILE = 
+ed altri parametri che lo studente ritiene utili.
