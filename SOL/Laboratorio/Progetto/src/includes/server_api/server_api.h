@@ -2,6 +2,13 @@
 #define _SERVER_API_H_
 
 #include <stdlib.h>
+#include <errno.h>
+
+enum flags
+{
+	O_CREATE = 0x01,
+	O_LOCK = 0x10
+};
 
 int openConnection(const char* sockname, int msec, const struct timespec abstime);
 
