@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS += -std=c99 -Wall -g
-INCLUDES = -I ./src/includes/logging/ -I ./src/includes/parsing/ -I ./src/includes/ -I ./src/includes/icl_hash/ -I ./src/includes/bst/
+INCLUDES = -I ./src/includes/logging/ -I ./src/includes/parsing/ -I ./src/includes/ -I ./src/includes/hashtable/
 LDFLAGS = -L ./src/includes/
 OPTFLAGS = -O3
 LIBS = -lpthread
@@ -18,7 +18,7 @@ TARGETS = src/server
 
 all: $(TARGETS)
 
-src/server: src/server.o src/includes/logging/logging.o src/includes/parsing/parsing.o src/includes/icl_hash/icl_hash.o src/includes/bst/bst.o
+src/server: src/server.o src/includes/logging/logging.o src/includes/parsing/parsing.o src/includes/hashtable.o
 	$(CC) $(CFLAGS) $(INCLUDES) $(OPTFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 clean :
