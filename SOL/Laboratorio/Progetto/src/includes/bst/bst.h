@@ -3,12 +3,14 @@
 
 #include <stdbool.h>
 
-struct tree_node_t;
+// Struct fields are not exposed in order to maintain BST invariant properties.
+// Duplicates are not allowed in this implementation.
+typedef struct tree_node tree_node_t;
 
-int bstInsert(struct tree_node_t**, int);
-bool bstFind(const struct tree_node_t*, int);
-void bstInorderVisit(const struct tree_node_t*);
-struct tree_node_t* bstDeleteNode(struct tree_node_t*, int);
-void bstFree(struct tree_node_t**);
+int bstInsert(tree_node_t**, int);
+bool bstFind(const tree_node_t*, int);
+void bstInorderVisit(const tree_node_t*);
+tree_node_t* bstDeleteNode(tree_node_t*, int);
+void bstFree(tree_node_t*);
 
 #endif

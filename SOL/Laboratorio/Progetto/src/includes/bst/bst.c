@@ -9,19 +9,26 @@
 		while (minimum && minimum->left) minimum = minimum->left; \
 	} while(0);
 
-struct tree_node_t
+struct tree_node
 {
 	int key;
-	struct tree_node_t* left;
-	struct tree_node_t* right;
+	struct tree_node* left;
+	struct tree_node* right;
 };
 
-// Inserisce in ABR
-int bstInsert(struct tree_node_t** root, int key)
+/**
+ * @brief Inserts in BST in O(logn).
+ * @param root BST root node
+ * @param key key of the node to insert
+ * @returns 0 when the operation succeeds, -1 otherwise (i.e. when the memory
+ * needed for another node is not available or there exists a node in root
+ * such that node.key == key).
+*/
+int bstInsert(tree_node_t** root, int key)
 {
 	if ( *root == NULL )
 	{
-		struct tree_node_t* leaf = (struct tree_node_t*) malloc(sizeof(struct tree_node_t));
+		tree_node_t* leaf = (tree_node_t*) malloc(sizeof(tree_node_t));
 		if (!leaf) return -1;
 		leaf->key = key;
 		leaf->left = NULL;
@@ -42,8 +49,14 @@ int bstInsert(struct tree_node_t** root, int key)
 	}
 }
 
-// Cerca in un ABR
-bool bstFind(const struct tree_node_t* root, int key)
+/**
+ * @brief Finds out whether there exists a node in root such that root.key == key.
+ * @param root BST root
+ * @param key key of the node to look for
+ * @returns true if there exists a node in root such that root.key == key, false 
+ * otherwise.
+*/
+bool bstFind(const tree_node_t* root, int key)
 {
 	if ( root == NULL ) return false;
 	else
@@ -56,8 +69,11 @@ bool bstFind(const struct tree_node_t* root, int key)
 
 }
 
-// Visita simmetrica
-void bstInorderVisit(const struct tree_node_t* root)
+/**
+ * @brief Prints out inorder visit of root.
+ * @param root BST root
+*/
+void bstInorderVisit(const tree_node_t* root)
 {
 	if ( root != NULL )
 	{
@@ -67,7 +83,13 @@ void bstInorderVisit(const struct tree_node_t* root)
 	}
 }
 
-struct tree_node_t* bstDeleteNode(struct tree_node_t* root, int key)
+/**
+ * @brief Deletes the node in BST such that node.key == key.
+ * @param root BST root
+ * @param key key of the node to be deleted
+ * @returns new BST without the node which has its key equal to parameter key.
+*/
+tree_node_t* bstDeleteNode(tree_node_t* root, int key)
 {
 	if (root == NULL) return NULL;
 	if (key < root->key)
@@ -81,17 +103,17 @@ struct tree_node_t* bstDeleteNode(struct tree_node_t* root, int key)
 	{
 		if (root->left == NULL)
 		{
-			struct tree_node_t* temp = root->right;
+			tree_node_t* temp = root->right;
 			free(root);
 			return temp;
 		}
 		else if (root->right == NULL)
 		{
-			struct tree_node_t* temp = root->left;
+			tree_node_t* temp = root->left;
 			free(root);
 			return temp;
 		}
-		struct tree_node_t* temp;
+		tree_node_t* temp;
 		MINIMUM_KEY(temp, root->left);
 		root->key = temp->key;
 		root->right = bstDeleteNode(root->right, temp->key);
@@ -99,14 +121,17 @@ struct tree_node_t* bstDeleteNode(struct tree_node_t* root, int key)
 	return root;
 }
 
-// Libera la memoria occupata dall'ABR
-void bstFree(struct tree_node_t** root)
+/**
+ * @brief Frees memory allocated for BST root.
+ * @param root BST root
+*/
+void bstFree(tree_node_t* root)
 {
-	if ( *root != NULL )
+	if ( root != NULL )
 	{
-		bstFree(&((*root)->left));
-		bstFree(&((*root)->right));
-		free(*root);
+		bstFree(root->left);
+		bstFree(root->right);
+		free(root);
 	}
 }
 

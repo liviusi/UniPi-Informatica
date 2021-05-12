@@ -4,18 +4,18 @@
 #include <string.h>
 #include <assert.h>
 
-struct hashtable_entry_t
+struct hashtable_entry
 {
 	void* key;
 	void* data;
 	size_t data_size;
-	struct hashtable_entry_t* next;
+	struct hashtable_entry* next;
 };
 
-struct hashtable_t
+struct hashtable
 {
 	size_t buckets_no;
-	struct hashtable_entry_t** buckets; 
+	hashtable_entry_t** buckets; 
 	size_t (*hash_function) (const void*);
 	int (*hash_compare) (const void*, const void*);
 };
@@ -29,7 +29,9 @@ size_t hashFunction(const void* buffer)
 {
 	if (buffer == NULL) return 0;
 	char* tmp = (char*) buffer;
-	const int p = 53; // roughly equal to the number of letters in the alphabet (uppercase and lowercase)
+	// roughly equal to the number of letters
+	// in the alphabet (uppercase and lowercase)
+	const int p = 53;
 	const int m = 1e9 + 9; // large prime number
 	size_t hash_value = 0;
 	long long p_pow = 1;
@@ -42,6 +44,9 @@ size_t hashFunction(const void* buffer)
 	return hash_value;
 }
 
+/**
+ * @brief String comparison.
+*/
 int hashCompare(const void* a, const void* b)
 {
 	char* buffer1 = (char*) a;
@@ -49,12 +54,21 @@ int hashCompare(const void* a, const void* b)
 	return strcmp(buffer1, buffer2);
 }
 
-struct hashtable_entry_t* entryCreate(const void* key, size_t key_size, 
+/**
+ * @brief Creates hashtable entry.
+ * @param key entry key
+ * @param key_size size of key
+ * @param data entry blob of data
+ * @param data_size size of data
+ * @returns pointer to entry. Key and data will be a heap-allocated copy of the given parameters.
+ * NULL may be returned if and only if memory allocation fails (sets errno to ENOMEM).
+*/
+hashtable_entry_t* entryCreate(const void* key, size_t key_size, 
 		const void* data, size_t data_size)
 {
-	struct hashtable_entry_t* entry;
-	RETURN_IF_EQ(entry, NULL, (struct hashtable_entry_t*) 
-			malloc(sizeof(struct hashtable_entry_t)), malloc);
+	hashtable_entry_t* entry;
+	RETURN_IF_EQ(entry, NULL, (hashtable_entry_t*) 
+			malloc(sizeof(hashtable_entry_t)), malloc);
 	RETURN_IF_EQ(entry->key, NULL, malloc(key_size), malloc);
 	if (data != NULL && data_size > 0)
 	{
@@ -72,7 +86,10 @@ struct hashtable_entry_t* entryCreate(const void* key, size_t key_size,
 	return entry;
 }
 
-void entryPrint(const struct hashtable_entry_t* entry)
+/**
+ * @brief Print out entry data. Used when debugging.
+*/
+void entryPrint(const hashtable_entry_t* entry)
 {
 	if (entry == NULL) fprintf(stdout, "NULL\n");
 	else
@@ -82,14 +99,24 @@ void entryPrint(const struct hashtable_entry_t* entry)
 	}
 }
 
-struct hashtable_t* hashtableInit(size_t buckets_no, size_t (*hash_function) (const void*), 
+/**
+ * @brief Initializes hashtable.
+ * @param buckets_no number of buckets
+ * @param hash_function pointer to the function used for hashing; if NULL is passed then
+ * it uses a default provided polynomial rolling hash function.
+ * @param hash_compare pointer to the function used for key comparison; if NULL is passed then
+ * it uses a default provided string comparison function.
+ * @returns pointer to initialized hashtable. NULL may be returned if and only if
+ * memory allocation fails (sets errno to ENOMEM).
+*/
+hashtable_t* hashtableInit(size_t buckets_no, size_t (*hash_function) (const void*), 
 		int (*hash_compare) (const void*, const void*))
 {
-	struct hashtable_t* table;
-	RETURN_IF_EQ(table, NULL, (struct hashtable_t*) malloc(sizeof(struct hashtable_t)), malloc);
+	hashtable_t* table;
+	RETURN_IF_EQ(table, NULL, (hashtable_t*) malloc(sizeof(hashtable_t)), malloc);
 	table->buckets_no = buckets_no;
-	table->buckets = (struct hashtable_entry_t**) 
-			malloc(sizeof(struct hashtable_entry_t*) * buckets_no);
+	table->buckets = (hashtable_entry_t**) 
+			malloc(sizeof(hashtable_entry_t*) * buckets_no);
 	if (table->buckets == NULL)
 	{
 		perror("malloc");
@@ -101,17 +128,27 @@ struct hashtable_t* hashtableInit(size_t buckets_no, size_t (*hash_function) (co
 	return table;
 }
 
-int hashtableInsert(struct hashtable_t* table, const void* key, size_t key_size,
+/**
+ * @brief Creates and inserts entry into hashtable. Duplicates are not allowed.
+ * @param table pointer to hashtable
+ * @param key pointer to key
+ * @param key_size size of key
+ * @param data pointer to blob of data
+ * @param data_size size of data
+ * @returns 0 on success, -1 otherwise. It may fail either because of memory allocation failure
+ * (sets errno to ENOMEM) or because key and/or key_size are not valid.
+*/
+int hashtableInsert(hashtable_t* table, const void* key, size_t key_size,
 		const void* data, size_t data_size)
 {
 	if (key == NULL || key_size == 0) return -1;
 	size_t hash = table->hash_function(key) % table->buckets_no;
-	for (struct hashtable_entry_t* curr = table->buckets[hash]; curr != NULL; curr = curr->next)
+	for (hashtable_entry_t* curr = table->buckets[hash]; curr != NULL; curr = curr->next)
 	{
 		if (table->hash_compare(curr->key, key) == 0) // duplicates are not allowed
 			return 0;
 	}
-	struct hashtable_entry_t* entry;
+	hashtable_entry_t* entry;
 	entry = entryCreate(key, key_size, data, data_size);
 	if (entry == NULL)
 	{
@@ -123,11 +160,11 @@ int hashtableInsert(struct hashtable_t* table, const void* key, size_t key_size,
 	return 0;
 }
 
-void* hashtableGetEntry(const struct hashtable_t* table, const void* key)
+void* hashtableGetEntry(const hashtable_t* table, const void* key)
 {
 	if (table == NULL) return NULL;
 	size_t hash = table->hash_function(key) % table->buckets_no;
-	struct hashtable_entry_t* entry = table->buckets[hash];
+	hashtable_entry_t* entry = table->buckets[hash];
 	while (entry != NULL)
 	{
 		if (table->hash_compare(entry->key, key) == 0)
@@ -146,11 +183,11 @@ void* hashtableGetEntry(const struct hashtable_t* table, const void* key)
 	return NULL;
 }
 
-int hashtableFind(const struct hashtable_t* table, const void* key)
+int hashtableFind(const hashtable_t* table, const void* key)
 {
 	if (table == NULL) return 0;
 	size_t hash = table->hash_function(key) % table->buckets_no;
-	struct hashtable_entry_t* entry = table->buckets[hash];
+	hashtable_entry_t* entry = table->buckets[hash];
 	while (entry != NULL)
 	{
 		if (table->hash_compare(entry->key, key) == 0) return 1;
@@ -159,12 +196,12 @@ int hashtableFind(const struct hashtable_t* table, const void* key)
 	return 0;
 }
 
-int hashtableDeleteNode(struct hashtable_t* table, const void* key)
+int hashtableDeleteNode(hashtable_t* table, const void* key)
 {
 	if (hashtableFind(table, key) == 0) return 0; // nothing to delete
 	size_t hash = table->hash_function(key) % table->buckets_no;
-	struct hashtable_entry_t* curr = table->buckets[hash];
-	struct hashtable_entry_t* prev = NULL;
+	hashtable_entry_t* curr = table->buckets[hash];
+	hashtable_entry_t* prev = NULL;
 	while(curr != NULL)
 	{
 		// this node is the one to be deleted
@@ -198,13 +235,13 @@ int hashtableDeleteNode(struct hashtable_t* table, const void* key)
 	return 0;
 }
 
-void hashtableFree(struct hashtable_t* table)
+void hashtableFree(hashtable_t* table)
 {
 	if (table == NULL) return;
 	for (size_t i = 0; i < table->buckets_no; i++)
 	{
-		struct hashtable_entry_t* curr = table->buckets[i];
-		struct hashtable_entry_t* tmp;
+		hashtable_entry_t* curr = table->buckets[i];
+		hashtable_entry_t* tmp;
 		while (curr != NULL)
 		{
 			tmp = curr;
@@ -218,7 +255,7 @@ void hashtableFree(struct hashtable_t* table)
 	free(table);
 }
 
-void hashtablePrint(const struct hashtable_t* table)
+void hashtablePrint(const hashtable_t* table)
 {
 	if (table == NULL) return;
 	fprintf(stdout, "buckets = %lu", table->buckets_no);
@@ -232,7 +269,7 @@ void hashtablePrint(const struct hashtable_t* table)
 
 /* int main(void)
 {
-	struct hashtable_t* table;
+	hashtable_t* table;
 	table = hashtableInit(10, NULL, NULL);
 	const char key1[] = "a";
 	const char key2[] = "ab";
