@@ -17,7 +17,7 @@ struct tree_node_t
 };
 
 // Inserisce in ABR
-int bst_insert(struct tree_node_t** root, int key)
+int bstInsert(struct tree_node_t** root, int key)
 {
 	if ( *root == NULL )
 	{
@@ -32,50 +32,50 @@ int bst_insert(struct tree_node_t** root, int key)
 	else
 	{
 		if ( key < (*root)->key )
-			return bst_insert(&((*root)->left), key);
+			return bstInsert(&((*root)->left), key);
 		else 
 		{
 			if ( key > (*root)->key )
-				return bst_insert(&((*root)->right), key);
+				return bstInsert(&((*root)->right), key);
 			else return -1;
 		}
 	}
 }
 
 // Cerca in un ABR
-int bst_find(const struct tree_node_t* root, int key)
+bool bstFind(const struct tree_node_t* root, int key)
 {
-	if ( root == NULL ) return 0;
+	if ( root == NULL ) return false;
 	else
 	{
-		if ( root->key > key ) return bst_find(root->left, key);
+		if ( root->key > key ) return bstFind(root->left, key);
 		else 
-			if ( root->key == key ) return 1;
-			else return bst_find(root->right, key); 
+			if ( root->key == key ) return true;
+			else return bstFind(root->right, key); 
 	}
 
 }
 
 // Visita simmetrica
-void inorder_visit(const struct tree_node_t* root)
+void bstInorderVisit(const struct tree_node_t* root)
 {
 	if ( root != NULL )
 	{
-		inorder_visit(root->left);
+		bstInorderVisit(root->left);
 		printf("%d ", root->key);
-		inorder_visit(root->right);
+		bstInorderVisit(root->right);
 	}
 }
 
-struct tree_node_t* bst_delete_node(struct tree_node_t* root, int key)
+struct tree_node_t* bstDeleteNode(struct tree_node_t* root, int key)
 {
 	if (root == NULL) return NULL;
 	if (key < root->key)
-		root->left = bst_delete_node(root->left, key);
+		root->left = bstDeleteNode(root->left, key);
  
 
 	else if (key > root->key)
-		root->right = bst_delete_node(root->right, key);
+		root->right = bstDeleteNode(root->right, key);
 
 	else
 	{
@@ -94,18 +94,18 @@ struct tree_node_t* bst_delete_node(struct tree_node_t* root, int key)
 		struct tree_node_t* temp;
 		MINIMUM_KEY(temp, root->left);
 		root->key = temp->key;
-		root->right = bst_delete_node(root->right, temp->key);
+		root->right = bstDeleteNode(root->right, temp->key);
 	}
 	return root;
 }
 
 // Libera la memoria occupata dall'ABR
-void bst_free(struct tree_node_t** root)
+void bstFree(struct tree_node_t** root)
 {
 	if ( *root != NULL )
 	{
-		bst_free(&((*root)->left));
-		bst_free(&((*root)->right));
+		bstFree(&((*root)->left));
+		bstFree(&((*root)->right));
 		free(*root);
 	}
 }
@@ -115,6 +115,6 @@ void bst_free(struct tree_node_t** root)
 	size_t dim;
 	scanf("%lu", &dim);
 	if ( dim == 0 ) return 0;
-	bst_free(&tree);
+	bstFree(&tree);
 	return 0;
 } */

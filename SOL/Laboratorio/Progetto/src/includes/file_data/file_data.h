@@ -4,21 +4,22 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define FILEDATA_INIT(fd, name, lock) filedata_init(fd, name, lock, NULL, 0);
+#define FILEDATA_INIT(fd, name, lock) filedataInit(fd, name, lock, NULL, 0);
 
-struct filedata;
+struct filedata_t;
 
-int* file_islocked(const struct filedata*);
-size_t file_getsize(const struct filedata*);
-struct filedata* filedata_init(int, const char*, const int*, const void*, size_t);
-int file_lock(struct filedata*, const int*);
-int file_unlock(struct filedata*);
-int fileOpenedBy(struct filedata*, int);
-int fileClosedBy(struct filedata*, int);
-int file_setcontents(struct filedata*, const void*, size_t);
-int file_addcontents(struct filedata*, const void*, size_t);
-void* fileGetContents(const struct filedata*, size_t*);
-void file_delete(struct filedata*);
+int* filedataGetLockedBy(const struct filedata_t*);
+size_t filedataGetSize(const struct filedata_t*);
+struct filedata_t* filedataInit(int, const char*, const int*, const void*, size_t);
+int filedataSetLockedBy(struct filedata_t*, const int*);
+int filedataUnlock(struct filedata_t*);
+bool filedataIsOpenedBy(const struct filedata_t*, int);
+int filedataAddOpenedBy(struct filedata_t*, int);
+int filedataRemoveOpenedBy(struct filedata_t*, int);
+int filedataSetContents(struct filedata_t*, const void*, size_t);
+int filedataAppendContents(struct filedata_t*, const void*, size_t);
+void* fileGetContents(const struct filedata_t*, size_t*);
+void filedataFree(struct filedata_t*);
 
 
 #endif

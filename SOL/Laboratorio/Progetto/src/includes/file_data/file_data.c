@@ -2,7 +2,7 @@
 #include <bst.h>
 #include <string.h>
 
-struct filedata
+struct filedata_t
 {
 	int descriptor;
 	char* name;
@@ -12,20 +12,20 @@ struct filedata
 	struct tree_node_t* openedby;
 };
 
-int* file_islocked(const struct filedata* file)
+int* filedataGetLockedBy(const struct filedata_t* file)
 {
 	return file->lockedby;
 }
 
-size_t file_getsize(const struct filedata* file)
+size_t filedataGetSize(const struct filedata_t* file)
 {
 	return file->size;
 }
 
-struct filedata* filedata_init(int filedescriptor, const char* filename, const int* lockedby,
+struct filedata_t* filedataInit(int filedescriptor, const char* filename, const int* lockedby,
 			const void* contents, size_t size)
 {
-	struct filedata* res = (struct filedata*) malloc(sizeof(struct filedata));
+	struct filedata_t* res = (struct filedata_t*) malloc(sizeof(struct filedata_t));
 	if (res == NULL) return NULL;
 	res->name = (char*) calloc(strlen(filename) + 1, sizeof(char));
 	if (res->name == NULL) return NULL;
@@ -43,36 +43,41 @@ struct filedata* filedata_init(int filedescriptor, const char* filename, const i
 	return res;
 }
 
-int file_lock(struct filedata* file, const int* lockedby)
+int filedataSetLockedBy(struct filedata_t* file, const int* lockedby)
 {
 	if (file->lockedby != NULL) return -1;
 	file->lockedby = lockedby;
 	return 0;
 }
 
-int file_unlock(struct filedata* file)
+int filedataUnlock(struct filedata_t* file)
 {
 	if (file->lockedby == NULL) return -1;
 	file->lockedby = NULL;
 	return 0;
 }
 
-int fileOpenedBy(struct filedata* file, int descriptor)
+bool filedataIsOpenedBy(const struct filedata_t* file, int descriptor)
+{
+	return bstFind(file->openedby, descriptor);
+}
+
+int filedataAddOpenedBy(struct filedata_t* file, int descriptor)
 {
 	if (file == NULL) return -1;
-	if (bst_insert(&(file->openedby), descriptor) == -1) return -1;
+	if (bstInsert(&(file->openedby), descriptor) == -1) return -1;
 	return 0;
 }
 
-int fileClosedBy(struct filedata* file, int descriptor)
+int filedataRemoveOpenedBy(struct filedata_t* file, int descriptor)
 {
 	if (file == NULL) return -1;
-	if (bst_find(file->openedby, descriptor) != 1) return -1;
-	file->openedby = bst_delete_node(file->openedby, descriptor);
+	if (bstFind(file->openedby, descriptor) != 1) return -1;
+	file->openedby = bstDeleteNode(file->openedby, descriptor);
 	return 0;
 }
 
-int file_setcontents(struct filedata* file, const void* buffer, size_t size)
+int filedataSetContents(struct filedata_t* file, const void* buffer, size_t size)
 {
 	if (file->contents != NULL && file->size != 0) return -1;
 	file->contents = (void*) malloc(size);
@@ -82,9 +87,9 @@ int file_setcontents(struct filedata* file, const void* buffer, size_t size)
 	return 0;
 }
 
-int file_addcontents(struct filedata* file, const void* buffer, size_t size)
+int filedataAppendContents(struct filedata_t* file, const void* buffer, size_t size)
 {
-	if (file->size == 0) return file_setcontents(file, buffer, size);
+	if (file->size == 0) return filedataSetContents(file, buffer, size);
 	realloc(file->contents, file->size + size);
 	if (file->contents == NULL) return -1;
 	memcpy(file->contents + file->size, buffer, size);
@@ -92,14 +97,14 @@ int file_addcontents(struct filedata* file, const void* buffer, size_t size)
 	return 0;
 }
 
-void file_delete(struct filedata* file)
+void filedataFree(struct filedata_t* file)
 {
 	free(file->contents);
 	free(file->name);
 	free(file);
 }
 
-void* fileGetContents(const struct filedata* file, size_t* size)
+void* fileGetContents(const struct filedata_t* file, size_t* size)
 {
 	void* contents = malloc(file->size);
 	if (contents == NULL) return NULL;
