@@ -10,11 +10,13 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <file_data.h>
+#include <hashtable.h>
 
 #define BUCKETS 512
 #define UNIX_PATH_MAX 108
 
 static int client_fd;
+static struct hashtable_t* hashtable = NULL;
 
 int openConnection(const char* sockname, int msec, const struct timespec abstime)
 {
@@ -51,18 +53,35 @@ int openFile(const char* pathname, int flags)
 {
 	mode_t oldmask = umask(033);
 	int open_flags = 0;
-	bool lock = false;
+	int* lockedby = NULL;
 	if (flags & O_CREATE) open_flags |= O_CREAT;
-	if (flags & O_LOCK) lock = true;
 	int fd = open(pathname, open_flags);
 	if (fd == -1) return -1;
+	if (flags & O_LOCK) lockedby = &client_fd;
 	umask(oldmask);
-	struct filedata* file = FILEDATA_INIT(fd, pathname, lock);
+	struct filedata* file = FILEDATA_INIT(fd, pathname, lockedby);
+	if (hashtable == NULL) hashtable = HASHTABLE_INITIALIZER(BUCKETS);
+	hashtableInsert(hashtable, (void*) pathname, sizeof(pathname), (void*) file, sizeof(file));
+	free(file);
 	return 0;
 }
 
 int readFile(const char* pathname, void** buf, size_t* size)
 {
+	void* tmp = hashtableGetEntry(hashtable, pathname);
+	if (tmp == NULL)
+	{
+		// should set errno to something
+		buf = NULL;
+		size = NULL;
+		return -1;
+	}
+	struct filedata* file = (struct filedata*) tmp;
+	size_t sz = 0;
+	void* contents = fileGetContents(file, &sz);
+	*buf = contents;
+	*size = sz;
+	free(file);
 	return 0;
 }
 
