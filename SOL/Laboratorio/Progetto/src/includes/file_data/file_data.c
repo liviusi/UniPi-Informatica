@@ -7,12 +7,12 @@ struct filedata
 	char* name;
 	size_t size;
 	void* contents;
-	bool locked;
+	int* lockedby;
 };
 
-bool file_islocked(const struct filedata* file)
+int* file_islocked(const struct filedata* file)
 {
-	return file->locked;
+	return file->lockedby;
 }
 
 size_t file_getsize(const struct filedata* file)
@@ -20,7 +20,7 @@ size_t file_getsize(const struct filedata* file)
 	return file->size;
 }
 
-struct filedata* filedata_init(int filedescriptor, const char* filename, bool locked,
+struct filedata* filedata_init(int filedescriptor, const char* filename, const int* lockedby,
 			const void* contents, size_t size)
 {
 	struct filedata* res = (struct filedata*) malloc(sizeof(struct filedata));
@@ -36,21 +36,21 @@ struct filedata* filedata_init(int filedescriptor, const char* filename, bool lo
 	}
 	res->descriptor = filedescriptor;
 	res->size = size;
-	res->locked = locked;
+	res->lockedby = lockedby;
 	return res;
 }
 
-int file_lock(struct filedata* file)
+int file_lock(struct filedata* file, const int* lockedby)
 {
-	if (file->locked) return -1;
-	file->locked = true;
+	if (file->lockedby != NULL) return -1;
+	file->lockedby = lockedby;
 	return 0;
 }
 
 int file_unlock(struct filedata* file)
 {
-	if (!(file->locked)) return -1;
-	file->locked = false;
+	if (file->lockedby == NULL) return -1;
+	file->lockedby = NULL;
 	return 0;
 }
 
@@ -79,4 +79,13 @@ void file_delete(struct filedata* file)
 	free(file->contents);
 	free(file->name);
 	free(file);
+}
+
+void* fileGetContents(const struct filedata* file, size_t* size)
+{
+	void* contents = malloc(file->size);
+	if (contents == NULL) return NULL;
+	memcpy(contents, file->contents, file->size);
+	*size = file->size;
+	return contents;
 }

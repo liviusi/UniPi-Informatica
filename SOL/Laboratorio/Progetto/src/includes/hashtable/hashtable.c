@@ -8,6 +8,7 @@ struct hashtable_entry_t
 {
 	void* key;
 	void* data;
+	size_t data_size;
 	struct hashtable_entry_t* next;
 };
 
@@ -59,8 +60,13 @@ struct hashtable_entry_t* entryCreate(const void* key, size_t key_size,
 	{
 		RETURN_IF_EQ(entry->data, NULL, malloc(data_size), malloc);
 		memcpy(entry->data, data, data_size);
+		entry->data_size = data_size;
 	}
-	else entry->data = NULL;
+	else
+	{
+		entry->data = NULL;
+		entry->data_size = 0;
+	}
 	memcpy(entry->key, key, key_size);
 	entry->next = NULL;
 	return entry;
@@ -115,6 +121,29 @@ int hashtableInsert(struct hashtable_t* table, const void* key, size_t key_size,
 	entry->next = table->buckets[hash];
 	table->buckets[hash] = entry;
 	return 0;
+}
+
+void* hashtableGetEntry(const struct hashtable_t* table, const void* key)
+{
+	if (table == NULL) return NULL;
+	size_t hash = table->hash_function(key) % table->buckets_no;
+	struct hashtable_entry_t* entry = table->buckets[hash];
+	while (entry != NULL)
+	{
+		if (table->hash_compare(entry->key, key) == 0)
+		{
+			void* data = malloc(sizeof(entry->data_size));
+			if (data == NULL)
+			{
+				errno = ENOMEM;
+				return NULL;
+			}
+			memcpy(data, entry->data, entry->data_size);
+			return data;
+		}
+		entry = entry->next;
+	}
+	return NULL;
 }
 
 int hashtableFind(const struct hashtable_t* table, const void* key)

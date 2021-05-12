@@ -8,13 +8,14 @@
 
 struct filedata;
 
-bool file_islocked(const struct filedata*);
+int* file_islocked(const struct filedata*);
 size_t file_getsize(const struct filedata*);
-struct filedata* filedata_init(int, const char*, bool, const void*, size_t);
-int file_lock(struct filedata*);
+struct filedata* filedata_init(int, const char*, const int*, const void*, size_t);
+int file_lock(struct filedata*, const int*);
 int file_unlock(struct filedata*);
 int file_setcontents(struct filedata*, const void*, size_t);
 int file_addcontents(struct filedata*, const void*, size_t);
+void* fileGetContents(const struct filedata*, size_t*);
 void file_delete(struct filedata*);
 
 
