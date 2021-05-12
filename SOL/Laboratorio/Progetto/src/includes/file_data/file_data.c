@@ -1,4 +1,5 @@
 #include <file_data.h>
+#include <bst.h>
 #include <string.h>
 
 struct filedata
@@ -8,6 +9,7 @@ struct filedata
 	size_t size;
 	void* contents;
 	int* lockedby;
+	struct tree_node_t* openedby;
 };
 
 int* file_islocked(const struct filedata* file)
@@ -37,6 +39,7 @@ struct filedata* filedata_init(int filedescriptor, const char* filename, const i
 	res->descriptor = filedescriptor;
 	res->size = size;
 	res->lockedby = lockedby;
+	res->openedby = NULL;
 	return res;
 }
 
@@ -51,6 +54,21 @@ int file_unlock(struct filedata* file)
 {
 	if (file->lockedby == NULL) return -1;
 	file->lockedby = NULL;
+	return 0;
+}
+
+int fileOpenedBy(struct filedata* file, int descriptor)
+{
+	if (file == NULL) return -1;
+	if (bst_insert(&(file->openedby), descriptor) == -1) return -1;
+	return 0;
+}
+
+int fileClosedBy(struct filedata* file, int descriptor)
+{
+	if (file == NULL) return -1;
+	if (bst_find(file->openedby, descriptor) != 1) return -1;
+	file->openedby = bst_delete_node(file->openedby, descriptor);
 	return 0;
 }
 
