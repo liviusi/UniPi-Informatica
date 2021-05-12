@@ -1,5 +1,5 @@
-#ifndef _FILE_DATA_H_
-#define _FILE_DATA_H_
+#ifndef _filedata_H_
+#define _filedata_H_
 
 #include <stdbool.h>
 #include <stdlib.h>
