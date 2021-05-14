@@ -41,7 +41,8 @@ int main(void)
 	EXIT_IF_NEQ(err, 0, pthread_sigmask(SIG_BLOCK, &mask, &old_mask), pthread_sigmask);
 
 	int server_fd, client_fd;
-	for (size_t i = 0; i < SOCKETMAXQUEUESIZE; i++) completed[i] = true;
+	for (int i = 0; i < SOCKETMAXQUEUESIZE; i++) completed[i] = true;
+	for (int i = 0; i < SOCKETMAXQUEUESIZE; i++) thread[i] = pthread_self();
 	int i = 0;
 	struct sockaddr_un socket_address;
 
@@ -79,7 +80,8 @@ int main(void)
 		{
 			if (completed[j])
 			{
-				EXIT_IF_EQ(err, -1, pthread_join(thread[j], NULL), pthread_join);
+				if (pthread_equal(pthread_self(), thread[j]) == 0)
+					EXIT_IF_EQ(err, -1, pthread_join(thread[j], NULL), pthread_join);
 				spawn_thread(client_fd, j);
 				break;
 			}
