@@ -1,4 +1,4 @@
-#define _POSIX_C_SOURCE 199309L
+#define _POSIX_C_SOURCE 200112L
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -15,7 +15,7 @@
 
 #define BUFFERSIZE 64
 #define UNIX_PATH_MAX 108
-#define SOCKETMAXQUEUESIZE 5
+#define SOCKETMAXQUEUESIZE 16
 #define SOCKETNAME "Esercizio2/socket"
 #define EXITCOMMAND "exit"
 #define SIGNAL_RECEIVED 1
@@ -24,14 +24,24 @@
 static void handler(int);
 static void* capitalize(void*);
 void cleanup_server(int, size_t);
+void spawn_thread(int, size_t);
 
 pthread_t thread[SOCKETMAXQUEUESIZE];
+bool completed[SOCKETMAXQUEUESIZE];
 struct sigaction s;
 volatile sig_atomic_t flag = SIGNAL_NOT_RECEIVED;
 
 int main(void)
 {
-	int err, server_fd, client_fd;
+	int err;
+	sigset_t mask, old_mask;
+	sigemptyset(&mask);
+	sigaddset(&mask, SIGINT);
+	sigaddset(&mask, SIGQUIT);
+	EXIT_IF_NEQ(err, 0, pthread_sigmask(SIG_BLOCK, &mask, &old_mask), pthread_sigmask);
+
+	int server_fd, client_fd;
+	for (size_t i = 0; i < SOCKETMAXQUEUESIZE; i++) completed[i] = true;
 	size_t i = 0;
 	struct sockaddr_un socket_address;
 
@@ -45,58 +55,39 @@ int main(void)
 
 	strncpy(socket_address.sun_path, SOCKETNAME, UNIX_PATH_MAX);
 	socket_address.sun_family = AF_UNIX;
-	EXIT_IF_EQ(server_fd, -1, socket(AF_UNIX, SOCK_STREAM, 0), "socket");
+	EXIT_IF_EQ(server_fd, -1, socket(AF_UNIX, SOCK_STREAM, 0), socket);
 	EXIT_IF_EQ(err, -1, bind(server_fd, (struct sockaddr*) &socket_address, 
-			sizeof(socket_address)), "bind");
+			sizeof(socket_address)), bind);
+	EXIT_IF_EQ(err, -1, listen(server_fd, SOCKETMAXQUEUESIZE), listen);
+	EXIT_IF_NEQ(err, 0, pthread_sigmask(SIG_SETMASK, &old_mask, NULL), pthread_sigmask);
 
-	while (true)
+	while (flag == SIGNAL_NOT_RECEIVED)
 	{
-		while (flag == SIGNAL_NOT_RECEIVED)
+		client_fd = accept(server_fd, NULL, 0);
+		if (client_fd == -1)
 		{
-			fprintf(stdout, "[SERVER] listening\n");
-			err = listen(server_fd, SOCKETMAXQUEUESIZE);
-			if (err == -1)
+			if (errno == EINTR) break;
+			else
 			{
-				if (flag == SIGNAL_RECEIVED) cleanup_server(server_fd, i);
-				else
-				{
-					perror("listen");
-					exit(EXIT_FAILURE);
-				}
-			}
-			client_fd = accept(server_fd, NULL, 0);
-			if (client_fd == -1)
-			{
-				if (flag == SIGNAL_RECEIVED) cleanup_server(server_fd, i);
-				else
-				{
-					perror("accept");
-					exit(EXIT_FAILURE);
-				}
-			}
-			if (flag == SIGNAL_RECEIVED) break;
-			fprintf(stdout, "[SERVER] accepted new client %d\n", client_fd);
-			fflush(stdout);
-
-			if (i < SOCKETMAXQUEUESIZE)
-			{
-				err = pthread_create(&(thread[i]), NULL, &capitalize, &client_fd);
-				if (err != 0)
-				{
-					if (flag == SIGNAL_RECEIVED) cleanup_server(server_fd, i);
-					else
-					{
-						perror("pthread_create");
-						exit(EXIT_FAILURE);
-					}
-				}
-				i++;
+				perror("accept");
+				exit(EXIT_FAILURE);
 			}
 		}
-		fprintf(stderr, "\nSIGNAL HAS BEEN RECEIVED. NOW TERMINATING.\n");
-		cleanup_server(server_fd, i);
+		fprintf(stdout, "[SERVER] accepted new client %d\n", client_fd);
+		fflush(stdout);
+		for (size_t j = 0; j < SOCKETMAXQUEUESIZE; j++)
+		{
+			if (completed[j])
+			{
+				EXIT_IF_EQ(err, -1, pthread_join(thread[j], NULL), pthread_join);
+				spawn_thread(client_fd, j);
+				break;
+			}
+		}
+		i++;
 	}
-	return 0;
+	cleanup_server(server_fd, i);
+	return 1;
 }
 
 void cleanup_server(int server_fd, size_t initialized)
@@ -105,15 +96,40 @@ void cleanup_server(int server_fd, size_t initialized)
 	EXIT_IF_EQ(err, -1, close(server_fd), close);
 	EXIT_IF_EQ(err, -1, remove(SOCKETNAME), remove);
 	for (size_t i = 0; i <= initialized; i++)
-		EXIT_IF_EQ(err, -1, pthread_cancel(thread[i]), pthread_cancel);
-	for (size_t i = 0; i <= initialized; i++)
 		EXIT_IF_EQ(err, -1, pthread_join(thread[i], NULL), pthread_join);
 	exit(EXIT_SUCCESS);
 }
 
+void spawn_thread(int client_fd, size_t i)
+{
+	int err;
+	sigset_t mask, old_mask;
+	sigemptyset(&mask);
+	sigaddset(&mask, SIGINT);
+	sigaddset(&mask, SIGPIPE);
+	sigaddset(&mask, SIGHUP);
+	sigaddset(&mask, SIGTERM);
+	sigaddset(&mask, SIGQUIT);
+	EXIT_IF_EQ(err, -1, pthread_sigmask(SIG_BLOCK, &mask, &old_mask), pthread_sigmask);
+
+	pthread_t worker;
+	int* arg;
+	EXIT_IF_NULL(arg, (int*) malloc(sizeof(int) * 2), malloc);
+	arg[0] = client_fd;
+	arg[1] = (int) i;
+	completed[i] = false;
+	EXIT_IF_NEQ(err, 0, pthread_create(&worker, NULL, capitalize, (void*) arg), pthread_create);
+	thread[i] = worker;
+	EXIT_IF_NEQ(err, 0, pthread_sigmask(SIG_SETMASK, &old_mask, NULL), pthread_sigmask);
+	return;
+}
+
 static void* capitalize(void* arg)
 {
-	int client_fd = *( (int*) arg );
+	int* tmp = (int*) arg;
+	int client_fd = tmp[0];
+	int pos = tmp[1];
+	free(arg);
 	char message[BUFFERSIZE];
 	ssize_t n;
 	int err;
@@ -134,7 +150,7 @@ static void* capitalize(void* arg)
 		}
 		else break;
 	}
-
+	completed[pos] = true;
 	EXIT_IF_EQ(err, -1, close(client_fd), "close");
 	return (void*) 0;
 
@@ -142,10 +158,5 @@ static void* capitalize(void* arg)
 
 static void handler(int signum)
 {
-	static int err;
-	if (signum == SIGINT || signum == SIGHUP || signum == SIGTERM || signum == SIGQUIT)
-	{
-		SIGNALSAFE_EXIT_IF_EQ(err, -1, sigaction(signum, &s, NULL), sigaction);
-		flag = SIGNAL_RECEIVED;
-	}
+	flag = SIGNAL_RECEIVED;
 }
