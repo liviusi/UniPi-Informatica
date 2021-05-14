@@ -23,8 +23,8 @@
 
 static void handler(int);
 static void* capitalize(void*);
-void cleanup_server(int, size_t);
-void spawn_thread(int, size_t);
+void cleanup_server(int, int);
+void spawn_thread(int, int);
 
 pthread_t thread[SOCKETMAXQUEUESIZE];
 bool completed[SOCKETMAXQUEUESIZE];
@@ -42,7 +42,7 @@ int main(void)
 
 	int server_fd, client_fd;
 	for (size_t i = 0; i < SOCKETMAXQUEUESIZE; i++) completed[i] = true;
-	size_t i = 0;
+	int i = 0;
 	struct sockaddr_un socket_address;
 
 	memset(&s, 0, sizeof(s));
@@ -75,7 +75,7 @@ int main(void)
 		}
 		fprintf(stdout, "[SERVER] accepted new client %d\n", client_fd);
 		fflush(stdout);
-		for (size_t j = 0; j < SOCKETMAXQUEUESIZE; j++)
+		for (int j = 0; j < SOCKETMAXQUEUESIZE; j++)
 		{
 			if (completed[j])
 			{
@@ -90,17 +90,17 @@ int main(void)
 	return 1;
 }
 
-void cleanup_server(int server_fd, size_t initialized)
+void cleanup_server(int server_fd, int initialized)
 {
 	int err;
 	EXIT_IF_EQ(err, -1, close(server_fd), close);
 	EXIT_IF_EQ(err, -1, remove(SOCKETNAME), remove);
-	for (size_t i = 0; i <= initialized; i++)
+	for (int i = 0; i <= initialized; i++)
 		EXIT_IF_EQ(err, -1, pthread_join(thread[i], NULL), pthread_join);
 	exit(EXIT_SUCCESS);
 }
 
-void spawn_thread(int client_fd, size_t i)
+void spawn_thread(int client_fd, int i)
 {
 	int err;
 	sigset_t mask, old_mask;
