@@ -5,6 +5,7 @@ INCLUDES = -I .
 
 TARGETS = Esercizio1/client Esercizio1/server \
 	Esercizio2/client Esercizio2/server \
+	Esercizio3/client Esercizio3/server
 
 .PHONY: all cleanall test
 .SUFFIXES: .c .h

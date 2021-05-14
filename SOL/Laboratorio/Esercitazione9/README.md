@@ -6,3 +6,6 @@ Realizzare in C un programma client ed un programma server. I due processi inter
 ## Esercizio 2
 Realizzare un programma C che implementa un server che rimane sempre attivo in attesa di richieste da parte di uno o piu' processi client su una socket di tipo AF_UNIX. Ogni client richiede al server la trasformazione di tutti i caratteri di una stringa da minuscoli a maiuscoli (es. ciao –> CIAO). Per ogni nuova connessione il server lancia un thread POSIX che gestisce tutte le richieste del client (modello “un thread per connessione”) e quindi termina la sua esecuzione quando il client chiude la connessione.
 Per testare il programma, lanciare piu' processi client ognuno dei quali invia una o piu' richieste al server multithreaded.
+
+## Esercizio 3
+Realizzare il server dell'Esercizio 2 secondo il modello single-threaded. Il server fa uso della chiamata di sistema select (o poll) per gestire sia nuove connessioni da parte di nuovi client che la gestione dei messaggi inviati dai client gia' connessi.
