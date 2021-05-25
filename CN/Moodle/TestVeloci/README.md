@@ -1,2 +1,2 @@
-# Test di autovalutazione su rappresentazione di numeri ed insieme dei numeri di macchina
-Traccia dello svolgimento dei quesiti del quiz.
+# Calcolo Numerico - Test veloci
+Traccia dello svolgimento dei quesiti dei quiz.
