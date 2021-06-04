@@ -1,0 +1,319 @@
+\documentclass[10pt, italian, openany, landscape]{book}
+% Set page margins
+\usepackage[top=100pt,bottom=100pt,left=68pt,right=66pt]{geometry}
+
+\usepackage[]{graphicx}
+% If multiple images are to be added, a folder (path) with all the images can be added here 
+\graphicspath{ {images/} }
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+ 
+% All page numbers positioned at the bottom of the page
+\usepackage{fancyhdr}
+\usepackage{lscape}
+\usepackage{adjustbox}
+
+\newcommand*{\MyIncludeGraphics}[2][]{%
+\begin{adjustbox}{max size={0.8\textwidth}{\textheight}}
+    \includegraphics[#1]{#2}%
+\end{adjustbox}
+}
+
+\fancyhf{} % clear all header and footers
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\pagestyle{fancy}
+
+% Changes the style of chapter headings
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
+
+% Change distance between chapter header and text
+\titlespacing{\chapter}{0pt}{50pt}{2\baselineskip}
+\usepackage{titlesec}
+\titleformat{\section}
+  [hang] % <shape>
+  {\normalfont\bfseries\Large} % <format>
+  {} % <label>
+  {0pt} % <sep>
+  {} % <before code>
+\renewcommand{\thesection}{} % Remove section references...
+\renewcommand{\thesubsection}{\arabic{subsection}} %... from subsections
+
+% Numbered subsections
+\setcounter{secnumdepth}{3}
+
+% Prevents LaTeX from filling out a page to the bottom
+\raggedbottom
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{amsmath}
+% Code Listings
+\definecolor{vgreen}{RGB}{104,180,104}
+\definecolor{vblue}{RGB}{49,49,255}
+\definecolor{vorange}{RGB}{255,143,102}
+\definecolor{vlightgrey}{RGB}{245,245,245}
+\lstdefinestyle{bash} {
+	language=bash,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{vblue},
+	identifierstyle=\color{black},
+	commentstyle=\color{vgreen},
+	tabsize=4,
+	backgroundcolor = \color{vlightgrey},
+	literate=*{:}{:}1
+}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{codeStyle}{
+	language=Java,
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\begin{document}
+
+\begin{titlepage}
+	\clearpage\thispagestyle{empty}
+	\centering
+	\vspace{1cm}
+
+    \includegraphics[scale=0.60]{unipi-logo.png}
+    
+	{\normalsize \noindent Dipartimento di Informatica \\
+	             Corso di Laurea in Informatica \par}
+	
+	\vspace{2cm}
+	{\Huge \textbf{Un giorno al Museo} \par}
+	\vspace{1cm}
+	{\large Ingegneria del Software a.a. 2020/2021}
+
+    \begin{minipage}[t]{0.47\textwidth}
+    	{\large{ Prof.ssa Roberta Gori}}
+    \end{minipage}\hfill\begin{minipage}[t]{0.47\textwidth}\raggedleft
+        {\large {S. C. \\ ---- - ----\\ }}
+        {\large {D. I. \\ ---- - ----\\ }}
+    	{\large {Giacomo Trapani \\ ---- - ----\\ }}
+    \end{minipage}
+
+    \vspace{4cm}
+
+	\pagebreak
+
+\end{titlepage}
+
+% A * after the section/chapter command indicates an unnumbered header which will not be added to the table of contents
+
+\section{Esercizio 1}
+Si assume che un utente possa possedere al massimo \textbf{uno e un solo abbonamento} alla volta.
+
+% \MyIncludeGraphics{esercizio1.png}
+
+\pagebreak
+\section{Esercizio2}
+Come si evince dal testo, all'interno di un museo esiste \textbf{una e una sola Biglietteria}, risultano \textbf{opzionali}
+le presenze di \textbf{Bar}, \textbf{Ristorante} (presenti al pi\`u \textbf{una e una sola volta} ciascuno), \textbf{Sale} e \textbf{Bagni} (presenti invece
+in quantit\`a non meglio precisate).
+
+
+% \MyIncludeGraphics{esercizio2.png}
+
+\pagebreak
+
+\section{Esercizio 3}
+Si ricorda che il frammento di piantina del museo da rappresentare \textbf{non} costituisce una istanza completa
+o corretta di un museo: nello specifico, manca un \textbf{Ambiente} connesso al \textbf{Varco 33}.
+
+% \MyIncludeGraphics{esercizio3.png}
+
+
+\pagebreak
+
+\section{Esercizio 4}
+Scegliendo di modellizzare la scelta del modulo a cui un dipendente del museo viene assegnato come
+un segnale ricevuto dall'esterno ed essendo presente un vincolo sulla \textbf{durata} dei singoli moduli, si sceglie
+di eliminare la logica (della durata) temporale dal diagramma delle attivit\`a di \textbf{Sala} e di \textbf{Reception} (che vengono
+dunque modellizzati come un ciclo infinito) e di forzare la terminazione di questi al livello superiore (ossia al livello di \textbf{Modulo}.)
+In questo modo l'attivit\`a \textbf{Turno} non \`e altro che una sequenza di 3 attivit\`a modulo.
+
+% \MyIncludeGraphics{esercizio4.png}
+
+\pagebreak
+
+\section{Esercizio 5}
+Si assume che la vita di un dispositivo non termini n\'e alla chiusura del museo n\'e quando questo si scarichi
+(questa infatti termina se e solo se il dispositivo risulta \textbf{rotto}) e che questi partano scarichi in modo tale
+da uniformarli.
+
+% \MyIncludeGraphics{esercizio5.png}
+\pagebreak
+
+\section{Esercizio 6}
+Si sceglie di dividere il sistema software Un giorno al Museo in due grosse componenti: \textbf{Gestione musei} e 
+\textbf{Gestione Visite}. Si assume che la prima gestisca il database delle audioguide a cui accede ogni dispositivo
+elettronico nel momento in cui un visitatore inquadra un codice QR per avere a disposizione - appunto - l'audioguida
+dell'opera scelta. Dal testo si deduce inoltre che i varchi comunicano direttamente col dispositivo elettronico scrivendo in
+questo i dati riguardo il transito in una determinata sala e che questi vengano elaborati dalla seconda componente menzionata
+(poich\'e a disposizione di quest'ultima viene messa una operazione di lettura dei dati dai dispositivi elettronici).
+
+% \MyIncludeGraphics{esercizio6.png}
+
+\pagebreak
+
+\section{Esercizio 7}
+Si assume che il software Un giorno al Museo fornisca a ogni museo appartenente al sistema museale un eseguibile
+che comunica col \textbf{server centrale} sul quale sono salvati sia gli abbonamenti sia i dati dei singoli musei. Si assume inoltre
+che la gestione del database delle audioguide non sia affidata al sistema centrale, ma sia responsabilit\`a dei
+singoli musei e che questo comunichi coi dispositivi elettronici.
+
+
+% \MyIncludeGraphics{esercizio7.png}
+\pagebreak
+
+\section{Esercizio 8}
+Si assume che per il calcolo delle tariffe e per il passaggio da
+tempo assoluto (che si assume essere il formato adottato dai dati inviati dai varchi)
+a \textbf{tempo relativo} (ossia il formato che verr\`a utilizzato nei punti successivi)
+sia necessario un \textbf{ProxyOrologio}.
+
+% \MyIncludeGraphics{esercizio8.png}
+\pagebreak
+
+\section{Esercizio 9}
+\subsection{Esercizio 9.a}
+Assumiamo nello svolgimento dell’esercizio che:
+\begin{itemize}
+    \item l’identificatore di ogni sala sia un intero (tipicamente una chiave primaria nel database delle sale);
+    \item i metodi \textit{bool salaPermanente(int ID)} e \textit{bool salaTemporanea(int ID)} internamente usino un oggetto di tipo che contiene gli attributi corrispondenti presenti nella sala e che usino uno stub che simuli la connessione al database per recuperare le informazioni necessarie.
+\end{itemize} Un possibile stub è il seguente:
+\begin{lstlisting}[style=codeStyle]
+    bool salaPermanente(int ID)
+    {
+        return ID % 3 == 0;
+    }
+
+    bool salaTemporanea(int ID)
+    {
+        return ID % 3 == 1;
+    }
+\end{lstlisting}
+che rispetta le specifiche del sistema in quanto non permette di avere sale contemporaneamente temporanee e permanenti.
+Si definiscono inoltre le due classi di equivalenza:
+\[ errore = \{ [Passaggio] \ lp \ | \ (lp = NULL) \ \lor \ (\exists \ int \ i \ \in [0; lp.length()] \ | \ lp[i] = NULL)) \}. \]
+\begin{gather*}
+(\forall (h, k) \ | \ k + h \ \in [0; lp.length() - 1] \ \wedge h*k \geq 0. \ \mathbf{X}_{h, k} = \{ [Passaggio] \ lp \ | \ (\exists \ I = \{i_1, ..., i_k\} \subseteq [1, ..., lp.length()-1] \ | \\
+(\forall i \in I. \ lp[i].orario - lp[i-1].orario \geq 30 \ \wedge \ salaPermanente(lp[i-1].sala)) \ \wedge \\
+(\exists J = \{j_1, ..., j_h\} \subseteq [1, ..., lp-length()-1] \ | \ (\forall j \in J. lp[j].orario - lp[j-1].orario \geq 30 \ \wedge salaTemporanea(lp[j-1].sala)) \ \wedge \ I \cap J = \emptyset \ \wedge \\
+(\forall h \in I \cup J)^C. \ (lp[h].orario - lp[h-1].orario \leq 30 \lor (!salaPermanente(lp[h-1].sala) \ \wedge \ !salaTemporanea(lp[h-1].sala)))))\}).
+\end{gather*}
+
+Ovvero la classe di equivalenza \(\mathbf{X}_{h, k}\) contiene tutti e soli i vettori che corrispondono a visite in cui bisogna pagare per
+\textit{k} sale permanenti e \textit{h} sale temporanee indipendentemente dall'ordine in cui queste sono state visitate ponendo dunque che
+il valore restituito da \textit{calcolaTariffa} \`e del tipo 3k + 5h.
+
+Si osserva inoltre che senza perdita di generalit\`a si pu\`o supporre di considerare \(lp.length() \leq 3\) poich\'e il comportamento atteso
+non dipende dalla lunghezza del vettore in ingresso (oltre una dimensione che permetta almeno un pagamento) ai fini del testing del metodo.
+
+Si fissa dunque \(n = 3\) e si suppone di identificare con \textit{p} un oggetto di tipo Passaggio con i parametri (p.orario, p.sala),
+una batteria di test composta da un test di errore e un test di frontiera per ogni classe di equivalenza individuata pu\`o essere definita come:
+\begin{itemize}
+    \item \{NULL; errore; A\};
+    \item k = 0, h = 0 : \{\{[0, 0], [10, 1], [20, 0]\}, 0, A\};
+    \item k = 0, h = 1 : \{\{[0, 0], [20, 1], [50, 2]\}, 5, A\};
+    \item k = 1, h = 0 : \{\{[0, 0], [30, 1], [50, 0]\}, 3, A\};
+    \item k = 1, h = 1 : \{\{[0, 0], [30, 1], [60, 0]\}, 8, A\};
+    \item k = 0, h = 2 : \{\{[0, 1], [30, 4], [60, 0]\}, 10, A\};
+    \item k = 2, h = 0 : \{\{[0, 0], [30, 3], [60, 0]\}, 6, A\};
+\end{itemize}
+
+\subsection{Esercizio 9.b}
+Il corpo del metodo viene partizionato in questo modo:
+\begin{enumerate}
+    \item int tariffa = 0;
+    \item for (i = 1;
+    \item i \(<\) lp.length;
+    \item if (lp[i].orario - lp[i-1].orario \(>=\) 30)
+    \item return tariffa;
+    \item i++)
+    \item if (salaPermanente(lp[i-1].sala))
+    \item tariffa += 3;
+    \item if (salaTemporanea(lp[i-1].sala))
+    \item tariffa += 5;
+\end{enumerate}
+%\includegraphics{esercizio9.jpg}
+\pagebreak
+
+\subsection{Esercizio 9.c}
+La batteria di test definita al punto (a) con l'aggiunta dell'ulteriore test \( \{\{[0, 0]\}, 0 , A\} \) \`e sufficiente per garantire una copertura
+del 100\% del grafo di flusso precedente. Infatti per garantire tale copertura sono sufficienti i seguenti testcase:
+\begin{itemize}
+    \item un testcase in cui il corpo del ciclo \textit{for} non viene mai raggiunto (quello appena aggiunto);
+    \item un testcase in cui il corpo del ciclo \textit{for} viene eseguito almeno una volta (succede in ogni caso in cui lp \( \neq \) NULL);
+    \item un testcase in cui il corpo del primo ramo \textit{if} non viene mai raggiunto (k = h = 0);
+    \item un testcase in cui il corpo del primo ramo \textit{if} viene eseguito almeno una volta (k = 1, h = 0);
+    \item un testcase in cui il corpo del secondo ramo \textit{if} viene eseguito almeno una volta, il terzo invece no (k = h = 1, iterazione n. 1);
+    \item un testcase in cui il corpo del terzo ramo \textit{if} viene eseguito almeno una volta, il secondo invece no (k = h = 1, iterazione n. 2).
+\end{itemize}
+
+\subsection{Esercizio 9.d}
+La specifica pone il vincolo \( \neg(\exists int \ i \ | \ salaPermanente(i) = salaTemporanea(i) = True) \).
+
+Si propongono due soluzioni all'esercizio affrontando il problema da due punti di vista differenti.
+
+
+\subsubsection{Prima soluzione}
+Suppongo le due implementazioni di \textit{salaPermanente} e di \textit{salaTemporanea} come due funzioni del tipo \( f : R \rightarrow \{T, F\} \).
+Ponendo ad esempio ID = \( \infty \ \lor \ \) ID = \( - \infty \) le operazioni usate all'interno delle due funzioni
+potrebbero non essere definite in quanto \( \infty \mod{n} \) ha un risultato che dipende dall'implementazione del linguaggio in cui si sviluppa
+(e.g. supponendo che i metodi siano implementati in modo simile a quelli dello stub fornito al punto (a), in Java il problema sussiterebbe poich\'e il
+modulo di infinito risulta essere \textit{NaN} e - supponendo anche che quella fosse una Sala - entrambi i metodi restituirebbero un valore \textit{False}
+che permetterebbe dunque al visitatore di non pagare per quella Sala; la coppia di risposte dello stub sarebbe dunque \{False, False\}).
+
+\subsubsection{Seconda soluzione}
+Si suppone che le definizioni di salaPermanente e di salaTemporanea siano mal poste, ad esempio:
+\begin{lstlisting}[style=codeStyle]
+    bool salaPermanente(int ID)
+    {
+        return ID % 3 == 0;
+    }
+
+    bool salaTemporanea(int ID)
+    {
+        return ID % 3 == 0;
+    }
+\end{lstlisting}
+in questo modo una sala risulta contemporaneamente permanente e temporanea (si restituisce dunque la coppia \{True, True\}) 
+- in contrasto con la specifica. Assumendo che tutti i valori per cui vale \( ID \mod{3} == 0\) siano sale permanenti
+e supponendo che un visitatore non attraversi solo queste, nel momento in cui (il visitatore) richieder\`a la possibilit\`a di
+procedere al pagamento (n.d.r. con \textbf{tariffa bianca}) l'ammontare effettivo non sarebbe coerente con quanto
+il visitatore si aspetterebbe.
+
+\end{document}
