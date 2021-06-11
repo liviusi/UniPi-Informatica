@@ -1,0 +1,950 @@
+\documentclass[10pt, italian, openany, landscape, fleqn]{book}
+% Set page margins
+\usepackage[top=100pt,bottom=100pt,left=68pt,right=66pt]{geometry}
+
+\usepackage[]{graphicx}
+% If multiple images are to be added, a folder (path) with all the images can be added here 
+\graphicspath{ {images/} }
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+}
+ 
+% All page numbers positioned at the bottom of the page
+\usepackage{fancyhdr}
+\usepackage{lscape}
+\usepackage{adjustbox}
+
+\newcommand*{\MyIncludeGraphics}[2][]{%
+\begin{adjustbox}{max size={0.8\textwidth}{\textheight}}
+    \includegraphics[#1]{#2}%
+\end{adjustbox}
+}
+\usepackage{tikz}
+
+\fancyhf{} % clear all header and footers
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\pagestyle{fancy}
+
+% Changes the style of chapter headings
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
+
+% Change distance between chapter header and text
+\titlespacing{\chapter}{0pt}{50pt}{2\baselineskip}
+\usepackage{titlesec}
+\titleformat{\section}
+  [hang] % <shape>
+  {\normalfont\bfseries\Large} % <format>
+  {} % <label>
+  {0pt} % <sep>
+  {} % <before code>
+\renewcommand{\thesection}{} % Remove section references...
+\renewcommand{\thesubsection}{\arabic{subsection}} %... from subsections
+
+% Numbered subsections
+\setcounter{secnumdepth}{3}
+
+% Prevents LaTeX from filling out a page to the bottom
+\raggedbottom
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{forest}
+\useforestlibrary{linguistics}
+\forestapplylibrarydefaults{linguistics}
+
+% Code Listings
+\definecolor{vgreen}{RGB}{104,180,104}
+\definecolor{vblue}{RGB}{49,49,255}
+\definecolor{vorange}{RGB}{255,143,102}
+\definecolor{vlightgrey}{RGB}{245,245,245}
+\lstdefinestyle{sql} {
+	language=SQL,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{vblue},
+	identifierstyle=\color{black},
+	commentstyle=\color{vgreen},
+	tabsize=4,
+	backgroundcolor = \color{vlightgrey},
+	literate=*{:}{:}1
+}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\begin{document}
+\begin{titlepage}
+	\clearpage\thispagestyle{empty}
+	\centering
+	\vspace{1cm}
+
+    \includegraphics[scale=0.60]{unipi-logo.png}
+    
+	{\normalsize \noindent Dipartimento di Informatica \\
+	             Corso di Laurea in Informatica \par}
+	
+	\vspace{2cm}
+	{\Huge \textbf{Un giorno al Museo} \par}
+	\vspace{1cm}
+	{\large Basi di Dati}
+
+    {\large {05/06/2021 - anno accademico 2020/2021}}
+
+    \begin{minipage}[t]{0.47\textwidth}
+    	{\large{ Prof. Giorgio Ghelli}}
+    \end{minipage}\hfill\begin{minipage}[t]{0.47\textwidth}\raggedleft
+        {\large {Salvatore Correnti \\ 584136 - Corso A\\ }}
+        {\large {Domenico Iiripino \\ 599248 - Corso A\\ }}
+    	{\large {Giacomo Trapani \\ 600124 - Corso A\\ }}
+    \end{minipage}
+
+    \vspace{4cm}
+
+	\pagebreak
+
+\end{titlepage}
+
+% A * after the section/chapter command indicates an unnumbered header which will not be added to the table of contents
+
+\section{Esercizio 1}
+Scopo di questo testo \`e descrivere la specifica di \textbf{Un giorno al museo}, un software di gestione del sistema museale
+della regione Toscana.
+
+Ogni \textbf{museo} \`e composto da diversi \textbf{ambienti} collegati a coppie tramite \textbf{varchi}, distinti in \textbf{sale} e \textbf{ambienti di servizio}.
+
+Ogni \textbf{sala} pu\`o essere o una \textbf{sala museale} o una \textbf{sala per mostre temporanee} o una \textbf{sala esclusiva} per l'esposizione di opere
+esclusive.
+
+Per ogni museo \`e possibile acquistare un \textbf{abbonamento generale}, che permette di visitare in totale un certo numero di sale
+museali e per mostre temporanee, oppure un \textbf{abbonamento speciale} che consente di visitare anche le sale esclusive.
+
+
+Di ogni \textbf{museo} interessano il \textit{nome}, gli \textit{ambienti che lo compongono}, \textit{come sono collegati} fra di loro e gli \textit{utenti che hanno
+effettuato almeno una visita} in quel museo.
+
+Di ogni \textbf{ambiente} interessano l'\textit{identificatore}, il \textit{nome} e i \textit{varchi} con cui \`e collegato ad altri ambienti.
+
+Di ogni \textbf{sala} interessa inoltre il \textit{tipo} (sala museale, sala per mostre o sala esclusiva) e gli \textit{utenti} che l'hanno visitata.
+
+Di ogni \textbf{ambiente di servizio} interessa inoltre il \textit{tipo} (bar, biglietteria, ristorante, bagno).
+
+Di ogni \textbf{varco} interessano l'\textit{identificatore}, la \textit{coppia di ambienti} che collega e il \textit{tipo} di varco (scala, porta, apertura).
+
+
+Di ogni \textbf{utente} interessano \textit{nome}, \textit{cognome}, \textit{indirizzo fisico}, \textit{indirizzo email}, \textit{visite effettuate}, \textit{riviste ricevute} e \textit{abbonamenti acquistati}.
+
+Di ogni \textbf{biglietto} interessano il \textit{codice}, il \textit{tipo} (tariffa bianca o tariffa verde), e le \textit{sale visitate} con quel biglietto.
+
+Di ogni \textbf{visita} (di sala) interessano la \textit{sala visitata}, l'\textit{utente visitatore}, se la visita al museo di cui fa parte
+è stata \textit{pagata con} un abbonamento o con un biglietto e l'\textit{ora di inizio e di fine}.
+
+Di ogni \textbf{abbonamento} interessano il \textit{numero di sale che permette di visitare}, il \textit{tempo in minuti} che permette per le visite,
+gli \textit{utenti che lo hanno acquistato}, le \textit{visite effettuate} con quell'abbonamento, se l'abbonamento \`e \textit{ancora valido} e se \`e 
+\textit{speciale}.
+
+Di ogni \textbf{rivista} interessano il \textit{nome} ("Il museo scientifico" o "Il museo d'arte"), gli \textit{utenti iscritti} e le \textit{spedizioni effettuate}.
+
+Di ogni \textbf{spedizione} interessano la \textit{rivista spedita} e l'\textit{utente} che l'ha ricevuta.
+
+% \MyIncludeGraphics{esercizio1.png}
+
+\pagebreak
+\section{Esercizio 2}
+% \MyIncludeGraphics{esercizio2.png}
+\pagebreak
+\subsection*{Vincoli non catturati dallo schema}
+\subsubsection*{Vincoli interrelazionali}
+\begin{gather*}
+(\forall v \in Visite. \ (v.Abbonamento \neq NULL \oplus v.Biglietto \neq NULL)); \\
+(\forall v \in Visite \ con \ v.Abbonamento \neq NULL. \ (v.Abbonamento \in v.Utente.Abbonamenti) \wedge (v.Abbonamento.valido = 1)); \\
+(\forall v1, v2 \in Visite \ con \ v1.Biglietto, \ v2.Biglietto \neq NULL. \ (v1.Biglietto = v2.Biglietto) \Rightarrow (v1.Sala.Museo = v2.Sala.Museo)); \\
+(\forall v \in Visite. \ (v.Abbonamento \neq NULL) \Rightarrow ((v.Sala.tipo = 'esclusiva') \Leftrightarrow (v.Abbonamento.Speciale = 1))); \\
+(\forall s \in Spedizioni. \ s.Rivista \in s.Utente.Riviste).
+\end{gather*}
+\subsubsection*{Vincoli intrarelazionali}
+\begin{gather*}
+(\forall v \in Varchi. \ v.Ambiente1 \neq v.Ambiente2); \\
+(\forall a \in Abbonamenti.\ (a.minuti \geq 0) \wedge (a.numeroSale \geq 0)); \\
+(\forall a1 \in Ambienti. \ \neg(\exists a2 \in Ambienti. \ (a1 \neq a2) \wedge (a1.codiceAmbiente = a2.codiceAmbiente)); \\
+(\forall v1 \in Varchi. \ \neg(\exists v2 \in Varchi. \ (v1 \neq v2) \wedge (v1.codiceVarco = v2.codiceVarco)); \\
+(\forall a1 \in Abbonamenti. \ \neg(\exists a2 \in Abbonamenti. \ (a1 \neq a2) \wedge (a1.codiceAbbonamento = a2.codiceAbbonamento)); \\
+(\forall u1 \in Utenti. \ \neg(\exists u2 \in Utenti. \ (u1 \neq u2) \wedge (u1.email = u2.email)); \\
+(\forall c \ campo \ dello \ schema. \ c \neq NULL ).
+\end{gather*}
+\pagebreak
+
+\section{Esercizio 3}
+Si pone che oraInizio, oraFine sono dei timestamp, per cui identificano un momento preciso nel tempo.
+% \MyIncludeGraphics{esercizio3.png}
+\pagebreak
+\subsection*{Dipendenze funzionali}
+Il simbolo (*) a destra di una dipendenza funzionale indica tutti gli attributi della relazione corrispondente.
+
+e.g. data R(IdR,A,B) vale che (IdR \( \rightarrow  \ *) \Leftrightarrow \) (IdR \( \rightarrow \) IdR, A, B).
+
+Si ricorda che non vale IdAmbiente1, IdAmbiente2 \( \rightarrow \) *, in quanto nel testo non \`e specificato che una coppia di ambienti sia 
+sempre collegata da uno e un solo varco.
+
+Si ha che la relazione Visite \textit{non} \`e in forma normale di Boyce-Codd in quanto IdBiglietto,IdAbbonamento\( \rightarrow \)IdUtente. Tutte le altre relazioni sono invece in \textbf{BCNF}
+in quanto tutte le dipendenze funzionali individuate sono scomponibili nella forma (X\( \rightarrow \)A) con A attributo e X superchiave.
+
+Si riportano di seguito le dipendenze funzionali; da queste risulta possibile ricavare tutte le altre dipendenze non banali.
+
+\subsubsection*{Musei}
+\begin{gather*}
+IdMuseo \rightarrow *.
+\end{gather*}
+\subsubsection*{Ambienti}
+\begin{gather*}
+codiceAmbiente \rightarrow *; \\
+IdAmbiente \rightarrow *.
+\end{gather*}
+\subsubsection*{Varchi}
+\begin{gather*}
+codiceVarco \rightarrow *; \\
+IdVarco \rightarrow *.
+\end{gather*}
+\subsubsection*{AmbientiDiServizio}
+\begin{gather*}
+IdAmbiente \rightarrow *.
+\end{gather*}
+\subsubsection*{Sale}
+\begin{gather*}
+IdAmbiente \rightarrow *.
+\end{gather*}
+\subsubsection*{Visite}
+\begin{gather*}
+IdBiglietto, \ IdAbbonamento, \ oraInizio, \ oraFine \rightarrow *; \\
+IdBiglietto, \ IdAbbonamento, \ oraInizio \rightarrow *; \\
+IdBiglietto, \ IdAbbonamento, \ oraFine \rightarrow *; \\
+IdBiglietto, \ IdAbbonamento \rightarrow IdUtente; \\
+IdUtente, \ oraInizio, \ oraFine \rightarrow *; \\
+IdUtente, \ oraInizio \rightarrow *; \\
+IdUtente, \ oraFine \rightarrow *; \\
+IdVisita \rightarrow *.
+\end{gather*}
+\subsubsection*{Biglietti}
+\begin{gather*}
+codiceBiglietto \rightarrow *; \\
+IdBiglietto \rightarrow *.
+\end{gather*}
+\subsubsection*{Abbonamenti}
+\begin{gather*}
+codiceAbbonamento \rightarrow *; \\
+IdAbbonamento \rightarrow *.
+\end{gather*}
+\subsubsection*{Sottoscrizioni}
+\begin{gather*}
+IdAbbonamento, \ IdUtente \rightarrow * \\
+\end{gather*}
+\subsubsection*{Utenti}.
+\begin{gather*}
+IdUtente \rightarrow *; \\
+email \rightarrow *.
+\end{gather*}
+\subsubsection*{Iscrizioni}
+\begin{gather*}
+IdUtente, \ IdRivista \rightarrow *.
+\end{gather*}
+\subsubsection*{Spedizioni}
+\begin{gather*}
+IdUtente, \ IdRivista \rightarrow *.
+\end{gather*}
+\subsubsection*{Riviste}
+\begin{gather*}
+IdRivista \rightarrow *.
+\end{gather*}
+\pagebreak
+
+\section{Esercizio 4}
+\subsection*{Esercizio 4.a}
+La query restituisce Id, nome e cognome di tutti e soli gli utenti a cui \`e stata spedita una rivista dopo il 2 Apr. 2021.
+\begin{lstlisting}[style=sql]
+SELECT DISTINCT
+    u.IdUtente, u.nome, u.cognome
+FROM
+    Utenti u
+    JOIN Spedizioni s USING (IdUtente)
+WHERE s.data > '2021-04-02'
+\end{lstlisting}
+\subsection*{Esercizio 4.b}
+La query restituisce Id, Nome, Cognome e numero di sale museali visitate di tutti e soli gli utenti
+che hanno visitato almeno 3 sale museali ordinandoli sul numero di sale museali visitate (in ordine crescente).
+\begin{lstlisting}[style=sql]
+SELECT
+    u.IdUtente, MAX(u.nome) as NomeUtente, 
+    MAX(u.cognome) as CognomeUtente,
+    COUNT(*) AS nVisite
+FROM
+    Utenti u
+    JOIN Visite v USING (IdUtente)
+    JOIN Sale s USING (IdAmbiente)
+WHERE s.tipo = 'museali'
+GROUP BY u.IdUtente
+HAVING COUNT(*) >= 3
+ORDER BY nVisite
+\end{lstlisting}
+\pagebreak
+\subsection*{Esercizio 4.c}
+La query restituisce Id, Nome, Cognome e numero di abbonamenti sottoscritti di tutti e soli
+gli utenti che hanno sottoscritto almeno 2 abbonamenti speciali.
+\begin{lstlisting}[style=sql]
+SELECT
+    u.IdUtente, MAX(u.nome) AS NomeUtente, MAX(u.cognome)
+    AS CognomeUtente, COUNT(*) as nSottoscrizioni
+FROM
+    Utenti u
+    JOIN Sottoscrizioni s USING (IdUtente)
+    JOIN Abbonamenti a USING (IdAbbonamento)
+WHERE (a.speciale = 1)
+GROUP BY u.IdUtente
+HAVING COUNT(*) >= 2
+\end{lstlisting}
+\subsection*{Esercizio 4.d}
+La query restitituisce tutti e soli gli utenti che hanno effettuato almeno una visita
+in una sala per mostre.
+\begin{lstlisting}[style=sql]
+SELECT
+    u.IdUtente, u.nome, u.cognome
+FROM Utenti u
+WHERE
+    EXISTS
+    (
+        SELECT *
+        FROM
+            Visite v
+            JOIN Sale s USING (IdAmbiente)
+        WHERE
+            (v.IdUtente = u.IdUtente) AND (s.tipo = 'per mostre')
+    )
+\end{lstlisting}
+\pagebreak
+\subsection*{Esercizio 4.e}
+La query restituisce tutti e soli i musei per cui tutte le sale sono museali o per mostre.
+\begin{lstlisting}[style=sql]    
+SELECT
+    m.IdMuseo, m.nome
+FROM Musei m
+WHERE
+    NOT EXISTS
+    (
+	    SELECT *
+	    FROM
+            Sale s
+	        JOIN (Ambienti a) USING (IdAmbiente)
+	    WHERE
+            (a.IdMuseo = m.IdMuseo) AND (s.tipo = 'esclusiva')
+    )
+\end{lstlisting}
+\subsection*{Esercizio 4.f}
+La query restituisce ID e nome degli di tutti e soli gli utenti che hanno visitato almeno 100 sale.
+\begin{lstlisting}[style=sql]    
+SELECT
+    u.IdUtente, u.nome
+FROM Utenti u
+WHERE
+    100 <=
+    (
+        SELECT COUNT(*)
+	    FROM Visite v
+	    WHERE (v.IdUtente = u.IdUtente)
+    )
+\end{lstlisting}
+\pagebreak
+
+\section{Esercizio 5}
+\subsection*{Esercizio 5.1.a}
+\begin{forest}
+[\(\delta\)
+    [\( \pi^b_{u.IdUtente, u.Nome, u.Cognome} \)
+        [
+            [\( \Join_{u.IdUtente = s.IdUtente} \) 
+                [\textit{Utenti u}]
+            [
+                \( \sigma_{s.data \ > \ '2021-04-02'} \)
+                    [ \textit{Spedizioni s} ]
+            ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+\pagebreak
+\subsection*{Esercizio 5.1.b}
+\subsubsection*{Versione 1}
+\begin{forest}
+[
+    \( \tau_{nVisite} \)
+    [
+        \( \pi^b_{u.IdUtente, MAX(u.nome) \ AS \ NomeUtente, MAX(u.cognome) \ AS \ CognomeUtente, COUNT(*) \ AS \ nVisite} \)
+        [
+            \( \sigma_{COUNT(*) \geq 3} \)
+            [
+                \( \{ u.IdUtente \} \ \gamma \ \{ MAX(u.nome); MAX(u.cognome); COUNT(*) \} \)
+                [
+                    \( \Join_{v.IdAmbiente = s.IdAmbiente} \)
+                    [
+                        \( \Join_{u.IdUtente = v.IdUtente} \)
+                        [
+                            \textit{Utenti u}
+                        ]
+                        [
+                            \textit{Visite v}
+                        ]
+                    ]
+                    [
+                        \( \sigma_{s.tipo = 'museali'} \)
+                        [
+                            \textit{Sale s}
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+
+Il calcolo degli attributi (\textit{NomeUtente}, \textit{CognomeUtente}) come (MAX(u.nome), MAX(u.cognome))
+- che risulta possibile in quanto il raggruppamento avviene sulla chiave primaria \textit{IdUtente} - 
+permette di avere un piano di accesso fisico leggermente pi\`u efficiente.
+\pagebreak
+\subsubsection*{Versione 2}
+\begin{forest}
+[
+    \( \tau_{nVisite} \)
+    [
+        \( \pi^b_{u.IdUtente, MAX(u.nome) \ AS \ NomeUtente, MAX(u.cognome) \ AS \ CognomeUtente, COUNT(*) \ AS \ nVisite} \)
+        [
+            \( \sigma_{COUNT(*) \geq 3} \)
+            [
+                \( \{ u.IdUtente \} \ \gamma \ \{ MAX(u.nome); MAX(u.cognome); COUNT(*) \} \)
+                [
+                    \( \Join_{u.IdUtente = v.IdUtente} \)
+                    [
+                        \textit{Utenti u}
+                    ]
+                    [
+                        \( \Join_{v.IdAmbiente = s.IdAmbiente} \)
+                        [
+                            \textit{Visite v}
+                        ]
+                        [
+                            \( \sigma_{s.tipo = 'museali'} \)
+                            [
+                                \textit{Sale s}
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+
+Questo piano logico pu\`o essere tradotto in un piano fisico in cui la Sort prima della GroupBy pu\`o essere eliminata.
+\pagebreak
+\subsection*{Esercizio 5.1.c}
+\subsubsection*{Versione 1}
+\begin{forest}
+[
+    \( \pi^b_{u.IdUtente, MAX(u.nome) \ AS \ NomeUtente, MAX(u.cognome) \ AS \ CognomeUtente, COUNT(*) \ AS \ nSottoscrizioni} \)
+    [
+        \( \sigma_{COUNT(*) \geq 2} \)
+        [
+            \( \{ u.IdUtente \} \ \gamma \ \{ MAX(u.nome); MAX(u.cognome); COUNT(*) \} \)
+            [
+                \( \Join_{u.IdUtente = s.IdUtente} \)
+                [
+                    \textit{Utenti u}
+                ]
+                [
+                    \( \Join_{s.IdAbbonamento = a.IdAbbonamento} \)
+                    [
+                        \textit{Sottoscrizioni s}
+                    ]
+                    [
+                        \( \sigma_{a.speciale = 1} \)
+                        [
+                            \textit{Abbonamenti a}
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+
+Anche in questo caso risulta possibile scrivere un piano di accesso fisico in cui la Sort prima della GroupBy viene eliminata.
+\pagebreak
+\subsubsection*{Versione 2}
+\begin{forest}
+[
+    \( \pi^b_{u.IdUtente, MAX(u.nome) \ AS \ NomeUtente, MAX(u.cognome) \ AS \ CognomeUtente, COUNT(*) \ AS \ nSottoscrizioni} \)
+    [
+        \( \sigma_{COUNT(*) \geq 2} \)
+        [
+            \( \{ u.IdUtente \} \ \gamma \ \{ MAX(u.nome); MAX(u.cognome); COUNT(*) \} \)
+            [
+                \( \Join_{a.IdAbbonamento = s.IdAbbonamento} \)
+                [
+                    \( \Join_{u.IdUtente = s.IdUtente} \)
+                    [
+                        \textit{Utenti u}
+                    ]
+                    [
+                        \textit{Sottoscrizioni s}
+                    ]
+                ]
+                [
+                    \( \sigma_{a.speciale = 1} \)
+                    [
+                        \textit{Abbonamenti a}
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+\pagebreak
+\subsection*{Esercizio 5.2.a}
+Previa ridenominazione per semplificare la scrittura: Utenti \( \rightarrow \) u, Spedizioni \( \rightarrow \) s.
+
+\begin{forest}
+[
+    Distinct
+    [
+        Project(u.IdUtente; u.nome; u.cognome)
+        [
+            SortMerge({$u.IdUtente = s.IdUtente$})
+            [
+                Sort(\{u.IdUtente\})
+                [
+                    TableScan(u)
+                ]
+            ]
+            [
+                Sort(\{s.IdUtente\})
+                [
+                    Filter(s.data \( > \) '2021-04-02')
+                    [
+                        TableScan(s)
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+\pagebreak
+\subsection*{Esercizio 5.2.b}
+Previa ridenominazione per semplificare la scrittura: Visite \( \rightarrow \) v, Utenti \( \rightarrow \) u, Sale \( \rightarrow \) s.
+\subsubsection*{Versione 1}
+\begin{forest}
+[
+    Sort(nVisite)
+    [
+        Project(u.IdUtente; MAX(u.nome) AS NomeUtente; MAX(u.cognome) AS CognomeUtente; COUNT(*) AS nVisite)
+        [
+            Filter(COUNT(*) \( \geq \) 3)
+            [
+                GroupBy(\{ u.IdUtente \}; \{MAX(u.nome); MAX(u.cognome); COUNT(*)\})
+                [
+                    Sort(\{u.IdUtente\})
+                    [
+                        SortMerge({$v.IdAmbiente = s.IdAmbiente$})
+                        [
+                            Sort(\{v.IdAmbiente\})
+                            [
+                                SortMerge({$u.IdUtente = v.IdUtente$})
+                                [
+                                    Sort(\{u.IdUtente\})
+                                    [
+                                        TableScan(u)
+                                    ]
+                                ]
+                                [
+                                    Sort(\{v.IdUtente\})
+                                    [
+                                        TableScan(v)
+                                    ]
+                                ]
+                            ]
+                        ]
+                        [
+                            Sort(\{s.IdAmbiente\})
+                            [
+                                Filter({$s.tipo = 'museali'$})
+                                [
+                                    TableScan(s)
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+\pagebreak
+\subsubsection*{Versione 2}
+\begin{forest}
+[
+    Sort(nVisite)
+    [
+        Project(u.IdUtente; MAX(u.nome) AS NomeUtente; MAX(u.cognome) AS CognomeUtente; COUNT(*) AS nVisite)
+        [
+            Filter(COUNT(*) \( \geq \) 3)
+            [
+                GroupBy(\{ u.IdUtente \}; \{MAX(u.nome); MAX(u.cognome); COUNT(*)\})
+                [
+                    SortMerge({$v.IdUtente = u.IdUtente$})
+                    [
+                        Sort(\{u.IdUtente\})
+                        [
+                            TableScan(u)
+                        ]
+                    ]
+                    [
+                        Sort(\{v.IdUtente\})
+                        [
+                            SortMerge({$v.IdAmbiente = s.IdAmbiente$})
+                            [
+                                Sort(\{v.IdUtente\})
+                                [
+                                    TableScan(v)
+                                ]
+                            ]
+                            [
+                                Sort(\{s.IdAmbiente\})
+                                [
+                                    Filter({$s.tipo = 'museali'$})
+                                    [
+                                        TableScan(s)
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+
+Questa versione contiene 14 operatori al posto dei 15 dell'altra; si \`e potuto eliminare la Sort prima della
+GroupBy in quanto l'output di SortMerge al quarto livello dell'albero \`e gi\`a ordinato su u.IdUtente per definizione
+(dell'operatore).
+\pagebreak
+\subsection*{Esercizio 5.2.c}
+Previa ridenominazione per semplificare la scrittura: Abbonamenti \( \rightarrow \) a, Utenti \( \rightarrow \) u, Sottoscrizioni \( \rightarrow \) s.
+\subsubsection*{Versione 1}
+\begin{forest}
+[
+    Project(u.IdUtente; MAX(u.nome) AS NomeUtente; MAX(u.cognome) AS CognomeUtente; COUNT(*) AS nSottoscrizioni)
+    [
+        Filter(COUNT(*) \( \geq \) 2)
+        [
+            GroupBy(\{u.IdUtente\}; \{MAX(u.nome); MAX(u.cognome); COUNT(*)\})
+            [
+                Sort(\{u.IdUtente\})
+                [
+                    SortMerge({$ s.IdAbbonamento = a.IdAbbonamento $})
+                    [
+                        Sort(\{ s.IdAbbonamento \})
+                        [
+                            SortMerge({$ u.IdUtente = s.IdUtente $})
+                            [
+                                Sort(\{ u.IdUtente \})
+                                [
+                                    TableScan(u)
+                                ]
+                            ]
+                            [
+                                Sort(\{ s.IdUtente \})
+                                [
+                                    TableScan(s)
+                                ]
+                            ]
+                        ]
+                    ]
+                    [
+                        Sort(\{ a.IdAbbonamento \})
+                        [
+                            Filter({$ a.speciale = 1 $})
+                            [
+                                TableScan(a)
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+\pagebreak
+\subsubsection*{Versione 2}
+\begin{forest}
+[
+    Project(u.IdUtente; MAX(u.nome) AS NomeUtente; MAX(u.cognome) AS CognomeUtente; COUNT(*) AS nSottoscrizioni)
+    [
+        Filter(COUNT(*) \( \geq \) 2)
+        [
+            GroupBy(\{u.IdUtente\}; \{MAX(u.nome); MAX(u.cognome); COUNT(*)\})
+            [
+                SortMerge({$u.IdUtente = s.IdUtente$})
+                [
+                    Sort(\{u.IdUtente\})
+                    [
+                        TableScan(u)
+                    ]
+                ]
+                [
+                    Sort(\{s.IdUtente\})
+                    [
+                        SortMerge({$ s.IdAbbonamento = a.IdAbbonamento $})
+                        [
+                            Sort(\{s.IdAbbonamento\})
+                            [
+                                TableScan(s)
+                            ]
+                        ]
+                        [
+                            Sort(\{a.IdAbbonamento\})
+                            [
+                                Filter({$a.speciale = 1$})
+                                [
+                                    TableScan(a)
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+
+Questa versione contiene 13 operatori al posto dei 14 dell'altra; anche in questo caso la Sort prima della
+GroupBy pu\`o essere eliminata poich\'e l'output di SortMerge al quarto livello dell'albero risulta ordinato su u.IdUtente.
+\pagebreak
+\subsection*{Esercizio 5.3.a}
+Previa ridenominazione per semplificare la scrittura: Utenti \( \rightarrow \) u, Spedizioni \( \rightarrow \) s;
+si assumono inoltre gli indici IdxUtentePK su u.IdUtente, IdxUtenteFK su s.IdUtente.
+
+\begin{forest}
+[
+    Distinct
+    [
+        Project(u.IdUtente; u.nome; u.cognome)
+        [
+            IndexNestedLoop({$u.IdUtente = s.IdUtente$})
+            [
+                TableScan(u)
+            ]
+            [
+                IndexFilter(s; IdxUtenteFK; s.data \( > \) '2021-04-02')
+            ]
+        ]
+    ]
+]
+\end{forest}
+
+Non si fa uso di IdxUtentePK in quanto un operatore IndexFilter(u, ...) avrebbe condizione \textit{true}
+e sarebbe "equivalente" a IndexScan.
+\pagebreak
+\subsection*{Esercizio 5.3.b}
+\subsubsection*{Versione 1}
+
+Previa ridenominazione per semplificare la scrittura: Visite \( \rightarrow \) v, Utenti \( \rightarrow \) u, Sale \( \rightarrow \) s;
+si assumono inoltre gli indici IdxvAmbiente su v.IdAmbiente, IdxsAmbiente su s.IdAmbiente.
+
+\begin{forest}
+[
+    Sort(nVisite)
+    [
+        Project(u.IdUtente; MAX(u.nome) AS NomeUtente; MAX(u.cognome) AS CognomeUtente; COUNT(*) AS nVisite)
+        [
+            Filter(COUNT(*) \( \geq \) 3)
+            [
+                GroupBy(\{ u.IdUtente \}; \{MAX(u.nome); MAX(u.cognome); COUNT(*)\})
+                [
+                    Sort(\{u.IdUtente\})
+                    [
+                        IndexNestedLoop({$v.IdAmbiente = s.IdAmbiente$})
+                        [
+                            [
+                                Sort(\{v.IdAmbiente\})
+                                [
+                                    SortMerge({$u.IdUtente = v.IdUtente$})
+                                    [
+                                        Sort(\{u.IdUtente\})
+                                        [
+                                            TableScan(u)
+                                        ]
+                                    ]
+                                    [
+                                        Sort(\{v.IdUtente\})
+                                        [
+                                            TableScan(v)
+                                        ]
+                                    ]
+                                ]
+                            ]
+                            [
+                                IndexFilter(s; IdxsAmbiente; {$s.tipo = 'museali'$})
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+
+Per lo stesso motivo che al punto precedente, non risulta necessario fare uso di IdxvAmbiente.
+\pagebreak
+\subsubsection*{Versione 2}
+Previa ridenominazione per semplificare la scrittura: Visite \( \rightarrow \) v, Utenti \( \rightarrow \) u, Sale \( \rightarrow \) s;
+si assumono inoltre gli indici IdxvAmbiente su v.IdAmbiente, IdxsAmbiente su s.IdAmbiente, IdxuUtente su u.IdUtente.
+
+\begin{forest}
+[
+    Sort(nVisite)
+    [
+        Project(u.IdUtente; MAX(u.nome) AS NomeUtente; MAX(u.cognome) AS CognomeUtente; COUNT(*) AS nVisite)
+        [
+            Filter(COUNT(*) \( \geq \) 3)
+            [
+                GroupBy(\{ u.IdUtente \}; \{MAX(u.nome); MAX(u.cognome); COUNT(*)\})
+                [
+                    SortMerge({$v.IdUtente = u.IdUtente$})
+                    [
+                        Sort(\{u.IdUtente\})
+                        [
+                            TableScan(u)
+                        ]
+                    ]
+                    [
+                        Sort(\{v.IdUtente\})
+                        [
+                            IndexNestedLoop({$v.IdAmbiente = s.IdAmbiente$})
+                            [
+                                TableScan(v)
+                            ]
+                            [
+                                IndexFilter(s; IdxsAmbiente; {$s.tipo = 'museali'$})
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+
+La Sort prima della GroupBy pu\`o essere eliminata e - come prima - non si fa uso di IdxvAmbiente per lo stesso motivo.
+Non si ricorre neanche a IdxuUtente in quanto \textit{non} \`e sulla relazione interna; anche invertendo le due met\`a del sottoalbero
+si ripresenterebbe il problema di non avere condizioni su u: non risulta dunque possibile convertire SortMerge in una IndexNestedLoop.
+\pagebreak
+\subsection*{Esercizio 5.3.c}
+Previa ridenominazione per semplificare la scrittura: Abbonamenti \( \rightarrow \) a, 
+Utenti \( \rightarrow \) u, Sottoscrizioni \( \rightarrow \) s; si assumono inoltre gli indici IdxuUtente su u.IdUtente, IdxsAbb su s.IdAbbonamento e 
+IdxaAbb su a.IdAbbonamento.
+\subsubsection*{Versione 1}
+\begin{forest}
+[
+    Project(u.IdUtente; MAX(u.nome) AS NomeUtente; MAX(u.cognome) AS CognomeUtente; COUNT(*) AS nSottoscrizioni)
+    [
+        Filter(COUNT(*) \( \geq \) 2)
+        [
+            GroupBy(\{u.IdUtente\}; \{MAX(u.nome); MAX(u.cognome); COUNT(*)\})
+            [
+                SortMerge({$u.IdUtente = s.IdUtente$})
+                [
+                    Sort(\{u.IdUtente\})
+                    [
+                        TableScan(u)
+                    ]
+                ]
+                [
+                    Sort(\{ s.IdUtente \})
+                    [
+                        IndexNestedLoop({$ s.IdAbbonamento = a.IdAbbonamento $})
+                        [
+                            TableScan(s)
+                        ]
+                        [
+                            IndexFilter(a; IdxaAbb; {$a.speciale = 1$})
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+
+La Sort prima della GroupBy viene eliminata, si fa uso di un solo indice per gli stessi motivi che al punto (b); SortMerge non risulta convertibile in IndexNestedLoop.
+\pagebreak
+\subsubsection*{Versione 2}
+\begin{forest}
+[
+    Project(u.IdUtente; MAX(u.nome) AS NomeUtente; MAX(u.cognome) AS CognomeUtente; COUNT(*) AS nSottoscrizioni)
+    [
+        Filter(COUNT(*) \( \geq \) 2)
+        [
+            GroupBy(\{u.IdUtente\}; \{MAX(u.nome); MAX(u.cognome); COUNT(*)\})
+            [
+                Sort(\{u.IdUtente\})
+                [
+                    IndexNestedLoop({$ s.IdAbbonamento = a.IdAbbonamento $})
+                    [
+                        SortMerge({$ s.IdUtente = u.IdUtente $})
+                        [
+                            Sort(\{ u.IdUtente \})
+                            [
+                                TableScan(u)
+                            ]
+                        ]
+                        [
+                            Sort(\{ s.IdUtente \})
+                            [
+                                TableScan(s)
+                            ]
+                        ]
+                    ]
+                    [
+                        IndexFilter(a; IdxaAbb; {$ a.speciale = 1 $})
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+\end{forest}
+
+Si faccia riferimento ai piani di accesso precedenti per il mancato uso di IdxuUtente e IdxsAbb.
+\end{document}
