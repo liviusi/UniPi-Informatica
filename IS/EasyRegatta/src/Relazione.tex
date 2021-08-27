@@ -1,0 +1,252 @@
+\documentclass[10pt, openany, landscape]{book}
+% Set page margins
+\usepackage[top=100pt,bottom=95pt,left=66pt,right=66pt]{geometry}
+
+\usepackage[]{graphicx}
+% If multiple images are to be added, a folder (path) with all the images can be added here 
+\graphicspath{ {images/} }
+ 
+% All page numbers positioned at the bottom of the page
+\usepackage{fancyhdr}
+\usepackage{lscape}
+\usepackage{adjustbox}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{setspace}
+
+\fancyhf{} % clear all header and footers
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\pagestyle{fancy}
+
+% Changes the style of chapter headings
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
+
+% Change distance between chapter header and text
+\titlespacing{\chapter}{0pt}{50pt}{2\baselineskip}
+\usepackage{titlesec}
+\titleformat{\section}
+  [hang] % <shape>
+  {\normalfont\bfseries\Large} % <format>
+  {} % <label>
+  {0pt} % <sep>
+  {} % <before code>
+\renewcommand{\thesection}{} % Remove section references...
+\renewcommand{\thesubsection}{\arabic{subsection}} %... from subsections
+
+% Numbered subsections
+\setcounter{secnumdepth}{3}
+
+% Prevents LaTeX from filling out a page to the bottom
+\raggedbottom
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\singlespace
+% Code Listings
+\definecolor{vgreen}{RGB}{104,180,104}
+\definecolor{vblue}{RGB}{49,49,255}
+\definecolor{vorange}{RGB}{255,143,102}
+\definecolor{vlightgrey}{RGB}{245,245,245}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{codeStyle}{
+	language=Java,
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\begin{document}
+
+\begin{titlepage}
+	\clearpage\thispagestyle{empty}
+	\centering
+	\vspace{1cm}
+
+    \includegraphics[scale=0.60]{unipi-logo.png}
+    
+	{\normalsize \noindent Dipartimento di Informatica \\
+	             Corso di Laurea in Informatica \par}
+	
+	\vspace{2cm}
+	{\Huge \textbf{EasyRegatta} \par}
+	\vspace{1cm}
+	{\large Ingegneria del Software a.a. 2020/2021}
+
+    \begin{minipage}[t]{0.47\textwidth}
+    	{\large{ Prof.ssa Roberta Gori}}
+    \end{minipage}\hfill\begin{minipage}[t]{0.47\textwidth}\raggedleft
+        {\large {F D L - ------ \\ }}
+        {\large {A F - ------ \\ }}
+    	{\large {Giacomo Trapani - ------ \\ }}
+    \end{minipage}
+
+    \vspace{4cm}
+
+	\pagebreak
+
+\end{titlepage}
+
+% A * after the section/chapter command indicates an unnumbered header which will not be added to the table of contents
+
+\section{Esercizio 1}
+Il diagramma dei casi d'uso descrive le funzionalit\`a che il sistema mette a disposizione all'esterno.
+Degni di nota sono il caso d'uso relativo alle comunicazioni - ("\textbf{Effettua una comunicazione}") - che prevede che il sistema
+faccia da tramite per le comunicazioni tra imbarcazioni, alle informazioni sui tempi di gara - (i.e. "\textbf{Registrazione
+tempo di arrivo}", "\textbf{Comunica passaggio in boa}") - che implicano che il sistema venga utilizzato per segnare in tempo reale
+i dati riguardo le posizioni in classifica, alla gestione di una singola gara - ("\textbf{Gestione gara}") - che astrae le
+features necessarie a descrivere, condurre e terminare una gara.
+\pagebreak
+\subsubsection*{Narrativa.}
+Si fornisce la narrativa del caso d'uso "\textbf{Modifica bando}".
+\begin{table}[H]
+    \begin{tabular}{@{}|l|l|@{}}
+    \toprule
+    \textbf{Nome}                              & Modifica bando.                                                                                                                                                                      \\ \midrule
+    \textbf{Breve Descrizione}                 & Effettua la modifica del bando aggiornando il catalogo, invia una notifica a tutte le \\
+    ~       & barche che si erano iscritte prima della modifica.                                          \\ \midrule
+    \textbf{Attori Primari}                    & Autorità Organizzatrice.                                                                                                                                                             \\ \midrule
+    \textbf{Attori Secondari}                  & Nessuno.                                                                                                                                                                             \\ \midrule
+    \textbf{Precondizioni}                     & Il bando esiste all’interno del Sistema.                                                                                                                                             \\ \midrule
+    \textbf{Sequenza degli eventi principale}  & \begin{tabular}[c]{@{}l@{}}Accerta che i nuovi dati siano corretti.\\ Modifica il bando.\\ Aggiorna il catalogo.\\ Notifica la modifica del bando a tutti i suoi iscritti.\end{tabular} \\ \midrule
+    \textbf{Postcondizioni}                    & Il bando è stato modificato, tutte le barche che si sono iscritte prima della modifica \\
+    ~       &  hanno ricevuto una notifica.                                                                   \\ \midrule
+    \textbf{Sequenze alternative degli eventi} & Dati non corretti, modifica annullata.                                                                                                                                              \\ \bottomrule
+    \end{tabular}
+    \end{table}
+\pagebreak
+\section{Esercizio 2}
+Viene fornito il diagramma di sequenza per "\textbf{Effettua una comunicazione}". Si sceglie di ripetere il tentativo di
+avviare una comunicazione con l'imbarcazione destinataria fino a che il mittente non riesce a connettersi rendendo il
+meccanismo quanto pi\`u possibile trasparente all'utente.
+
+\pagebreak
+
+\section{Esercizio 3}
+All'interno del diagramma delle classi vengono descritte le entit\`a fondanti il dominio del progetto. Si sceglie - coerentemente
+con quanto descritto all'interno del diagramma dell'esercizio precedente - di modellare le comunicazioni come un qualcosa che
+riguarda solo le imbarcazioni coinvolte.
+
+\pagebreak
+
+\section{Esercizio 4}
+All'interno del diagramma si riconosce come stato fondamentale (in quanto quello di interesse ai fini dell'esercizio)
+"\textbf{Gara}", vero e proprio nodo nevralgico per tutte le interazioni che una imbarcazione pu\`o avere (i.e. effettuare
+comunicazioni, inviare proteste, inviare il tempo di passaggio alle boe e tagliare il traguardo). Seguendo la specifica, si
+sceglie di terminare la vita di una imbarcazione (relativamente a una regata) solo dopo un'ora dal momento in cui si \`e
+tagliato il traguardo poich\'e si deve permettere l'invio di proteste anche dopo l'arrivo (ma comunque entro un'ora da questo):
+per questo motivo si sceglie di adoperare uno stato "\textbf{Idle}" in modo da non uscire da "\textbf{Arrivato}"
+fino al timeout. La stessa logica si utilizza anche per segnare una imbarcazione come "\textit{Non partita}" - flag che necessita
+di un altro timeout - a patto che siano passati 30 minuti dal momento in cui \`e arrivato il segnale di "\textit{Partenza}"
+e questa non sia - appunto - ancora partita.
+
+\pagebreak
+
+\section{Esercizio 5}
+Si modellano le attivit\`a svolte dall'indizione del bando alla fine della regata.
+La prima sottoattivit\`a svolta - "\textbf{Bando}" - riguarda l'indizione di un bando e le operazioni che ne vengono implicate
+(i.e. la gestione delle iscrizioni, la possibilit\`a di modificare un bando a patto che non si sia ancora raggiunto il termine
+delle iscrizioni); una volta nominato il comitato di gara (evento che si suppone avvenga al termine delle iscrizioni al bando
+e prima della regata) si passa a una seconda sottoattivit\`a - "\textbf{Gara}" - che modella lo svolgimento della regata (dalla
+gestione delle proteste a quella delle comunicazioni tra imbarcazioni, dai segnali di partenza a quelli per il passaggio alle boe);
+si conclude stilando la classifica delle imbarcazioni un'ora dopo il tempo limite.
+
+\pagebreak
+
+\section{Esercizio 6}
+\subsubsection*{Vista componenti-connettori.}
+Si sceglie di dividere il sistema software \textit{EasyRegatta} in due componenti fondamentali.
+La prima - "\textbf{GestioneBandi}" - si occupa della pubblicazione dei bandi (e il loro salvataggio) e permette agli
+utenti di consultarne comunicando con il database a questi dedicato - "\textbf{DataBaseBandi}" - abilitandone, inoltre, l'iscrizione
+attraverso "\textbf{AppIscrizioni}", componente con la quale si interfaccia anche per inviare notifiche agli (utenti) iscritti
+in seguito a modifiche; la seconda - "\textbf{GestioneGare}" - si occupa di seguire per intero una regata (i.e. stilando
+la classifica, permettendo di esaminare le proteste etc.), comunica con un database - "\textbf{DataBaseGare}" - nel quale
+salva i risultati della competizione e con "\textbf{AppComunicazioni}", utilizzata per gestire le proteste (la stessa componente
+viene utilizzata anche per le comunicazioni tra imbarcazioni senza che queste passino dalla componente centrale).
+
+\pagebreak
+
+\subsubsection*{Vista di dislocazione.}
+A livello hardware si identificano 4 differenti ambienti di esecuzione: il server centrale - "\textbf{ApplicationServer}" -
+utilizzato anche per le basi di dati mantenute dal sistema; il dispositivo di un utente - "\textbf{DispositivoUtente}" -
+(e.g. uno smartphone, un computer etc.) su cui viene eseguito l'applicativo che consente l'iscrizione a un bando; il dispositivo
+utilizzato dal comitato di regata - "\textbf{ComputerComitato}" - che viene utilizzato durante lo svolgimento della gara (e.g. pu\`o
+essere utilizzato per la gestione delle proteste); il dispositivo utilizzato all'interno delle imbarcazioni -
+"\textbf{ComputerBarca}" - utilizzato per la gestione delle comunicazioni (tra imbarcazioni).
+
+\pagebreak
+
+\section{Esercizio 7}
+Per impostare il test, si individuano delle categorie secondo le quali partizionare i valori in input:
+\begin{itemize}
+\itemsep0em
+    \item nome := [a-zA-Z][a-zA-Z ]+ \textbar \ "" \textbar \ null \textbar \ NOT([a-zA-Z][a-zA-Z ]+). Il primo pattern corrisponde alle stringhe che contengono solo spazi, lettere maiuscole e lettere minuscole (e che non iniziano con uno spazio). Si considera valido solo se (il match col primo pattern) ha successo. La notazione utilizzata per l'ultima \`e per identificare tutte le stringhe che falliscono il match con la prima espressione regolare.
+    \item rating := \(\{x : x \in Z \ \wedge \ x \in [-\infty; 0]\} \) \textbar \ \(\{x : x \in N \ \wedge \ x \neq 0\} \). Si considera valido solo per valori maggiori di zero.
+    \item temporeale = \(\{x : x \in Z \ \wedge \ x \in [-\infty; 0]\} \) \textbar \ \(\{x : x \in N \ \wedge \ x \neq 0\} \). Si considera valido solo per valori maggiori di zero.
+    \item distanza = \(\{x : x \in Z \ \wedge \ x \in [-\infty; 0]\} \) \textbar \ \(\{x : x \in N \ \wedge \ x \neq 0\} \). Si considera valido solo per valori maggiori di zero.
+    \item Tempo Compensato = \(\{x : x \in Z \ \wedge \ x \in [-\infty; 0]\} \) \textbar \ \(\{x : x \in N \ \wedge \ x \neq 0\} \). Si considera valido solo per valori maggiori di zero.
+    \item rep[i] = null \textbar \ definito. Si considera valido se tutti i campi sono validi.
+    \item rep = null \textbar \  [] \textbar \ array con almeno un elemento. Si considera valido se tutti gli elementi sono validi.
+\end{itemize}
+Si distinguono dunque 384 possibili combinazioni, tra queste se ne scelgono 11, una per ogni caso non valido che non viene
+gestito + una valida. Si sceglie un criterio \textit{white box}.
+
+Si scrive la seguente batteria di test:
+
+\begin{table}[H]
+    \scalebox{0.85}{
+    \begin{tabular}{@{}|l|l|@{}}
+    \toprule
+    \textbf{Input}                                                                & \textbf{output atteso}                 \\ \midrule
+    \{\textless{}null, 5\textgreater{}\}                                          & errore: array null.                    \\ \midrule
+    \{\textless{}{[}{]},3\textgreater{}\}                                         & errore: array vuoto.                   \\ \midrule
+    \{\textless{}{[}\{“Luca”, 4.5, 10\}, \{“Antonio, 5.5, 11\}, \{“Mario”, 1.2, 23\}{]}, -8\textgreater{}\}        & errore: distanza non positiva.              \\ \midrule
+    \{\textless{}{[}\{“Fabio”, 2.3, 20\}, \{null, 4.1, 10\}{]}, 4\textgreater{}\} & errore: rep{[}1{]}.nome null.          \\ \midrule
+    \{\textless{}{[}\{“Francesco”,-1.3,23\}{]}, \{“Alberto”,3.2, 14\}{]}, 2\textgreater{}\}                        & errore: rep{[}0{]}.rating non positivo.     \\ \midrule
+    \{\textless{}{[}\{“Luca”, 4.5, -3\}, \{“Antonio, 5.5, 11\}, \{“Mario”, 1.2, 23\}{]}, 4\textgreater{}\}         & errore: rep{[}0{]}.tempoReale non positivo. \\ \midrule
+    \{\textless{}{[}\{“Aldo”, 4.5, 30\}, \{“”, 3.4, 25\}{]}, 4\textgreater{}\}    & errore: rep{[}1{]}.nome vuoto.         \\ \midrule
+    \{\textless{}{[}\{“Marco”, 2.5, 31\}, \{“!!?”, 3.5, 21\}{]}, 2\textgreater{}\}                                 & errore: rep{[}1{]}.nome non valido.         \\ \midrule
+    \{\textless{}{[}\{“Giovanni”, 9.1, 35\}, null{]}, 6\textgreater{}\}           & errore: rep{[}1{]} null.               \\ \midrule
+    \{\textless{}{[}\{”Federico”, 2.5, 52\}{]}, 10\textgreater{}\}                & errore: Tempo Compensato non positivo. \\ \midrule
+    \{\textless{}{[}\{“Giacomo”, 4.5, 40\}, \{“Alberto”, 1.2, 20\}, \{“Francesco”, 2.3, 45\}{]}, 8\textgreater{}\} & “Giacomo”.                                  \\ \bottomrule
+    \end{tabular}
+    }
+    \end{table}
+Si implementa il seguente test driver:
+
+\begin{lstlisting}[style=codeStyle]
+bool testDriver()
+{
+    Report [] r = new Report[3];
+    r[0] = new Report("Giacomo", 4.5, 40);
+    r[1] = new Report("Alberto", 1.2, 20);
+    r[2] = new Report("Francesco", 2.3, 45);
+    String v = calcolaVincitore(r, 8);
+    return v.equals("Giacomo");
+}
+\end{lstlisting}
+
+\end{document}
