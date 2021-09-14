@@ -31,7 +31,7 @@ public class Assignment
 					System.out.println("TIME'S UP!\nAccuracy reached = " + Math.abs(pi - Math.PI));
 					break;
 				}
-				if (Math.abs(pi - Math.PI) <= accuracy)
+				if (Math.abs(pi - Math.PI) < accuracy)
 				{
 					System.out.println("ACCURACY THERSHOLD REACHED!\nAccuracy = " + accuracy + " - Reached: " + Math.abs(pi - Math.PI));
 					break;
