@@ -1,8 +1,6 @@
 public class Assignment
 {
 
-	boolean cond = true;
-
 	class GregoryLeibniz implements Runnable
 	{
 		private double accuracy;
@@ -23,14 +21,14 @@ public class Assignment
 		public void run()
 		{
 			int sign = 1;
-			while(cond)
+			while(true)
 			{
 				pi += sign * (4.0 / (step * 2 + 1));
 				sign *= -1;
 				step += 1;
 				if (Thread.currentThread().isInterrupted())
 				{
-					System.out.println("TIME'S UP!");
+					System.out.println("TIME'S UP!\nAccuracy reached = " + Math.abs(pi - Math.PI));
 					break;
 				}
 				if (Math.abs(pi - Math.PI) <= accuracy)
