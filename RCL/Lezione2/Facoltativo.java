@@ -1,7 +1,7 @@
-import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.*;
 
-public class Assignment
+public class Facoltativo
 {
 
 	class Persona implements Runnable
@@ -37,44 +37,44 @@ public class Assignment
 
 	public static void main(String[] args)
 	{
-		if (args.length != 3) return;
+		if (args.length != 1) return;
 
-		final int primaSalaMax; // capienza prima sala
-		final int secondaSalaMax; // capienza seconda sala (i.e. k)
+		final int secondaSalaMax;
 		final int numSportelli = 4;
-		final int numVisitatori; // necessario per assicurare la terminazione
+		final int timeout = 500;
+		final int intervalLength = 150;
 		try
 		{
-			primaSalaMax = Integer.parseInt(args[0]);
-			secondaSalaMax = Integer.parseInt(args[1]);
-			numVisitatori = Integer.parseInt(args[2]);
+			secondaSalaMax = Integer.parseInt(args[0]);
 		}
 		catch (NumberFormatException e) { return; }
 
-		Assignment assignment = new Assignment();
-		Queue<Integer> primaSalaCoda = new LinkedBlockingQueue<Integer>(primaSalaMax);
+		Facoltativo facoltativo = new Facoltativo();
 		PriorityBlockingQueue<Runnable> secondaSalaCoda = new PriorityBlockingQueue<>(secondaSalaMax);
-		ExecutorService service = new ThreadPoolExecutor(numSportelli, numSportelli, 5000, TimeUnit.MILLISECONDS, secondaSalaCoda);
+		ThreadPoolExecutor service = new ThreadPoolExecutor(numSportelli, numSportelli, timeout, TimeUnit.MILLISECONDS, secondaSalaCoda);
+		service.allowCoreThreadTimeOut(true);
+		Random random = new Random();
+
 
 		int i = 0;
-		while (i < numVisitatori)
+		while (true)
 		{
-			if (primaSalaCoda.isEmpty()) // riempio la coda
-				for (int j = i; primaSalaCoda.offer(j+1); j++) i++;
-			while (!primaSalaCoda.isEmpty()) // svuoto la coda
+			Persona task = facoltativo.new Persona(i+1);
+			try { service.execute(facoltativo.new PersonaTask(task)); }
+			catch (RejectedExecutionException r)
 			{
-				Persona task = assignment.new Persona(primaSalaCoda.remove());
-				try { service.execute(assignment.new PersonaTask(task)); }
-				catch (RejectedExecutionException r)
+				try
 				{
-					try
-					{
-						Thread.sleep(50);
-						service.execute(assignment.new PersonaTask(task));
-					}
-					catch (Exception e) { System.exit(1); }
+					Thread.sleep(50);
+					service.execute(facoltativo.new PersonaTask(task));
 				}
+				catch (Exception e) { System.exit(1); }
 			}
+			long sleepingTime = random.nextInt(timeout + intervalLength) - intervalLength;
+			if (sleepingTime >= timeout) break;
+			try { Thread.sleep(sleepingTime); }
+			catch (Exception e) { return; }
+			i++;
 		}
 		service.shutdown();
 	}
