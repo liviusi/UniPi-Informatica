@@ -308,6 +308,44 @@ I layer dal livello 5 al 7 sono di supporto all'elaborazione e interazione con l
 alla rete e all'infrastruttura trasmissiva (realizzati a livello hardware e software); tipicamente i nodi intermedi implementano solo i primi
 4.
 
+Il modello prevede inoltre l'incapsulamento: il flusso di informazioni - che ha origine al livello applicativo - discende verso i livelli inferiori e
+viene progressivamente arricchita mediante l'aggiunta di headers.
+
+Si danno in proposito le seguenti definizioni:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item \textbf{Header}: qualificazione del pacchetto dati al livello corrente.
+	\item \textbf{Data}: payload proveniente dal livello precedente.
+	\item \textbf{Trailer}: usato in funzione di trattamento dell'errore.
+\end{itemize}
+
+\subsubsection*{Stack protocollare TCP/IP.}
+TCP/IP \`e una famiglia di protocolli attualmente utilizzata in Internet. Si tratta di una gerarchia di protocolli, ciascuno dei quali fornisce
+funzionalità specifiche. Prende di riferimento il modello ISO/OSI e si articola nei seguenti 5 livelli (elencati dall'alto al basso):
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item \textbf{Application Layer}: \`e di supporto alle applicazioni di rete, permette un collegamento logico end-to-end; si usa per lo scambio di
+	pacchetti di informazioni detti "messaggi". Include i HTTP, FTP, SMTP...
+	\item \textbf{Transport Layer}: permette il trasporto di messaggi tra sistemi terminali; un pacchetto a questo livello prende il nome di "segmento".
+	Include i protocolli TCP (connection oriented, garantisce la consegna dei messaggi) e UDP (connectionless, non garantisce la consegna dei messaggi).
+	\item \textbf{Network Layer}: si occupa dell'instradamento di pacchetti detti "datagrammi" dalla sorgente alla destinazione tipicamente attraversando
+	una serie di router. Include i protocolli IP, ICMP.
+	\item \textbf{Link Layer}: si occupa di trasferire pacchetti detti "frame" attraverso il collegamento tra elementi di rete vicini. Include i protocolli
+	Ethernet, PPP, WiFi...
+	\item \textbf{Physical Layer}: si occupa di trasferire individualmente i bit contenuti nei singoli frame da un nodo al successivo.
+\end{itemize}
+
+\begin{figure}[h!]
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.18]{images/livello-fisico-tcp_ip.png}
+		\caption{Comunicazione in una internet - livello fisico.}
+	\end{subfigure}
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.18]{images/incapsulamento-tcp_ip.png}
+		\caption{Comunicazione in una internet - incapsulamento.}
+	\end{subfigure}
+\end{figure}
+
 \pagebreak
 
 \subsubsection*{Formato dei messaggi.}
