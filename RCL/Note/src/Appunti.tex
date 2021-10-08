@@ -1,0 +1,393 @@
+\documentclass[11pt, italian, openany]{book}
+% Set page margins
+\usepackage[margin=2cm]{geometry}
+
+\usepackage[]{graphicx}
+\usepackage{setspace}
+\usepackage{mathptmx}
+\singlespace % interlinea singola
+% If multiple images are to be added, a folder (path) with all the images can be added here 
+\graphicspath{ {images/} }
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+ 
+% All page numbers positioned at the bottom of the page
+\usepackage{fancyhdr}
+\fancyhf{} % clear all header and footers
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\pagestyle{fancy}
+
+% Changes the style of chapter headings
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
+
+% Change distance between chapter header and text
+\titlespacing{\chapter}{0pt}{35pt}{\baselineskip}
+\usepackage{titlesec}
+\titleformat{\section}
+  [hang] % <shape>
+  {\normalfont\bfseries\Large} % <format>
+  {} % <label>
+  {0pt} % <sep>
+  {} % <before code>
+\renewcommand{\thesection}{} % Remove section references...
+\renewcommand{\thesubsection}{\arabic{subsection}} %... from subsections
+
+% Numbered subsections
+\setcounter{secnumdepth}{3}
+
+% Prevents LaTeX from filling out a page to the bottom
+\raggedbottom
+
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{subcaption}
+% Code Listings
+\definecolor{vgreen}{RGB}{104,180,104}
+\definecolor{vblue}{RGB}{49,49,255}
+\definecolor{vorange}{RGB}{255,143,102}
+\definecolor{vlightgrey}{RGB}{245,245,245}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\usepackage{listings}
+
+\lstdefinestyle{code}{
+    language=bash,
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\begin{document}
+
+\begin{sloppypar}
+\begin{titlepage}
+	\clearpage\thispagestyle{empty}
+	\centering
+	\vspace{1cm}
+
+    \includegraphics[scale=0.60]{unipi-logo.png}
+    
+	{\normalsize \noindent Dipartimento di Informatica \\
+	             Corso di Laurea in Informatica \par}
+	
+	\vspace{2cm}
+	{\Huge \textbf{Reti di Calcolatori} \par }
+
+    \vspace{4cm}
+
+	{\normalsize Giacomo Trapani \\ Anno Accademico 2020/2021\par}
+
+	\pagebreak
+
+\end{titlepage}
+\subsection*{Premessa.}
+Si danno le seguenti definizioni:
+\begin{itemize}[topsep=0pt]
+\itemsep-0.3em
+	\item \textbf{Rete}: interconnessione di dispositivi in grado di scambiarsi informazioni, quali sistemi terminali, router, switch e modem.
+	\item \textbf{Host} (\textbf{sistema terminale}): sono macchine appartenenti agli utenti finali, dedicate all'esecuzione di applicazioni (e.g. computer,
+	tablet, smartphone) oppure "server" che forniscono servizi a diverse applicazioni utente (e.g. posta elettronica, web).
+	\item \textbf{Dispositivi di interconnessione}: si distinguono in "router" (i.e. dispositivi che interconnettono reti) e "switch"
+	(i.e. dispositivi che collegano fra loro molteplici host a livello locale).
+	\item \textbf{Collegamenti} (\textbf{link}): mezzi trasmissivi (cablati, wireless).
+\end{itemize}
+\subsection{Tipi di Reti.}
+\subsubsection*{LAN (Local Area Network).}
+Le LAN vengono definite come reti di computer circoscritte a un'area geograficamente limitata (si estendono al pi\`u per alcuni chilometri,
+sono circoscritte ad aree limitate come un ufficio, una scuola, un edificio etc.). Si cita Ethernet come tecnologia LAN popolare.
+
+Le LAN sono tipicamente di propriet\`a di una qualche organizzazione (sono dunque reti private), connettono sistemi terminali (stampanti, PC,
+workstations) mediante cavi di rame o connessioni wireless.
+
+Si distinguono LAN con cavo condiviso (obsolete) e LAN con switch (moderne); il maggiore vantaggio della seconda sulla prima \`e che non ha
+bisogno di far passare un pacchetto da ogni dispositivo connesso nel percorso dal router al (dispositivo) target.
+
+\begin{figure}[h!]
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.35]{images/lan-obsoleta.png}
+		\caption{LAN con cavo convidiso.}
+	\end{subfigure}
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.35]{images/lan-moderna.png}
+		\caption{LAN con switch.}
+	\end{subfigure}
+\end{figure}
+
+\subsubsection*{WAN (Wide Area Network).}
+Una WAN (o rete geografica) \`e una rete il cui compito \`e di interconnettere LAN o singoli host separati da distanze geografiche. Viene
+tipicamente gestita da un operatore di rete che fornisce servizi ai clienti. Un esempio di WAN \`e la rete GARR.
+\pagebreak
+
+Si distinguono WAN punto-punto (collegano direttamente due dispositivi attraverso un mezzo trasmissivo (e.g. cavo in fibra ottica, ponti radio))
+e WAN a commutazione (collegano pi\`u di due punti di terminazioni (e.g. dorsali Internet)); le seconde sono dotate di elementi di commutazione
+(i.e. elaboratori specializzati utilizzati per connettere tra loro pi\`u linee di trasmissione).
+
+\begin{figure}[h!]
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[width=80mm,height=10mm]{images/wan-puntopunto.png}
+		\caption{WAN punto-punto.}
+	\end{subfigure}
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.35]{images/wan-commutazione.png}
+		\caption{WAN a commutazione.}
+	\end{subfigure}
+\end{figure}
+
+\subsection{Tecniche di commutazione.}
+Si definiscono "tecniche di commutazione" le modalit\`a con cui viene determinato il percorso sorgente-destinazione e vengono dedicate ad esso le
+risorse della rete. Si distinguono due tecniche: circuit switching (si parla di "reti a commutazione di circuito") e packet switching ("reti a
+commutazione di pacchetto").
+
+\begin{figure}[h!]
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/commutazione-circuito.png}
+		\caption{Rete a commutazione di circuito.}
+	\end{subfigure}
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/commutazione-pacchetto.png}
+		\caption{Rete a commutazione di pacchetto.}
+	\end{subfigure}
+\end{figure}
+
+\subsubsection*{Circuit switching.}
+La rete determina un percorso dalla sorgente alla destinazione, su questo viene riservato e garantito un rate di trasmissione costante per la
+durata dell'intera sessione di comunicazione (una frazione della capacit\`a di trasmissione dei link).
+
+Un esempio di rete a commutazione \`e la rete telefonica fissa tradizionale.
+
+\textbf{Svantaggi}: le risorse rimangono inattive quando non utilizzate e non vengono mai condivise, necessaria una fase di instaurazione della
+comunicazione (detta anche di "setup") nella quale si configurano le tabelle di switching, la scarsa flessibilit\`a nell'uso delle risorse pu\`o
+portare a "overprovisioning" e/o a un sottoutilizzo di queste in presenza di rate di traffico variabile.
+
+\textbf{Vantaggi}: performance garantita, overhead limitato, tecnologie di switching efficienti.
+
+\subsubsection*{Packet switching.}
+Il flusso di dati punto-punto viene suddiviso in pacchetti che condividono le risorse di rete e instradati singolarmente e indipendentemente
+dagli altri. Si parla di trasmissione "store and forward": il commutatore (tipicamente un router) deve aspettare di aver ricevuto per intero il
+pacchetto prima di poter trasmettere sul collegamento in uscita.
+
+Non c’\`e un canale dedicato e la sequenza dei pacchetti non segue uno schema prestabilito (si parla di "multiplexing statistico"): i router
+possono memorizzare i pacchetti nelle code ("buffer") nel caso in cui il collegamento sia gi\`a usato alla massima capacit\`a, introducendo
+dunque dei "ritardi di coda" e il rischio di "congestione"; non si ha garanzia nelle prestazioni e si corre il rischio di avere una perdita
+di pacchetti poich\'e i buffer hanno dimensione finita.
+
+\textbf{Svantaggi}: alto overhead, tecnologie di inoltro non efficienti (si ha la necessit\`a di selezionare l’uscita per ogni pacchetto),
+tempo di elaborazione ai router (si parla di "routing table lookup"), accodamento ai router.
+
+\textbf{Vantaggi}: risorse trasmissive usate solo su richiesta, segnalazione non necessaria.
+
+\subsection{Internet.}
+Si definisce "internet" una rete costituita da due o pi\`u reti interconnesse; un esempio di internet \`e Internet, una rete a commutazione di
+pacchetti composta da migliaia di reti interconnesse che seguono l'Internet Protocol e rispettano convenzioni precise per nomi e indirizzi, che
+fornisce servizi di comunicazione alle applicazioni e per le applicazioni.
+
+Le reti dei sistemi terminali sono connesse a Internet attraverso una gerarchia di fornitori di servizi internet (Internet Service Provider);
+definisco "dorsale" una ISP di primo livello. Si permette l'esistenza di "Internet eXchange Point", definiti come punti di incontro per il peering
+tra due o pi\`u ISP.
+
+\begin{figure}[h!]
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.28]{images/internet-semplificata.png}
+		\caption{Internet: rete di reti - versione semplificata.}
+	\end{subfigure}
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.28]{images/internet-completa.png}
+		\caption{Internet: rete di reti - versione moderna.}
+	\end{subfigure}
+\end{figure}
+
+\subsubsection*{Metriche.}
+Si definiscono i seguenti parametri, utilizzati per misurare le prestazioni della rete:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item \textbf{Larghezza di banda} (\textbf{Bandwidth}): larghezza dell’intervallo di frequenze utilizzato dal sistema trasmissivo misurato in Hertz.
+	\item \textbf{Velocit\`a di trasmissione} (\textbf{Bitrate o transmission rate}): quantit\`a di dati (bits) che possono essere trasmessi (“inseriti
+	nella linea”) nell'unit\`a di tempo (bits/secondo o bps) su un certo collegamento; dipende alla larghezza di banda e dalla tecnica trasmissiva
+	utilizzata.
+	\item \textbf{Throughput}: quantit\`a di dati che possono essere trasmessi da un nodo sorgente a un nodo destinazione in un certo intervallo di tempo
+	al netto di perdite sulla rete, duplicazioni, protocolli etc.
+	\item \textbf{Latenza}: tempo richiesto affinch\'e un messaggio arrivi a destinazione dal momento in cui il primo bit parte dalla sorgente; \`e
+	definito come somma di ritardo di elaborazione, di accodamento, di trasmissione e di propagazione.
+\end{itemize}
+Si definiscono dunque i ritardi sopra elencati:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item \textbf{Ritardo di elaborazione}: \`e dovuto al controllo di errori sui bit e alla determinazione del canale di uscita.
+	\item \textbf{Ritardo di accodamento}: \`e il tempo che un pacchetto spende all'interno del buffer (tipicamente di un router), \`e una
+	quantit\`a aleatoria.
+	\item \textbf{Ritardo di trasmissione}: \`e il tempo impiegato per trasmettere un pacchetto sul link; definendo L lunghezza del pacchetto in bit,
+	R rate di trasmissione sul link in bps, vale \( \frac{L}{R} \).
+	\item \textbf{Ritardo di propagazione}: \`e il tempo che 1bit impiega per essere propagato da un nodo all'altro; definendo d lunghezza del
+	collegamento fisico, s velocit\`a di propagazione nel mezzo, vale \( \frac{d}{s} \).
+\end{itemize}
+Si definisce inoltre il "ritardo end-to-end" come sommatoria del ritardo ai singoli nodi: \\\( R_{end-to-end} = \sum_{i=1}^{N} R_{nodo_i}\).
+
+Si ricorda l'esistenza dei comandi "traceroute", che traccia un pacchetto dal proprio dispositivo all'host mostrando anche il numero di passaggi
+(salti) necessari per raggiungerlo assieme al ritardo dal mittente per ogni passaggio, e "ping", che calcola il ritardo per la trasmissione dal
+dispositivo corrente all'host.
+
+\subsection{Modelli stratificati.}
+Si definisce un "protocollo" come un insieme di regole che permettono a due entit\`a di comunicare; nei sistemi di comunicazione non \`e
+sufficiente un singolo protocollo, si ricorre a una organizzazione di protocolli.
+
+Si definisce inoltre "aperto" un insieme di protocolli i cui dettagli sono disponibili pubblicamente e i cui cambiamenti sono gestiti da una
+organizzazione la cui partecipazione \`e aperta al pubblico; definisco "sistema aperto" un sistema che implementa protocolli aperti.
+
+Per la stratificazione si fa riferimento ai principi di "separation of concern" (i.e. separazione degli interessi e delle responsabilit\`a, fare
+ci\`o che compete, delegando ad altri tutto ci\`o che \`e delegabile) e "information hiding" (i.e. nascondere tutte le informazioni che non sono
+indispensabili per il committente per definire completamente un'operazione).
+
+In concreto:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item Il modello permette di scomporre il problema in sottoproblemi pi\`u semplici il cui sviluppo \`e indipendente (da quello degli altri
+	sottoproblemi).
+	\item Ogni strato scambia informazioni con quelli adiacenti, ma comunica logicamente con il proprio omologo; fornisce informazioni allo strato
+	superiore e usa i servizi offerti da quello inferiore.
+	\item Un singolo strato svolge una sola funzione e realizza uno e un solo livello logico.
+\end{itemize}
+
+A questo punto l'obiettivo diventa realizzare una rete di calcolatori in cui qualsiasi terminale comunica con un qualsiasi fornitore di servizi
+mediante qualsiasi rete; lo standard per l'interconnessione di sistemi aperti \`e il modello ISO/OSI.
+
+\subsubsection*{Modello ISO/OSI.}
+Si danno le seguenti definizioni nei termini del modello ISO/OSI:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item \textbf{Livello} (o \textbf{strato}): modulo interamente definito attraverso i servizi, protocolli e le interfacce che lo caratterizzano.
+	\item \textbf{Servizio}: insieme di primitive (operazioni) che uno strato fornisce ad uno strato soprastante.
+	\item \textbf{Interfaccia}: insieme di regole che governano il formato e il significato delle unit\`a di dati (es. messaggi, segmenti o
+	pacchetti) che vengono scambiati tra due strati adiacenti della stessa entit\`a.
+	\item \textbf{Protocollo}: insieme di regole che permettono a due entit\`a omologhe (stesso strato) uno scambio efficace ed efficiente delle
+	informazioni, definiscono il formato e l’ordine dei messaggi inviati e ricevuti tra entit\`a omologhe della rete e le azioni che vengono
+	fatte per la trasmissione e ricezione dei messaggi; occorre specificare sintassi e semantica di un messaggio e quali azioni intraprendere
+	una volta ricevuto.
+\end{itemize}
+
+\begin{figure}[h!]
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.22]{images/stack-protocollare-iso_osi.png}
+		\caption{Pila di protocolli.}
+	\end{subfigure}
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.22]{images/gerarchia-layer-iso_osi.png}
+		\caption{Gerarchia di strati (o "layer").}
+	\end{subfigure}
+\end{figure}
+
+I layer dal livello 5 al 7 sono di supporto all'elaborazione e interazione con l'utente (vengono realizzati a livello software), gli altri 4
+alla rete e all'infrastruttura trasmissiva (realizzati a livello hardware e software); tipicamente i nodi intermedi implementano solo i primi
+4.
+
+\pagebreak
+
+\subsubsection*{Formato dei messaggi.}
+Appare evidente che il formato ASCII 7bit non permetta di rappresentare caratteri speciali: si introduce il protocollo \textbf{Multipurpose
+Internet Mail Extension} (MIME). 
+
+Vengono fornite delle regole di codifica e di decodifica per trasformare caratteri speciali e contenuti multimediali in caratteri ASCII 7bit;
+questo approccio ha permesso di inviare messaggi MIME usando protocolli e mail server esistenti (risulta necessario modificare gli User Agents).
+
+I mail server moderni possono negoziare l'invio di dati in codifica binaria (8 bit); se non ha successo, inviano caratteri ASCII 7bit seguendo
+il protocollo MIME.
+
+\subsubsection*{Protocolli di accessi alla Mail.}
+SMTP \`e un protocollo di tipo "push", per la ricezione risulta necessario un protocollo di tipo "pull". Alcuni esempi sono: Post Office Protocol
+(POP), Internet Mail Access Protocol (IMAP), HTTP (quando User Agent è un browser).
+
+\subsection*{Strato Applicativo DNS.}
+Si danno le seguenti definizioni:
+
+\textbf{Nome}: identifica un oggetto con una sequenza di caratteri scelti da un alfabeto finito; si usa per motivi mnemonici e per disaccoppiare
+il livello applicativo da quello di rete.
+
+\textbf{Indirizzo}: identifica la locazione dell'oggetto (i dispositivi connessi alla rete vengono individuati mediante indirizzi da 4byte detti
+"indirizzi IP").
+
+\textbf{Dominio}: sottoalbero nello spazio dei nomi di dominio che viene identificato dal nome di dominio del nodo in cima al sottoalbero.
+
+
+Inizialmente l'associazione tra nomi logici e indirizzi IP era statica (i.e. tutti i nomi logici e i relativi indirizzi IP erano contenuti in
+un file detto "host file"); questo approccio risulta attualmente impraticabile. Si ricorre al sistema DNS.
+
+\subsubsection*{Domain Name System (DNS).}
+Il DNS si trova al livello applicativo, viene fornito da sistemi terminali e usa servizi del livello di trasporto per trasferire messaggi,
+non interagisce direttamente con gli utenti a meno che non ci siano errori.
+
+E' un meccanismo che deve specificare la sintassi dei nomi e le regole per gestirli, consentire la conversione da nomi a indirizzi e viceversa.
+è costituito essenzialmente da:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item uno schema di assegnazione dei nomi gerarchico e basato su domini;
+	\item un database distribuito contenente i nomi e le corrispondenze con gli indirizzi IP implementato con una gerarchia di name server;
+	\item un protocollo per la distribuzione delle informazioni sui nomi tra name server host, router, name server comunicano per risolvere nomi (traduzione nome/indirizzo) utilizzando tipicamente UDP con porta 53.
+\end{itemize}
+
+Offre i seguenti servizi:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item risoluzione di nomi di alto livello (hostname) in indirizzi IP;
+	\item host aliasing (i.e. un host può avere più nomi, vengono tradotti nel nome canonico e - di seguito - nell'indirizzo IP);
+	\item mail server aliasing (i.e. sinonimi per mail server; e.g. nome identico per mail server e web server);
+	\item distribuzione carico (i.e. un hostname canonico può corrispondere a più indirizzi IP, il DNS restituisce la lista variandone l'ordine per ogni risposta).
+\end{itemize}
+
+Per i nomi viene usata una struttura gerarchica (i.e. un nome è costituito da diverse parti (e.g. lab3.di.unipi.it)); in questo modo
+l'assegnazione dei nomi può essere delegata a singole organizzazioni e la responsabilità di convertire nomi e indirizzi distribuita.
+
+\subsubsection*{Name Server.}
+Si definisce come un programma che gestisce la conversione da nome di dominio a indirizzo IP.
+
+Si definiscono inoltre:
+
+\textbf{Server Radice}: responsabile dei record della zona radice e restituisce le informazioni sui name server di TLD.
+
+\textbf{Server Top-Level Domain}: mantiene le informazioni dei nomi di dominio che appartengono a un certo TLD, restituisce le informazioni
+sui name server di competenza dei sottodomini.
+
+\textbf{Server di Competenza} (Authoritative Name Server): autorità per una certa zona, memorizza nome e indirizzo IP di un insieme di host dei
+quali può effettuare traduzioni nome/indirizzo; per una certa zona ci possono essere server di competenza primari e secondari:
+quelli primari mantengono il file di zona, quelli secondari ricevono il file di zona e offrono il servizio di risoluzione.
+
+\textbf{Local Name Servers}: non appartengono strettamente alla gerarchia dei server, ogni ISP (università, società, ISP) ha il proprio; a questi
+vengono inizialmente rivolte le query DNS: operano da proxy e inoltrano la query in una gerarchia di server DNS.
+
+Quando un programma (es. browser) deve trasformare un nome in
+un indirizzo IP chiama un programma detto resolver, passando il
+nome come parametro di ingresso.
+Il resolver interroga il local name server, che cerca il nome nelle sue
+tabelle e restituisce l’indirizzo al resolver oppure inoltra la query
+alla gerarchia DNS
+
+
+\end{sloppypar}
+\end{document}
