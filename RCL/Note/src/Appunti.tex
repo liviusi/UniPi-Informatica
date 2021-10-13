@@ -461,6 +461,42 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item \textbf{TRACE}:
 		\item \textbf{extension-method}:
 	\end{itemize}
+	\item \textbf{File Transfer Protocol}: ha le seguenti caratteristiche:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item Permette control connection (i.e scambio di comandi e risposte tra client e server). Segue il protocollo Telnet.
+
+		Il client FTP contatta il server FTP alla porta 21, ottiene l’autorizzazione sulla connessione di controllo e invia i comandi su di questa
+		(e.g. cambio directory, invio file, ecc.). La connessione di controllo \`e persistente
+		\item Permette data connection (i.e. connessione su cui i dati sono trasferiti con modi e tipi specificati). I dati trasferiti possono essere
+		parte di un file, un file o un set di file.
+
+		Il server apre una connessione dati TCP con il client (caveat: non \`e il client a farlo, si parla di ``modalit\`a attiva"), trasferisce il
+		file sulla connessione dati e, terminata l'operazione, il server chiude la connessione. La connessione dati non \`e persistente, ne viene
+		aperta e chiusa una per ciascun trasferimento.
+		\item Si usa il protocollo di trasporto TCP, per cui si permettono due differenti modalit\`a: quella ``attiva" (descritta precedentemente,
+		usata di default) e quella ``passiva" (in questo caso il client chiede al server di mettersi in ascolto su una porta per una connessione dati,
+		ottiene questo numero di porta - tipicamente 20 - e lo usa per aprire la connessione con il server).
+		\item \`E un protocollo stateful.
+		\item Fa uso di codici di ritorno.
+		\item Il collegamento pu\`o essere anonimo (si parla di ``anonymous FTP") o reso sicuro con TLS.
+	\end{itemize}
+	I comandi messi a disposizione sono i seguenti:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep -0.3em
+		\item \textbf{USER} \textless{username}\textgreater{.}
+		\item \textbf{PASS} \textless{password}\textgreater{.}
+		\item \textbf{LIST}: elenca i file della directory corrente.
+		\item \textbf{NLST}: richiede elenco file e directory.
+		\item \textbf{RETR} \textless{filename}\textgreater{:} recupera filename dalla directory corrente.
+		\item \textbf{STOR} \textless{filename}\textgreater{:} memorizza (PUT) filename nell'host remoto.
+		\item \textbf{ABOR}: interrompe l’ultimo comando ed i trasferimenti in corso.
+		\item \textbf{PORT}: indirizzo e numero di porta del client.
+		\item \textbf{SYST}: il server restituisce il tipo di sistema.
+		\item \textbf{QUIT}: chiude la connessione.
+	\end{itemize}
 \end{itemize}
 
 \pagebreak
@@ -542,8 +578,138 @@ un indirizzo IP chiama un programma detto resolver, passando il
 nome come parametro di ingresso.
 Il resolver interroga il local name server, che cerca il nome nelle sue
 tabelle e restituisce l’indirizzo al resolver oppure inoltra la query
-alla gerarchia DNS
+alla gerarchia DNS.
 
+INSERIRE IMMAGINI QUERY RICORSIVA, QUERY ITERATIVA.
+
+Una volta appresa una associazione, questa viene salvata su una cache i cui record vengono cancellati dopo un certo tempo detto ``timeout-ttl".
+
+I record sono una quadrupla definita come ``name", ``value", ``type", ``ttl".
+
+Dal parametro ``type" dipende il significato della coppia ``name" e ``value"; si citano alcuni esempi:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item \textbf{A}: `name" sta per hostname, value per indirizzo IP.
+	\item \textbf{CNAME}: `name" sta per hostname (o un suo sinonimo), ``value" per il nome canonico dell'host.
+	\item \textbf{NS}: ``name" sta per nome di dominio, ``value" per l'authorative name server per quel dominio.
+	\item \textbf{MX}: ``name" sta per nome di dominio, ``value" per il nome canonico del server di posta associato a quel dominio.
+\end{itemize}
+
+Il protocollo DNS ha le seguenti caratteristiche:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item Usa connessione UDP sulla porta 53.
+	\item Permette uso di TCP (tipicamente usata per messaggi di grandi dimensioni tra server DNS)
+	\item Messaggi di query e reply hanno lo stesso formato.
+	\item Ha un header formato dai seguenti campi:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item identification: intero a 16bit uguale per la coppia query, reply.
+		\item flags: 0 se query, 1 se risposta.
+		\item autorevolezza della risposta.
+	\end{itemize}
+	\item Domande: campi per il nome richiesto e il tipo di query
+	\item Risposte: RR nella risposta alla domanda
+	\item Competenza: record relative ai server di competenza
+	\item Informazioni aggiuntive
+\end{itemize}
+
+INSERIRE IMMAGINE MESSAGGI DNS.
+
+Per interrogazioni a server DNS si usa il tool "dig".
+
+\pagebreak
+\subsubsection*{Transport Layer.}
+Si danno le seguenti definizioni:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item \textbf{Multiplexing}: provvede all'``accorpamento” dei flussi dati dai processi verso la rete, li ``imbusta" con un preambolo. \`E
+	basato sui socket address dei processi.
+	\item \textbf{Demultiplexing}: provvede allo ``smistamento” dei pacchetti fra la rete e le applicazioni (i.e. dirige i dati ricevuti al
+	processo corretto). \`E basato sui socket address dei processi.
+	\item \textbf{Porta}: intero senza segno a 16bit assegnato a un punto di demultiplexing dei protocolli TCP o UDP. Si distinguono tre differenti
+	categorie di porte: ``system ports" (da 0 a 1023, identificano processi server, assegnate da IANA), ``user ports" (da 1024 a 49151, assegnate
+	da IANA), ``dynamic ports" (le restanti, non assegnate da IANA).
+	\item \textbf{Indirizzo IP}: indirizzo di 32bit presente nello stack TCP/IP.
+	\item \textbf{Socket address}: identificativo formato dalla coppia ``porta", ``indirizzo IP".
+	\item \textbf{Socket TCP}: identificativo formato dalla quadrupla ``indirizzo IP di origine", ``numero di porta di origine", ``indirizzo IP di
+	destinazione", ``numero di porta di destinazione".
+\end{itemize}
+
+Offre i seguenti servizi:
+\begin{itemize}[topsep=0pt]
+	\itemsep-0.3em
+	\item \textbf{Multiplexing}.
+	\item \textbf{Demultiplexing}: se ne distinguono due tipi:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item \textbf{senza connessione} (\textbf{UDP}): lo strato di trasporto dell'host ricevente consegna il segmento UDP alla socket
+		identificata dal socket address destinazione; i datagrammi inviati da mittenti differenti e con stessa destinazione vengono consegnati
+		alla stessa socket.
+		\item \textbf{con connessione} (\textbf{TCP}): lo strato di trasporto dell'host ricevente usa i parametri della socket TCP per inviare il
+		segmento alla socket appropriata (e.g. un server Web pu\`o creare una socket per ogni client connesso); un host server pu\`o supportare
+		pi\`u socket alla volta.
+	\end{itemize}
+
+	\begin{figure}[h!]
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.22]{images/demultiplexing-senza-connessione.png}
+			\caption{Demultiplexing senza connessione.}
+		\end{subfigure}
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.22]{images/demultiplexing-orientato-alla-connessione.png}
+			\caption{Demultiplexing orientato alla connessione.}
+		\end{subfigure}
+	\end{figure}
+	
+	\item \textbf{Protocollo TCP}: ha le seguenti caratteristiche:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item \textbf{Orientato allo stream}: i dati sono un flusso di byte ordinati ma non strutturati; numera i byte (NON i segmenti). Si
+		definiscono in merito ``numero di sequenza" associato a un segmento il numero (nel flusso) del primo byte del segmento e ``numero di
+		riscontro" il numero dell'ultimo byte correttamente ricevuto + 1.
+		\item \textbf{Orientato alla connessione}: i processi effettuano un handshake (i.e. informazioni preliminari per preparare lo scambio
+		dei dati) prima dello scambio dei dati; si definisce orientato poich\'e lo stato della connessione risiede sui punti terminali e non
+		sugli elementi intermedi della rete.
+		\item \textbf{Connessione full-duplex}: il flusso dati tra due host pu\`o avvenire contemporaneamente nelle due direzioni.
+		\item Garantisce trasferimento dati ordinato e affidabile (i.e. corregge eventuali errori).
+		\item Implementa multiplexing/demultiplexing.
+		\item Implementa meccanismi di controllo di flusso (i.e. evita di spedire pi\`u dati di quanti il ricevitore possa elaborare).
+		\item Implementa meccanismi di controllo di congestione (i.e. gestisce opportunamente situazioni di sovraccarico della rete).
+		\item Suddivide il flusso di byte in segmenti in modo indipendente dal programma applicativo che li ha generati (si parla di ``trasferimento
+		bufferizzato".
+	\end{itemize}
+\pagebreak
+
+	\begin{figure}[h!]
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.25]{images/tcp-trasferimento-bufferizzato.png}
+			\caption{Trasferimento bufferizzato.}
+		\end{subfigure}
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.25]{images/tcp-formato-segmenti.png}
+			\caption{Formato dei segmenti TCP.}
+		\end{subfigure}
+	\end{figure}
+
+	Un segmento TCP permette ``selective acknowledgement" (nel campo ``Opzioni", non supportato da tutte le implementazioni) che permette di
+	specificare quali segmenti sono stati ricevuti, e i seguenti flags (in grassetto i pi\`u importanti):
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item URG: Il campo Puntatore Urgente contiene dati significativi da trasferire in via prioritaria.
+		\item \textbf{ACK}: Il campo Numero di Riscontro contiene dati significativi
+		\item PSH: Funzione Push (trasferimento immediato dei dati in un segmento dal trasporto al livello applicativo).
+		\item RST: Reset della connessione, implica una chiusura forzata della connessione.
+		\item \textbf{SYN}: Sincronizza il Numero di Sequenza. Messo a 1 durante l'handshake.
+		\item \textbf{FIN}: Non ci sono altri dati dal mittente, implica la chiusura della connessione.
+	\end{itemize}
+
+	\item \textbf{Protocollo UDP}:
+\end{itemize}
 
 \end{sloppypar}
 \end{document}
