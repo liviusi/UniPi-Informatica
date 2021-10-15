@@ -1,14 +1,16 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
-import java.util.concurrent.*;
 
 public class Assignment
 {
 	static final int numComputers = 20;
+	static final long waitTimeout = 500;
 
 	static class Laboratory
 	{
-		static class Person implements Runnable, Comparable<Person>
+		static class Person implements Runnable
 		{
 			public enum Priority
 			{
@@ -16,80 +18,88 @@ public class Assignment
 				{
 					public synchronized void useComputer(Laboratory laboratory, Assignment.Laboratory.Person person) throws InterruptedException
 					{
-						while (laboratory.getCurrentlyInUse() == numComputers) this.wait();
+						while (laboratory.count == numComputers) this.wait(waitTimeout);
 						for (int i = 0; i < numComputers; i++)
 						{
-							if (laboratory.checkIfInUse(i)) continue;
-							laboratory.setToBusy(i);
+							if (laboratory.array[i]) continue;
+							laboratory.count++;
+							laboratory.array[i] = true;
 							person.currentIndex = i;
 							break;
 						}
 						System.out.printf("[STUDENT %d] is now in the lab (using %d).\n", person.id, person.currentIndex);
-						System.out.flush();
+						// System.out.flush();
 						this.notifyAll();
 						return;
 					}
 
-					public synchronized void setToFreeComputer(Laboratory laboratory,  Assignment.Laboratory.Person person) throws InterruptedException
+					public synchronized void freeComputer(Laboratory laboratory,  Assignment.Laboratory.Person person) throws InterruptedException
 					{
-						while(!laboratory.checkIfInUse(person.currentIndex)) this.wait();
-						laboratory.setToFree(person.currentIndex);
+						while(!laboratory.array[person.currentIndex]) this.wait(waitTimeout);
+						laboratory.array[person.currentIndex] = false;
+						laboratory.count--;
 						System.out.printf("[STUDENT %d] is now exiting the lab (freeing %d).\n", person.id, person.currentIndex);
-						System.out.flush();
+						// System.out.flush();
 						this.notifyAll();
 					}
 				},
+
 				THESIST
 				{
 					public synchronized void useComputer(Laboratory laboratory, Assignment.Laboratory.Person person) throws InterruptedException
 					{
-						while (laboratory.checkIfInUse(person.currentIndex)) this.wait();
-						laboratory.setToBusy(person.currentIndex);
+						while (laboratory.array[person.currentIndex]) this.wait(waitTimeout);
+						laboratory.array[person.currentIndex] = true;
+						laboratory.count++;
 						System.out.printf("[THESIST %d] is now in the lab (using %d).\n", person.id, person.currentIndex);
-						System.out.flush();
+						// System.out.flush();
 						this.notifyAll();
 					}
 
-					public synchronized void setToFreeComputer(Laboratory laboratory,  Assignment.Laboratory.Person person) throws InterruptedException
+					public synchronized void freeComputer(Laboratory laboratory,  Assignment.Laboratory.Person person) throws InterruptedException
 					{
-						while (!laboratory.checkIfInUse(person.currentIndex)) this.wait();
-						laboratory.setToFree(person.currentIndex);
+						while (!laboratory.array[person.currentIndex]) this.wait(waitTimeout);
+						laboratory.array[person.currentIndex] = false;
+						laboratory.count--;
 						System.out.printf("[THESIST %d] is now exiting the lab (freeing %d).\n", person.id, person.currentIndex);
-						System.out.flush();
+						// System.out.flush();
 						this.notifyAll();
 					}
 				},
+
 				PROFESSOR
 				{
 					public synchronized void useComputer(Laboratory laboratory, Assignment.Laboratory.Person person) throws InterruptedException
 					{
-						while (laboratory.getCurrentlyInUse() != 0) this.wait();
-						for (int i = 0; i < numComputers; i++) laboratory.setToBusy(i);
+						while (laboratory.count != 0) this.wait(waitTimeout);
+						Arrays.fill(laboratory.array, true);
+						laboratory.count = 20;
 						System.out.printf("[PROFESSOR %d] is now in the lab.\n", person.id);
-						System.out.flush();
+						// System.out.flush();
 						this.notifyAll();
 					}
 
-					public synchronized void setToFreeComputer(Laboratory laboratory,  Assignment.Laboratory.Person person) throws InterruptedException
+					public synchronized void freeComputer(Laboratory laboratory,  Assignment.Laboratory.Person person) throws InterruptedException
 					{
-						while (laboratory.getCurrentlyInUse() != numComputers) this.wait();
-						for (int i = 0; i < numComputers; i++) laboratory.setToFree(i);
+						while (laboratory.count != numComputers) this.wait(waitTimeout);
+						Arrays.fill(laboratory.array, false);
+						laboratory.count = 0;
 						System.out.printf("[PROFESSOR %d] is now exiting the lab.\n", person.id);
-						System.out.flush();
+						// System.out.flush();
 						this.notifyAll();
 					}
 				};
 
 				public abstract void useComputer(Assignment.Laboratory laboratory, Assignment.Laboratory.Person person) throws InterruptedException;
-				public abstract void setToFreeComputer(Assignment.Laboratory laboratory, Assignment.Laboratory.Person person) throws InterruptedException;
+				public abstract void freeComputer(Assignment.Laboratory laboratory, Assignment.Laboratory.Person person) throws InterruptedException;
 			};
 
 			public final int id;
-			static final int maxWorkingTime = 100;
+			static final int maxWorkingTime = 1000, minWorkingTime = 200;
 			private Priority priority;
 			private final Laboratory laboratory;
 			private Random random;
-			public int currentIndex;
+			private int currentIndex;
 
 
 			public Person(int id, Priority priority, Laboratory laboratory, int index)
@@ -109,57 +119,48 @@ public class Assignment
 				try
 				{
 					laboratory.useComputer(this);
-					//System.out.println("aa");
-					Thread.sleep(random.nextInt(maxWorkingTime));
-					laboratory.setToFreeComputer(this);
+					Thread.sleep(random.nextInt(maxWorkingTime - minWorkingTime) + minWorkingTime);
+					laboratory.freeComputer(this);
 				}
 				catch (Exception e) { }
 				return;
 			}
-
-			public int compareTo(Person another) { return this.priority.compareTo(another.priority); }
 		}
 
-		private boolean[] array = new boolean[numComputers]; // entries are toggled on when in use
-		private int count = 0; // number of entries in array currently toggled on
+		private boolean[] array = new boolean[numComputers]; // array[i] is toggled on when the i-th computer is in use
+		private int count; // number of entries in array currently toggled on
 
-		public Laboratory() { Arrays.fill(array, false); }
+		public Laboratory() { Arrays.fill(array, false); count = 0; }
 
-		protected void setToFree(int index) { array[index] = false; count--; }
+		public void useComputer(Person person) throws InterruptedException { person.priority.useComputer(this, person); }
 
-		protected void setToBusy(int index) { array[index] = true; count++; }
-
-		protected boolean checkIfInUse(int index) { return array[index]; }
-
-
-		protected int getCurrentlyInUse() { return count; }
-
-		public void useComputer(Person person) throws InterruptedException
-		{
-			person.priority.useComputer(this, person);
-		}
-
-		public void setToFreeComputer(Person person) throws InterruptedException
-		{
-			person.priority.setToFreeComputer(this, person);
-		}
+		public void freeComputer(Person person) throws InterruptedException { person.priority.freeComputer(this, person); }
 	}
 
-	public static ExecutorService createThreadPool(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue)
+	// instantiate one thread per user
+	public static List<Thread> instantiateThreads(int numStudents, int numThesists, int numProfessors, Laboratory laboratory, Random random)
 	{
-		ThreadPoolExecutor service = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS, workQueue);
-		service.allowCoreThreadTimeOut(true);
-		return service;
+		List<Thread> userThread = new ArrayList<>(numStudents + numThesists + numProfessors);
+		for (int i = 0; i < numProfessors; i++)
+			userThread.add(i, new Thread(new Laboratory.Person(i, Laboratory.Person.Priority.PROFESSOR, laboratory, -1)));
+		for (int i = 0; i < numThesists; i++)
+			userThread.add(i + numProfessors, new Thread(new Laboratory.Person(i, Laboratory.Person.Priority.THESIST, laboratory, random.nextInt(numComputers))));
+		for (int i = 0; i < numStudents; i++)
+			userThread.add(i + numProfessors + numThesists, new Thread(new Laboratory.Person(i, Laboratory.Person.Priority.STUDENT, laboratory, -1)));
+		return userThread;
 	}
 
 	public static void main(String[] args)
 	{
-		if (args.length != 3) return;
+		if (args.length != 3) { System.err.println("java Assignment <numStudents> <numThesists> <numProfessors>"); return; }
 
 		final int numStudents, numThesists, numProfessors;
-		final int timeout = 500;
-		final int intervalLength = 5, upperBound = 15;
+		final int joinTimeout = 500, maxIntervalBetweenAccesses = 200;
+		final int minAccesses = 3, maxAccesses = 5;
 		final int accessesNo; // k in the text
+		Random random = new Random();
+		Laboratory laboratory = new Laboratory();
+		List<Thread> userThread;
 
 		try
 		{
@@ -167,60 +168,26 @@ public class Assignment
 			numThesists = Integer.parseInt(args[1]);
 			numProfessors = Integer.parseInt(args[2]);
 		}
-		catch (Exception e) { return; }
+		catch (Exception e) { System.err.println("java Assignment <numStudents> <numThesists> <numProfessors>"); return; }
 
-		PriorityBlockingQueue<Runnable> workQueue = new PriorityBlockingQueue<>(numStudents + numThesists + numProfessors);
-		ExecutorService service = createThreadPool(numComputers, numComputers, timeout, TimeUnit.MILLISECONDS, workQueue);
-
-		Random random = new Random();
-		accessesNo = Math.abs(random.nextInt(upperBound + intervalLength) - intervalLength);
-
-		Laboratory laboratory = new Laboratory();
-		final int numUsers = numStudents + numThesists + numProfessors;
-		Laboratory.Person[] user = new Laboratory.Person[numUsers];
-		for (int i = 0; i < numUsers; i++)
-		{
-			int j = random.nextInt(100);
-			switch (j % 3)
-			{
-				case 0:
-					user[i] = new Laboratory.Person(i, Laboratory.Person.Priority.PROFESSOR, laboratory, -1);
-					break;
-				
-				case 1:
-					user[i] = new Laboratory.Person(i, Laboratory.Person.Priority.THESIST, laboratory, random.nextInt(numComputers));
-					break;
-
-				case 2:
-					user[i] = new Laboratory.Person(i, Laboratory.Person.Priority.STUDENT, laboratory, -1);
-					break;
-			}
-		}
-
+		accessesNo = random.nextInt(maxAccesses - minAccesses) + minAccesses;
 		System.out.println(accessesNo + " accesses will now be made.");
-		for (int j = 0; j < accessesNo; j++)
+
+		for (int i = 0; i < accessesNo; i++)
 		{
-			long intervalBetweenAccesses = Math.abs((random.nextInt(upperBound + intervalLength) - intervalLength) * 10);
-			for (int i = 0; i < numUsers; i++)
+			userThread = instantiateThreads(numStudents, numThesists, numProfessors, laboratory, random);
+			for (Thread t : userThread)
 			{
-				try
-				{
-					service.execute(user[i]);
-					Thread.sleep(intervalBetweenAccesses);
-				}
-				catch (RejectedExecutionException | InterruptedException r)
-				{
-					try
-					{
-						Thread.sleep(50);
-						service.execute(user[i]);
-					}
-					catch (Exception e) { }
-				}
+				t.start();
+				try { Thread.sleep(maxIntervalBetweenAccesses); }
+				catch (Exception e) { }
+			}
+			for (Thread t : userThread)
+			{
+				try { t.join(joinTimeout); }
+				catch (Exception e) { }
 			}
 		}
-		service.shutdown();
-		try { if (!service.awaitTermination(timeout, TimeUnit.MILLISECONDS)) service.shutdownNow(); }
-		catch (Exception e) { service.shutdownNow(); }
+
 	}
 }
