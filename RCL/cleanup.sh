@@ -2,5 +2,5 @@
 
 [[ $# -ne 1 ]] && { echo "Specify a folder to clean"; exit 1; }
 
-rm $1/*.class
+rm -v $1/*.class $1/*.txt
 exit 0
