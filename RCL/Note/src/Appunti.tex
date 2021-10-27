@@ -145,11 +145,6 @@ bisogno di far passare un pacchetto da ogni dispositivo connesso nel percorso da
 \subsection*{WAN (Wide Area Network).}
 Una WAN (o rete geografica) \`e una rete il cui compito \`e di interconnettere LAN o singoli host separati da distanze geografiche. Viene
 tipicamente gestita da un operatore di rete che fornisce servizi ai clienti. Un esempio di WAN \`e la rete GARR.
-\pagebreak
-
-Si distinguono WAN punto-punto (collegano direttamente due dispositivi attraverso un mezzo trasmissivo (e.g. cavo in fibra ottica, ponti radio))
-e WAN a commutazione (collegano pi\`u di due punti di terminazioni (e.g. dorsali Internet)); le seconde sono dotate di elementi di commutazione
-(i.e. elaboratori specializzati utilizzati per connettere tra loro pi\`u linee di trasmissione).
 
 \begin{figure}[h!]
 	\begin{subfigure}{0.49 \linewidth} \centering
@@ -157,10 +152,14 @@ e WAN a commutazione (collegano pi\`u di due punti di terminazioni (e.g. dorsali
 		\caption{WAN punto-punto.}
 	\end{subfigure}
 	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.35]{images/wan-commutazione.png}
+		\includegraphics[scale=0.25]{images/wan-commutazione.png}
 		\caption{WAN a commutazione.}
 	\end{subfigure}
 \end{figure}
+
+Si distinguono WAN punto-punto (collegano direttamente due dispositivi attraverso un mezzo trasmissivo (e.g. cavo in fibra ottica, ponti radio))
+e WAN a commutazione (collegano pi\`u di due punti di terminazioni (e.g. dorsali Internet)); le seconde sono dotate di elementi di commutazione
+(i.e. elaboratori specializzati utilizzati per connettere tra loro pi\`u linee di trasmissione).
 
 \section{Tecniche di commutazione.}
 Si definiscono ``tecniche di commutazione" le modalit\`a con cui viene determinato il percorso sorgente-destinazione e vengono dedicate ad esso le
@@ -256,7 +255,7 @@ Si ricorda l'esistenza dei comandi ``traceroute", che traccia un pacchetto dal p
 dispositivo corrente all'host.
 
 \section{Modelli stratificati.}
-Si definisce un ``protocollo" come un insieme di regole che permettono a due entit\`a di comunicare; nei sistemi di comunicazione non \`e
+Si definisce un ``protocollo" un insieme di regole che permettono a due entit\`a di comunicare; nei sistemi di comunicazione non \`e
 sufficiente un singolo protocollo, si ricorre a una organizzazione di protocolli.
 
 Si definisce inoltre ``aperto" un insieme di protocolli i cui dettagli sono disponibili pubblicamente e i cui cambiamenti sono gestiti da una
@@ -429,6 +428,13 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		da quelle che la han preceduta.
 		\item \textbf{Richiesta/Risposta}: La connessione viene iniziata dal client, che invia un messaggio di richiesta detto ``request" a cui il server
 		risponde con un messaggio di risposta detto ``response".
+		\item \textbf{Content negotiation}: permette di selezionare la rappresentazione appropriata per una risorsa (e.g. formato, lingua etc) quando
+		viene servita richiesta.
+		\item \textbf{Web caching}: si memorizzano copie temporanee di risorse Web (es. pagine HTML, immagini) e vengono servite al client per ridurre
+		l’uso di risorse (e.g. banda, workload sul server) e il tempo di risposta al client.
+		\item Implementa i ``cookie": un pacchetto di informazioni assegnato dal server alla prima richiesta del client che, a sua volta, lo legge dal
+		messaggio di risposta (in cui trova una linea ``set-cookie") e lo salva in un file; il cookie viene poi aggiunto dal client a tutte le successive
+		richieste a quel sito (conterranno la linea ``cookie:\textless{cookie}\textgreater{)}".
 		\item Usa TCP.
 		\item HTTP/1.0 permetteva solo connessioni non persistenti, HTTP/1.1 prevede che - di default - le connessioni siano invece persistenti e vengano
 		mantenute fino a una richiesta di chiusura. I server che rispettano HTTP/1.1 supportano inoltre il pipelining (i.e. consiste nell’invio da parte del
@@ -436,7 +442,9 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		sono state ricevute; riguarda solo metodi idempotenti); implementato in pochi browser, introduce il rischio di Head of Line Blocking (i.e. se una
 		richiesta richiede tempo per essere processata le risposte a quelle successive sono bloccate).
 	\end{itemize}
+
 \pagebreak
+
 	\begin{figure}[h!]
 		\begin{subfigure}{0.49 \linewidth} \centering
 			\includegraphics[scale=0.25]{images/http-request.png}
@@ -452,15 +460,52 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	\vspace{-3.5mm}
 	\begin{itemize}
 		\itemsep-0.3em
-		\item \textbf{OPTIONS}:
-		\item \textbf{GET}:
-		\item \textbf{HEAD}:
-		\item \textbf{POST}:
-		\item \textbf{PUT}:
-		\item \textbf{DELETE}:
-		\item \textbf{TRACE}:
-		\item \textbf{extension-method}:
+		\item \textbf{OPTIONS}: richiede informazioni sulle opzioni di comunicazione (i.e. quali metodi) sono associati a una URL o al server stesso.
+		\item \textbf{GET}: richiede il trasferimento di una risorsa identificata da una URL o operazioni associate all’URL stessa; la semantica pu\`o
+		essere modificata in un ``conditional GET" se l'header contiene uno dei campi ``If-Modified-Since", ``If-Unmodified-Since", ``If-Match",
+		``If-None-Match" o ``If-Range", ``partial GET" se contiene il campo ``range".
+		\item \textbf{HEAD}: identico al metodo GET con l'eccezione che la risposta non contiene il campo ``message-body".
+		\item \textbf{POST}: serve per inviare dal client al server informazioni inserite nel body del messaggio, la funzione effettiva determinata \`e
+		dal server e dipendente tipicamente dalla Request-URI; tipicamente non \`e abilitato sui server pubblici.
+		\item \textbf{PUT}: il client chiede al server di creare/modificare una risorsa.
+		\item \textbf{DELETE}: il client chiede di cancellare una risorsa.
+		\item TRACE.
 	\end{itemize}
+
+	Si definiscono ``safe" i metodi che non modificano la rappresentazione di una risorsa (i.e. GET, HEAD, OPTIONS, TRACE), ``idempotent" quelli che godono
+	della propriet\`a di idempotenza (i.e. GET, HEAD, PUT, DELETE, OPTIONS, TRACE).
+
+	\item \textbf{TErminaL NETwork}: ha le seguenti caratteristiche
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item Prevede un programma server che accetta le richieste e un programma client che effettua le richieste; quest'ultimo interagisce con il terminale
+		utente sull'host locale e scambia messaggi con il Telnet server.
+		\item Usa TCP e persiste per l'intera durata della sessione, il client si connette alla porta 23 del server.
+		\item Il client accetta le battute di tasti del terminale e le invia al server nel quale un software chiamato ``pseudo terminal driver" fa da entry point
+		del sistema operativo: consente di trasferire caratteri a un processo come se provenissero dal terminale.
+		Il client accetta i caratteri che il server manda indietro e li visualizza sul terminale utente.
+		\item  I messaggi di controllo iniziali sono usati per scambiare informazioni sulle caratteristiche degli host (si parla di ``Telnet option negotiation").
+		\item Il client invia (in chiaro) un login identifier e una password (non \`e sicuro, \`e stato sostituito da ``SSH").
+	\end{itemize}
+
+	\begin{figure}[h!]
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.25]{images/telnet.png}
+			\caption{TELNET: Login da remoto.}
+		\end{subfigure}
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.25]{images/telnet-nvt.png}
+			\caption{TELNET: NVT.}
+		\end{subfigure}
+	\end{figure}
+
+	Il terminale in esecuzione sia sul client sia sul server \`e un ``Network Virtual Terminal": gli host traducono le loro caratteristiche locali cos\`i da
+	apparire esternamente come un NVT e assumono che l’host remoto sia un NVT; si scambiano dati e comandi in formato 7-bit US-ASCII sullo stesso canale (prevede
+	dunque ``in-band signaling"), ogni carattere \`e inviato come un ottetto con il primo bit settato a 0 se si tratta di un dato, a 1 per i comandi.
+
+	\item \textbf{Simple Mail Transfer Protocol}:
+
 	\item \textbf{File Transfer Protocol}: ha le seguenti caratteristiche:
 	\vspace{-3.5mm}
 	\begin{itemize}
@@ -696,7 +741,7 @@ Offre i seguenti servizi:
 	\end{figure}
 
 	Un segmento TCP permette ``selective acknowledgement" (nel campo ``Opzioni", non supportato da tutte le implementazioni) che permette di
-	specificare quali segmenti sono stati ricevuti, e i seguenti flags (in grassetto i pi\`u importanti):
+	specificare quali segmenti sono stati ricevuti, e supporta i seguenti flags (in grassetto i pi\`u importanti):
 	\vspace{-3.5mm}
 	\begin{itemize}
 		\itemsep-0.3em
