@@ -389,8 +389,8 @@ Il livello di trasporto mette a disposizione due protocolli diversi per la comun
 		\itemsep-0.3em
 		\item \textbf{Connection-oriented}: \`e necessaria una fase di setup iniziale tra client e server prima di poter trasmettere messaggi (si parla
 		di ``handshaking").
-		\item \textbf{Controllo del flusso}: il mittente non "inonder\`a" di dati il destinatario.
-		\item \textbf{Controllo di congestione}: ``strangola" il mittente (client o server) quando la rete è sovraccarica.
+		\item \textbf{Controllo del flusso}: il mittente non ``inonder\`a" di dati il destinatario.
+		\item \textbf{Controllo di congestione}: ``strangola" il mittente (client o server) quando la rete \`e sovraccarica.
 		\item Garantisce il trasporto affidabile tra processo mittente e destinatario.
 		\item Non offre garanzie di timing n\'e di ampiezza minima di banda.
 	\end{itemize}
@@ -504,8 +504,143 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	apparire esternamente come un NVT e assumono che l’host remoto sia un NVT; si scambiano dati e comandi in formato 7-bit US-ASCII sullo stesso canale (prevede
 	dunque ``in-band signaling"), ogni carattere \`e inviato come un ottetto con il primo bit settato a 0 se si tratta di un dato, a 1 per i comandi.
 
-	\item \textbf{Simple Mail Transfer Protocol}:
+	\item \textbf{Simple Mail Transfer Protocol}: si danno in merito le seguenti definizioni:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item \textbf{User agent}: componente che permette l'invio, la modifica e la lettura di messaggi di posta elettronica.
+		\item \textbf{Mail server}: componente che trasferisce i messaggi di posta elettronica.
+		\item \textbf{Indirizzo email}: stringa che identifica un destinario, ha la struttura
+		``\textless{local-part}\textgreater{@}\textless{domain-name}\textgreater{"}:
+		la prima parte identifica il destinatario all'interno del mail server, la seconda (identifica) il mail server.
+		\item \textbf{Tipo MIME}: specifica la natura dei dati nel corpo di un'entità MIME.
+	\end{itemize}
 
+	Il protocollo ha le seguenti caratteristiche:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item Ha come obiettivo \textbf{trasferimento affidabile ed efficiente di email}.
+		\item Implementa un meccanismo di \textbf{scambio formale di responsabilit\`a}: i client hanno come responsabilit\`a trasferire email a un server SMTP o
+		comunicare un eventuale insuccesso.
+		\item \`E indipendente dal sistema di trasmissione usato e richiede solo il \textbf{trasferimento di stream di byte ordinato e affidabile} (tipicamente,
+		si usano connessioni TCP su porta 25).
+		\item Ha la capacit\`a di \textbf{trasportare mail attraverso pi\`u reti} (i.e. un messaggio di mail può passare attraverso server intermedi nel percorso da
+		mittente a destinatario finale).
+		\item I messaggi sono costituiti da una componente \textbf{header} (i.e. linee di intestazione, tra cui ``To:'', ``From'', ``Subject'') e un \textbf{body}
+		(i.e. il corpo del messaggio formato da soli caratteri ASCII 7bit).
+		\item Le interazioni tra client e server sono del tipo \textbf{command}/\textbf{response}: a ogni comando (testo ASCII 7 bit) corrisponde una risposta
+		formata da codice di stato e opzionalmente una descrizione.
+		\item \`E un protocollo di tipo \textbf{push}.
+	\end{itemize}
+
+	I mail server implementano una tecnica denominata ``spooling": al momento dell'invio di un messaggio, il sistema (client) copia messaggio, identificativo del
+	mittente, del destinatario e della macchina di destinazione e tempo di deposito in un'area di memoria detta ``spool"; il client stabilisce una connessione TCP
+	con la macchina destinazione, se questo ha successo allora la copia locale viene eliminata; il processo di trasferimento scandisce periodicamente lo spool ed
+	esegue la procedura di trasferimento dei messaggi non consegnati, dopo un intervallo di tempo definito dall'amministratore del server se un messaggio non
+	\`e stato ancora consegnato allora l'utente mittente viene notificato.
+
+	\begin{figure}[!h]
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.28]{images/smtp.png}
+			\caption{Modello SMTP.}
+		\end{subfigure}
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.2]{images/smtp-aliasing.png}
+			\caption{Server postale con gestione degli alias.}
+		\end{subfigure}
+	\end{figure}
+
+	Si identificano tre fasi per il trasferimento SMTP:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item \textbf{Handshaking}: nella fase di setup iniziale, il client stabilisce la connessione e attende dal server il messaggio di risposta
+		``220 READY FOR MAIL", che indica la disponibilit\`a a ricevere posta.
+		\item \textbf{Trasferimento del messaggio}.
+		\item \textbf{Chiusura della connessione}.
+	\end{itemize}
+
+	I mail server moderni permettono la negoziazione per l'invio di dati in codifica binaria (quindi a 8bit), se non ha successo si inviano caratteri ASCII 7bit
+	seguendo il \textbf{protocollo MIME}. MIME fornisce regole di codifica e decodifica per trasformare caratteri speciali e contenuti multimediali in caratteri
+	ASCII 7bit (in questo modo, si garantisce la retrocompatibilit\`a con i mail server e non con gli user agent).
+
+	Per indicare la fine di un messaggio si usa la seguenza di caratteri ``\textless{CLRF}\textgreater{.}\textless{CLRF}\textgreater{"}. Vengono messi a
+	disposizione i seguenti comandi:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item \textbf{HELO} \textless{client identifier}\textgreater{;}
+		\item \textbf{MAIL FROM:}\textless{\textbf{reverse-path}\textgreater{\textless{CRLF}\textgreater{;}}}
+		\item \textbf{RCPT TO:}\textless{\textbf{forward-path}\textgreater{CRLF\textgreater{;}}}
+		\item \textbf{DATA};
+		\item \textbf{QUIT};
+	\end{itemize}
+
+	\begin{figure}[!h]
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.275]{images/smtp-mime.png}
+			\caption{Esempio di uso del protocollo MIME.}
+		\end{subfigure}
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.32]{images/smtp-sessione.png}
+			\caption{Esempio di sessione SMTP.}
+		\end{subfigure}
+	\end{figure}
+
+	SMTP \`e un protocollo di tipo ``push", per la ricezione risulta necessario un protocollo di tipo ``pull". Alcuni esempi sono: Post Office Protocol
+	(\textbf{POP}), Internet Mail Access Protocol (\textbf{IMAP}), \textbf{HTTP} (quando user agent \`e un browser).
+
+	\item \textbf{Domain Name Server}: si danno in merito le seguenti definizioni:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em 
+		\item \textbf{Nome}: identifica un oggetto con una sequenza di caratteri scelti da un alfabeto finito; si usa per motivi mnemonici e per disaccoppiare
+		il livello applicativo da quello di rete.
+		\item \textbf{Indirizzo}: identifica la locazione dell'oggetto (i dispositivi connessi alla rete vengono individuati mediante indirizzi da 4byte detti
+		``indirizzi IP").
+		\item \textbf{Dominio}: sottoalbero nello spazio dei nomi di dominio che viene identificato dal nome di dominio del nodo in cima al sottoalbero.
+		\item \textbf{Sottodomini}: insieme dei domini in cui si pu\`o suddividere un dominio.
+		\item \textbf{Name server}: programma che gestisce la conversione da nome di dominio a indirizzo IP.
+		\item \textbf{Server Radice}: responsabile dei record della zona radice e restituisce le informazioni sui name server di TLD.
+		\item \textbf{Server Top-Level Domain}: mantiene le informazioni dei nomi di dominio che appartengono a un certo TLD, restituisce le informazioni
+		sui name server di competenza dei sottodomini.
+		\item \textbf{Server di Competenza} (\textbf{Authoritative Name Server}): autorità per una certa zona, memorizza nome e indirizzo IP di un insieme di
+		host dei quali può effettuare traduzioni nome/indirizzo; per una certa zona ci possono essere server di competenza primari e secondari:
+		quelli primari mantengono il file di zona, quelli secondari ricevono il file di zona e offrono il servizio di risoluzione.
+		\item \textbf{Local Name Servers}: non appartengono strettamente alla gerarchia dei server, ogni ISP (università, società, ISP) ha il proprio; a questi
+		vengono inizialmente rivolte le query DNS: operano da proxy e inoltrano la query in una gerarchia di server DNS.
+	\end{itemize}
+
+	Concretamente, DNS \`e un meccanismo che specifica la sintassi dei nomi e le regole per gestirli, consente la conversioni da nomi a indirizzi e viceversa.
+	\`E costituito da:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item \textbf{Schema di assegnazione dei nomi} gerarchico e basato su domini.
+		\item \textbf{Database distribuito} contenente i nomi e le corrispondenze con gli indirizzi IP implementato con una gerarchia di name server.
+		\item \textbf{Protocollo per la distribuzione delle informazioni sui nomi tra name server}: host, router, name server comunicano per risolvere nomi
+		(traduzione nome/indirizzo) utilizzando tipicamente UDP con porta 53.
+	\end{itemize}
+
+	A livello pratico, garantire una struttura gerarchica per i nomi permette di delegarne l'assegnazione a singoli organizzazioni e distribuire la conversione
+	di nomi e indirizzi.
+
+	Lo spazio dei domini ha una struttura ad albero; ogni nodo dell'albero dello spazio dei domini ha un nome di dominio, ossia una sequenza di diverse
+	etichette separate da punti (e.g. ``lab3''.``di''.``unipi''.``it'').
+
+	DNS offre i seguenti servizi:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item \textbf{Risoluzione di nomi} di alto livello (``hostname") in indirizzi IP.
+		\item \textbf{Host aliasing}: un host può avere più nomi, vengono tradotti nel nome canonico e - di seguito - nell'indirizzo IP.
+		\item \textbf{Mail server aliasing}: sinonimi per mail server; e.g. nome identico per mail server e web server).
+		\item \textbf{Distribuzione carico}: un hostname canonico può corrispondere a più indirizzi IP, il DNS restituisce la lista variandone l'ordine per
+		ogni risposta.
+	\end{itemize}
+
+	Per interrogazioni a server DNS si usa il tool "dig".
 	\item \textbf{File Transfer Protocol}: ha le seguenti caratteristiche:
 	\vspace{-3.5mm}
 	\begin{itemize}
@@ -546,77 +681,7 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 
 \pagebreak
 
-\subsection*{Formato dei messaggi.}
-Appare evidente che il formato ASCII 7bit non permetta di rappresentare caratteri speciali: si introduce il protocollo \textbf{Multipurpose
-Internet Mail Extension} (MIME). 
-
-Vengono fornite delle regole di codifica e di decodifica per trasformare caratteri speciali e contenuti multimediali in caratteri ASCII 7bit;
-questo approccio ha permesso di inviare messaggi MIME usando protocolli e mail server esistenti (risulta necessario modificare gli User Agents).
-
-I mail server moderni possono negoziare l'invio di dati in codifica binaria (8 bit); se non ha successo, inviano caratteri ASCII 7bit seguendo
-il protocollo MIME.
-
-\subsection*{Protocolli di accessi alla Mail.}
-SMTP \`e un protocollo di tipo "push", per la ricezione risulta necessario un protocollo di tipo "pull". Alcuni esempi sono: Post Office Protocol
-(POP), Internet Mail Access Protocol (IMAP), HTTP (quando User Agent è un browser).
-
 \section*{Strato Applicativo DNS.}
-Si danno le seguenti definizioni:
-
-\textbf{Nome}: identifica un oggetto con una sequenza di caratteri scelti da un alfabeto finito; si usa per motivi mnemonici e per disaccoppiare
-il livello applicativo da quello di rete.
-
-\textbf{Indirizzo}: identifica la locazione dell'oggetto (i dispositivi connessi alla rete vengono individuati mediante indirizzi da 4byte detti
-"indirizzi IP").
-
-\textbf{Dominio}: sottoalbero nello spazio dei nomi di dominio che viene identificato dal nome di dominio del nodo in cima al sottoalbero.
-
-
-Inizialmente l'associazione tra nomi logici e indirizzi IP era statica (i.e. tutti i nomi logici e i relativi indirizzi IP erano contenuti in
-un file detto "host file"); questo approccio risulta attualmente impraticabile. Si ricorre al sistema DNS.
-
-\subsection*{Domain Name System (DNS).}
-Il DNS si trova al livello applicativo, viene fornito da sistemi terminali e usa servizi del livello di trasporto per trasferire messaggi,
-non interagisce direttamente con gli utenti a meno che non ci siano errori.
-
-E' un meccanismo che deve specificare la sintassi dei nomi e le regole per gestirli, consentire la conversione da nomi a indirizzi e viceversa.
-è costituito essenzialmente da:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
-	\item uno schema di assegnazione dei nomi gerarchico e basato su domini;
-	\item un database distribuito contenente i nomi e le corrispondenze con gli indirizzi IP implementato con una gerarchia di name server;
-	\item un protocollo per la distribuzione delle informazioni sui nomi tra name server host, router, name server comunicano per risolvere nomi
-	(traduzione nome/indirizzo) utilizzando tipicamente UDP con porta 53.
-\end{itemize}
-
-Offre i seguenti servizi:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
-	\item risoluzione di nomi di alto livello (hostname) in indirizzi IP;
-	\item host aliasing (i.e. un host può avere più nomi, vengono tradotti nel nome canonico e - di seguito - nell'indirizzo IP);
-	\item mail server aliasing (i.e. sinonimi per mail server; e.g. nome identico per mail server e web server);
-	\item distribuzione carico (i.e. un hostname canonico può corrispondere a più indirizzi IP, il DNS restituisce la lista variandone l'ordine per ogni risposta).
-\end{itemize}
-
-Per i nomi viene usata una struttura gerarchica (i.e. un nome è costituito da diverse parti (e.g. lab3.di.unipi.it)); in questo modo
-l'assegnazione dei nomi può essere delegata a singole organizzazioni e la responsabilità di convertire nomi e indirizzi distribuita.
-
-\subsection*{Name Server.}
-Si definisce come un programma che gestisce la conversione da nome di dominio a indirizzo IP.
-
-Si definiscono inoltre:
-
-\textbf{Server Radice}: responsabile dei record della zona radice e restituisce le informazioni sui name server di TLD.
-
-\textbf{Server Top-Level Domain}: mantiene le informazioni dei nomi di dominio che appartengono a un certo TLD, restituisce le informazioni
-sui name server di competenza dei sottodomini.
-
-\textbf{Server di Competenza} (Authoritative Name Server): autorità per una certa zona, memorizza nome e indirizzo IP di un insieme di host dei
-quali può effettuare traduzioni nome/indirizzo; per una certa zona ci possono essere server di competenza primari e secondari:
-quelli primari mantengono il file di zona, quelli secondari ricevono il file di zona e offrono il servizio di risoluzione.
-
-\textbf{Local Name Servers}: non appartengono strettamente alla gerarchia dei server, ogni ISP (università, società, ISP) ha il proprio; a questi
-vengono inizialmente rivolte le query DNS: operano da proxy e inoltrano la query in una gerarchia di server DNS.
 
 Quando un programma (es. browser) deve trasformare un nome in
 un indirizzo IP chiama un programma detto resolver, passando il
@@ -634,8 +699,8 @@ I record sono una quadrupla definita come ``name", ``value", ``type", ``ttl".
 Dal parametro ``type" dipende il significato della coppia ``name" e ``value"; si citano alcuni esempi:
 \begin{itemize}[topsep=0pt]
 	\itemsep-0.3em
-	\item \textbf{A}: `name" sta per hostname, value per indirizzo IP.
-	\item \textbf{CNAME}: `name" sta per hostname (o un suo sinonimo), ``value" per il nome canonico dell'host.
+	\item \textbf{A}: ``name" sta per hostname, value per indirizzo IP.
+	\item \textbf{CNAME}: ``name" sta per hostname (o un suo sinonimo), ``value" per il nome canonico dell'host.
 	\item \textbf{NS}: ``name" sta per nome di dominio, ``value" per l'authorative name server per quel dominio.
 	\item \textbf{MX}: ``name" sta per nome di dominio, ``value" per il nome canonico del server di posta associato a quel dominio.
 \end{itemize}
@@ -662,9 +727,9 @@ Il protocollo DNS ha le seguenti caratteristiche:
 
 INSERIRE IMMAGINE MESSAGGI DNS.
 
-Per interrogazioni a server DNS si usa il tool "dig".
 
 \pagebreak
+
 \subsubsection*{Transport Layer.}
 Si danno le seguenti definizioni:
 \begin{itemize}[topsep=0pt]
