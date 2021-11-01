@@ -43,7 +43,8 @@
 \renewcommand{\thesection}{\arabic{section}} %... from sections
 \usepackage{titlesec}
 
-\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{5}
+\setcounter{secnumdepth}{5}
 
 % Prevents LaTeX from filling out a page to the bottom
 \raggedbottom
@@ -86,8 +87,9 @@
     tabsize=2
 }
 
+\renewcommand*\contentsname{Indice.}
+\renewcommand{\figurename}{Figura}
 \begin{document}
-
 \begin{sloppypar}
 \begin{titlepage}
 	\clearpage\thispagestyle{empty}
@@ -104,15 +106,20 @@
 
     \vspace{4cm}
 
-	{\normalsize Giacomo Trapani \\ Anno Accademico 2020/2021\par}
+	{\normalsize Giacomo Trapani \\ Anno Accademico 2021/2022\par}
 
 	\pagebreak
 
 \end{titlepage}
+\begingroup
+\let\clearpage\relax
+\tableofcontents
+\listoffigures
+\endgroup
+\pagebreak
 \section*{Premessa.}
 Si danno le seguenti definizioni:
-\begin{itemize}[topsep=0pt]
-\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{Rete}: interconnessione di dispositivi in grado di scambiarsi informazioni, quali sistemi terminali, router, switch e modem.
 	\item \textbf{Host} (\textbf{sistema terminale}): sono macchine appartenenti agli utenti finali, dedicate all'esecuzione di applicazioni (e.g. computer,
 	tablet, smartphone) oppure ``server" che forniscono servizi a diverse applicazioni utente (e.g. posta elettronica, web).
@@ -121,7 +128,7 @@ Si danno le seguenti definizioni:
 	\item \textbf{Collegamenti} (\textbf{link}): mezzi trasmissivi (cablati, wireless).
 \end{itemize}
 \section{Tipi di Reti.}
-\subsection*{LAN (Local Area Network).}
+\subsection{LAN (Local Area Network).}
 Le LAN vengono definite come reti di computer circoscritte a un'area geograficamente limitata (si estendono al pi\`u per alcuni chilometri,
 sono circoscritte ad aree limitate come un ufficio, una scuola, un edificio etc.). Si cita Ethernet come tecnologia LAN popolare.
 
@@ -131,53 +138,26 @@ workstations) mediante cavi di rame o connessioni wireless.
 Si distinguono LAN con cavo condiviso (obsolete) e LAN con switch (moderne); il maggiore vantaggio della seconda sulla prima \`e che non ha
 bisogno di far passare un pacchetto da ogni dispositivo connesso nel percorso dal router al (dispositivo) target.
 
-\begin{figure}[h!]
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.35]{images/lan-obsoleta.png}
-		\caption{LAN con cavo convidiso.}
-	\end{subfigure}
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.35]{images/lan-moderna.png}
-		\caption{LAN con switch.}
-	\end{subfigure}
-\end{figure}
+Si veda la figura \ref{fig:LAN}.
 
-\subsection*{WAN (Wide Area Network).}
+\subsection{WAN (Wide Area Network).}
 Una WAN (o rete geografica) \`e una rete il cui compito \`e di interconnettere LAN o singoli host separati da distanze geografiche. Viene
 tipicamente gestita da un operatore di rete che fornisce servizi ai clienti. Un esempio di WAN \`e la rete GARR.
-
-\begin{figure}[h!]
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[width=80mm,height=10mm]{images/wan-puntopunto.png}
-		\caption{WAN punto-punto.}
-	\end{subfigure}
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.25]{images/wan-commutazione.png}
-		\caption{WAN a commutazione.}
-	\end{subfigure}
-\end{figure}
 
 Si distinguono WAN punto-punto (collegano direttamente due dispositivi attraverso un mezzo trasmissivo (e.g. cavo in fibra ottica, ponti radio))
 e WAN a commutazione (collegano pi\`u di due punti di terminazioni (e.g. dorsali Internet)); le seconde sono dotate di elementi di commutazione
 (i.e. elaboratori specializzati utilizzati per connettere tra loro pi\`u linee di trasmissione).
+
+Si veda la figura \ref{fig:WAN}.
 
 \section{Tecniche di commutazione.}
 Si definiscono ``tecniche di commutazione" le modalit\`a con cui viene determinato il percorso sorgente-destinazione e vengono dedicate ad esso le
 risorse della rete. Si distinguono due tecniche: circuit switching (si parla di ``reti a commutazione di circuito") e packet switching (``reti a
 commutazione di pacchetto").
 
-\begin{figure}[h!]
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.25]{images/commutazione-circuito.png}
-		\caption{Rete a commutazione di circuito.}
-	\end{subfigure}
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.25]{images/commutazione-pacchetto.png}
-		\caption{Rete a commutazione di pacchetto.}
-	\end{subfigure}
-\end{figure}
+Si veda la figura \ref{fig:tipi-reti}.
 
-\subsection*{Circuit switching.}
+\subsection{Circuit switching.}
 La rete determina un percorso dalla sorgente alla destinazione, su questo viene riservato e garantito un rate di trasmissione costante per la
 durata dell'intera sessione di comunicazione (una frazione della capacit\`a di trasmissione dei link).
 
@@ -189,7 +169,7 @@ portare a ``overprovisioning" e/o a un sottoutilizzo di queste in presenza di ra
 
 \textbf{Vantaggi}: performance garantita, overhead limitato, tecnologie di switching efficienti.
 
-\subsection*{Packet switching.}
+\subsection{Packet switching.}
 Il flusso di dati punto-punto viene suddiviso in pacchetti che condividono le risorse di rete e instradati singolarmente e indipendentemente
 dagli altri. Si parla di trasmissione ``store and forward": il commutatore (tipicamente un router) deve aspettare di aver ricevuto per intero il
 pacchetto prima di poter trasmettere sul collegamento in uscita.
@@ -213,21 +193,11 @@ Le reti dei sistemi terminali sono connesse a Internet attraverso una gerarchia 
 definisco ``dorsale" una ISP di primo livello. Si permette l'esistenza di ``Internet eXchange Point", definiti come punti di incontro per il peering
 tra due o pi\`u ISP.
 
-\begin{figure}[h!]
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.28]{images/internet-semplificata.png}
-		\caption{Internet: rete di reti - versione semplificata.}
-	\end{subfigure}
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.28]{images/internet-completa.png}
-		\caption{Internet: rete di reti - versione moderna.}
-	\end{subfigure}
-\end{figure}
+Si veda la figura \ref{fig:internet}.
 
-\subsection*{Metriche.}
+\subsection{Metriche.}
 Si definiscono i seguenti parametri, utilizzati per misurare le prestazioni della rete:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{Larghezza di banda} (\textbf{Bandwidth}): larghezza dell’intervallo di frequenze utilizzato dal sistema trasmissivo misurato in Hertz.
 	\item \textbf{Velocit\`a di trasmissione} (\textbf{Bitrate o transmission rate}): quantit\`a di dati (bits) che possono essere trasmessi (“inseriti
 	nella linea”) nell'unit\`a di tempo (bits/secondo o bps) su un certo collegamento; dipende alla larghezza di banda e dalla tecnica trasmissiva
@@ -238,8 +208,7 @@ Si definiscono i seguenti parametri, utilizzati per misurare le prestazioni dell
 	definito come somma di ritardo di elaborazione, di accodamento, di trasmissione e di propagazione.
 \end{itemize}
 Si definiscono dunque i ritardi sopra elencati:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{Ritardo di elaborazione}: \`e dovuto al controllo di errori sui bit e alla determinazione del canale di uscita.
 	\item \textbf{Ritardo di accodamento}: \`e il tempo che un pacchetto spende all'interno del buffer (tipicamente di un router), \`e una
 	quantit\`a aleatoria.
@@ -266,8 +235,7 @@ ci\`o che compete, delegando ad altri tutto ci\`o che \`e delegabile) e ``inform
 indispensabili per il committente per definire completamente un'operazione).
 
 In concreto:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item Il modello permette di scomporre il problema in sottoproblemi pi\`u semplici il cui sviluppo \`e indipendente (da quello degli altri
 	sottoproblemi).
 	\item Ogni strato scambia informazioni con quelli adiacenti, ma comunica logicamente con il proprio omologo; fornisce informazioni allo strato
@@ -278,10 +246,9 @@ In concreto:
 A questo punto l'obiettivo diventa realizzare una rete di calcolatori in cui qualsiasi terminale comunica con un qualsiasi fornitore di servizi
 mediante qualsiasi rete; lo standard per l'interconnessione di sistemi aperti \`e il modello ISO/OSI.
 
-\subsection*{Modello ISO/OSI.}
+\subsection{Modello ISO/OSI.}
 Si danno le seguenti definizioni nei termini del modello ISO/OSI:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{Livello} (o \textbf{strato}): modulo interamente definito attraverso i servizi, protocolli e le interfacce che lo caratterizzano.
 	\item \textbf{Servizio}: insieme di primitive (operazioni) che uno strato fornisce ad uno strato soprastante.
 	\item \textbf{Interfaccia}: insieme di regole che governano il formato e il significato delle unit\`a di dati (es. messaggi, segmenti o
@@ -292,16 +259,7 @@ Si danno le seguenti definizioni nei termini del modello ISO/OSI:
 	una volta ricevuto.
 \end{itemize}
 
-\begin{figure}[h!]
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.22]{images/stack-protocollare-iso_osi.png}
-		\caption{Pila di protocolli.}
-	\end{subfigure}
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.22]{images/gerarchia-layer-iso_osi.png}
-		\caption{Gerarchia di strati (o "layer").}
-	\end{subfigure}
-\end{figure}
+Per uno schema, si veda la figura \ref{fig:iso-osi}.
 
 I layer dal livello 5 al 7 sono di supporto all'elaborazione e interazione con l'utente (vengono realizzati a livello software), gli altri 4
 alla rete e all'infrastruttura trasmissiva (realizzati a livello hardware e software); tipicamente i nodi intermedi implementano solo i primi
@@ -311,18 +269,16 @@ Il modello prevede inoltre l'incapsulamento: il flusso di informazioni - che ha 
 viene progressivamente arricchita mediante l'aggiunta di headers.
 
 Si danno in proposito le seguenti definizioni:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{Header}: qualificazione del pacchetto dati al livello corrente.
 	\item \textbf{Data}: payload proveniente dal livello precedente.
 	\item \textbf{Trailer}: usato in funzione di trattamento dell'errore.
 \end{itemize}
 
-\subsection*{Stack protocollare TCP/IP.}
+\subsection{Stack protocollare TCP/IP.}
 TCP/IP \`e una famiglia di protocolli attualmente utilizzata in Internet. Si tratta di una gerarchia di protocolli, ciascuno dei quali fornisce
-funzionalità specifiche. Prende di riferimento il modello ISO/OSI e si articola nei seguenti 5 livelli (elencati dall'alto al basso):
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+funzionalit\`a specifiche. Prende di riferimento il modello ISO/OSI e si articola nei seguenti 5 livelli (elencati dall'alto al basso):
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{Application Layer}: \`e di supporto alle applicazioni di rete, permette un collegamento logico end-to-end; si usa per lo scambio di
 	pacchetti di informazioni detti ``messaggi". Include i protocolli HTTP, FTP, SMTP...
 	\item \textbf{Transport Layer}: permette il trasporto di messaggi tra sistemi terminali; un pacchetto a questo livello prende il nome di ``segmento".
@@ -334,30 +290,18 @@ funzionalità specifiche. Prende di riferimento il modello ISO/OSI e si articola
 	\item \textbf{Physical Layer}: si occupa di trasferire individualmente i bit contenuti nei singoli frame da un nodo al successivo.
 \end{itemize}
 
-\begin{figure}[h!]
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.18]{images/livello-fisico-tcp_ip.png}
-		\caption{Comunicazione in una internet - livello fisico.}
-	\end{subfigure}
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.18]{images/incapsulamento-tcp_ip.png}
-		\caption{Comunicazione in una internet - incapsulamento.}
-	\end{subfigure}
-\end{figure}
+Si veda la figura \ref{fig:comunicazione-internet}.
 
-\subsubsection*{Application Layer.}
+\subsubsection{Application Layer.}
 Si danno in merito le seguenti definizioni:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{Application Programming Interface}: insieme di regole che un programmatore deve rispettare per l'utilizzo delle risorse.
 	\item \textbf{Socket}: API che funge da interfaccia tra gli application e transport layer; due processi comunicano mandando dati alla socket (che
 	fa da connessione a livello logico) il cui invio e ricezione sono responsabilit\`a dei restanti quattro livelli dello stack TCP/IP nel sistema
 	operativo. \`E la API di Internet.
 	\item \textbf{Uniform Resource Identifier}: stringa di caratteri che identifica una risorsa (i.e. qualsiasi cosa abbia una identit\`a) presente
 	sulla rete. Se ne distinguono di due tipi:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{Uniform Resource Locator}: sottoinsieme di URI che identifica le risorse attraverso il loro meccanismo di accesso. Segue la sintassi
 		\textless{scheme}\textgreater{://}\textless{user}\textgreater{:}\textless{password}\textgreater{@}\textless{host}\textgreater{:}\textless{port}
 		\textgreater{/}\textless{path}\textgreater:
@@ -369,8 +313,7 @@ Si danno in merito le seguenti definizioni:
 \end{itemize}
 
 A questo livello si distinguono due modelli architetturali:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{Client-Server}: esiste un host sempre attivo (il ``server") che serve le richieste di altri host (i ``clients").
 	\item \textbf{Peer-to-Peer}: la comunicazione avviene tra coppie di dispositivi non sempre attivi (i ``peer") che possono offrire servizi e inviare
 	richieste.
@@ -381,12 +324,9 @@ intero a 32bit che identifica univocamente una macchina host), numero di porta (
 una macchina).
 
 Il livello di trasporto mette a disposizione due protocolli diversi per la comunicazione:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{TCP}: ha le seguenti caratteristiche:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{Connection-oriented}: \`e necessaria una fase di setup iniziale tra client e server prima di poter trasmettere messaggi (si parla
 		di ``handshaking").
 		\item \textbf{Controllo del flusso}: il mittente non ``inonder\`a" di dati il destinatario.
@@ -395,9 +335,7 @@ Il livello di trasporto mette a disposizione due protocolli diversi per la comun
 		\item Non offre garanzie di timing n\'e di ampiezza minima di banda.
 	\end{itemize}
 	\item \textbf{UDP}: ha le seguenti caratteristiche:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{Connectionless}: non orientato alle connessioni, non prevede una fase di setup iniziale.
 		\item Trasporto non affidabile.
 		\item Non implementa meccanismi di controllo di flusso.
@@ -406,24 +344,14 @@ Il livello di trasporto mette a disposizione due protocolli diversi per la comun
 	\end{itemize}
 \end{itemize}
 
-\begin{figure}[h!]
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.18]{images/trasporto-applicazioni-comuni.png}
-		\caption{Tipo di trasporto richiesto da applicazioni comuni.}
-	\end{subfigure}
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.18]{images/applicazioni-internet.png}
-		\caption{Esempi di applicazioni Internet e i relativi protocolli.}
-	\end{subfigure}
-\end{figure}
+Per degli esempi di applicazioni Internet, si veda la figura \ref{fig:applicazioni-internet}.
 
 Si passa dunque alla trattazione dei protocolli implementati a questo livello:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{HTTP}: ha le seguenti caratteristiche:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\phantomsection
+	\addcontentsline{toc}{paragraph}{HTTP}
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{Stateless}: non ha memoria di stato: le coppie richiesta, risposta sono indipendenti; ogni richiesta viene eseguita indipendentemente
 		da quelle che la han preceduta.
 		\item \textbf{Richiesta/Risposta}: La connessione viene iniziata dal client, che invia un messaggio di richiesta detto ``request" a cui il server
@@ -443,23 +371,10 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		richiesta richiede tempo per essere processata le risposte a quelle successive sono bloccate).
 	\end{itemize}
 
-\pagebreak
-
-	\begin{figure}[h!]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.25]{images/http-request.png}
-			\caption{HTTP Request Message.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.25]{images/http-response.png}
-			\caption{HTTP Response Message.}
-		\end{subfigure}
-	\end{figure}
+	Per la struttura dei messaggi HTTP, si veda la figura \ref{fig:messaggi-http}.
 
 	I metodi messi a disposizione dal protocollo sono:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{OPTIONS}: richiede informazioni sulle opzioni di comunicazione (i.e. quali metodi) sono associati a una URL o al server stesso.
 		\item \textbf{GET}: richiede il trasferimento di una risorsa identificata da una URL o operazioni associate all’URL stessa; la semantica pu\`o
 		essere modificata in un ``conditional GET" se l'header contiene uno dei campi ``If-Modified-Since", ``If-Unmodified-Since", ``If-Match",
@@ -476,9 +391,8 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	della propriet\`a di idempotenza (i.e. GET, HEAD, PUT, DELETE, OPTIONS, TRACE).
 
 	\item \textbf{TErminaL NETwork}: ha le seguenti caratteristiche
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\addcontentsline{toc}{paragraph}{TELNET}
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item Prevede un programma server che accetta le richieste e un programma client che effettua le richieste; quest'ultimo interagisce con il terminale
 		utente sull'host locale e scambia messaggi con il Telnet server.
 		\item Usa TCP e persiste per l'intera durata della sessione, il client si connette alla porta 23 del server.
@@ -489,25 +403,15 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item Il client invia (in chiaro) un login identifier e una password (non \`e sicuro, \`e stato sostituito da ``SSH").
 	\end{itemize}
 
-	\begin{figure}[h!]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.25]{images/telnet.png}
-			\caption{TELNET: Login da remoto.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.25]{images/telnet-nvt.png}
-			\caption{TELNET: NVT.}
-		\end{subfigure}
-	\end{figure}
-
 	Il terminale in esecuzione sia sul client sia sul server \`e un ``Network Virtual Terminal": gli host traducono le loro caratteristiche locali cos\`i da
 	apparire esternamente come un NVT e assumono che l’host remoto sia un NVT; si scambiano dati e comandi in formato 7-bit US-ASCII sullo stesso canale (prevede
 	dunque ``in-band signaling"), ogni carattere \`e inviato come un ottetto con il primo bit settato a 0 se si tratta di un dato, a 1 per i comandi.
 
+	Si veda la figura \ref{fig:telnet}.
+
 	\item \textbf{Simple Mail Transfer Protocol}: si danno in merito le seguenti definizioni:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\addcontentsline{toc}{paragraph}{SMTP}
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{User agent}: componente che permette l'invio, la modifica e la lettura di messaggi di posta elettronica.
 		\item \textbf{Mail server}: componente che trasferisce i messaggi di posta elettronica.
 		\item \textbf{Indirizzo email}: stringa che identifica un destinario, ha la struttura
@@ -517,9 +421,7 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	\end{itemize}
 
 	Il protocollo ha le seguenti caratteristiche:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item Ha come obiettivo \textbf{trasferimento affidabile ed efficiente di email}.
 		\item Implementa un meccanismo di \textbf{scambio formale di responsabilit\`a}: i client hanno come responsabilit\`a trasferire email a un server SMTP o
 		comunicare un eventuale insuccesso.
@@ -540,21 +442,10 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	esegue la procedura di trasferimento dei messaggi non consegnati, dopo un intervallo di tempo definito dall'amministratore del server se un messaggio non
 	\`e stato ancora consegnato allora l'utente mittente viene notificato.
 
-	\begin{figure}[!h]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.28]{images/smtp.png}
-			\caption{Modello SMTP.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.2]{images/smtp-aliasing.png}
-			\caption{Server postale con gestione degli alias.}
-		\end{subfigure}
-	\end{figure}
+	Si veda la figura \ref{fig:smtp}.
 
 	Si identificano tre fasi per il trasferimento SMTP:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{Handshaking}: nella fase di setup iniziale, il client stabilisce la connessione e attende dal server il messaggio di risposta
 		``220 READY FOR MAIL", che indica la disponibilit\`a a ricevere posta.
 		\item \textbf{Trasferimento del messaggio}.
@@ -568,9 +459,7 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 
 	Per indicare la fine di un messaggio si usa la seguenza di caratteri ``\textless{CLRF}\textgreater{.}\textless{CLRF}\textgreater{"}. Vengono messi a
 	disposizione i seguenti comandi:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{HELO} \textless{client identifier}\textgreater{;}
 		\item \textbf{MAIL FROM:}\textless{\textbf{reverse-path}\textgreater{\textless{CRLF}\textgreater{;}}}
 		\item \textbf{RCPT TO:}\textless{\textbf{forward-path}\textgreater{CRLF\textgreater{;}}}
@@ -578,24 +467,14 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item \textbf{QUIT}.
 	\end{itemize}
 
-	\begin{figure}[!h]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.275]{images/smtp-mime.png}
-			\caption{Esempio di uso del protocollo MIME.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.32]{images/smtp-sessione.png}
-			\caption{Esempio di sessione SMTP.}
-		\end{subfigure}
-	\end{figure}
+	Si veda la figura \ref{fig:smtp-esempi}.
 
 	SMTP \`e un protocollo di tipo ``push", per la ricezione risulta necessario un protocollo di tipo ``pull". Alcuni esempi sono: Post Office Protocol
 	(\textbf{POP}), Internet Mail Access Protocol (\textbf{IMAP}), \textbf{HTTP} (quando user agent \`e un browser).
 
 	\item \textbf{Domain Name Server}: si danno in merito le seguenti definizioni:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em 
+	\addcontentsline{toc}{paragraph}{DNS}
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{Nome}: identifica un oggetto con una sequenza di caratteri scelti da un alfabeto finito; si usa per motivi mnemonici e per disaccoppiare
 		il livello applicativo da quello di rete.
 		\item \textbf{Indirizzo}: identifica la locazione dell'oggetto (i dispositivi connessi alla rete vengono individuati mediante indirizzi da 4byte detti
@@ -607,9 +486,7 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 
 
 	DNS offre i seguenti servizi:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{Risoluzione di nomi} di alto livello (``hostname") in indirizzi IP.
 		\item \textbf{Host aliasing}: un host può avere più nomi, vengono tradotti nel nome canonico e - di seguito - nell'indirizzo IP.
 		\item \textbf{Mail server aliasing}: sinonimi per mail server; e.g. nome identico per mail server e web server).
@@ -618,9 +495,7 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	\end{itemize}
 
 	Concretamente, DNS \`e costituito da:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{Schema di assegnazione dei nomi} gerarchico e basato su domini.
 		\item \textbf{Database distribuito} contenente i nomi e le corrispondenze con gli indirizzi IP implementato con una gerarchia di name server (``record
 		DNS'').
@@ -628,16 +503,7 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		(traduzione nome/indirizzo) utilizzando tipicamente UDP con porta 53.
 	\end{itemize}
 
-	\begin{figure}[!h]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.35]{images/dns-servizio.png}
-			\caption{DNS: servizio di risoluzione.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.32]{images/dns-gerarchia-nameserver.png}
-			\caption{Gerarchia dei name server.}
-		\end{subfigure}
-	\end{figure}
+	Si vedano le figure \ref{fig:dns-servizio} e \ref{fig:dns-nameserver}.
 
 	A livello pratico, garantire una struttura gerarchica per i nomi permette di delegarne l'assegnazione a singoli organizzazioni e distribuire la conversione
 	di nomi e indirizzi.
@@ -647,21 +513,10 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	contigua dell’albero) di cui \`e responsabile un name server; per esempio, in ``di.unipi.it'' zona e dominio coincidono, lo stesso discorso non vale per 
 	``unipi.it''.
 
-	\begin{figure}[!h]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.35]{images/dns-query-ricorsiva.png}
-			\caption{Query DNS risolta ricorsivamente.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.35]{images/dns-query-iterativa.png}
-			\caption{Query DNS risolta iterativamente.}
-		\end{subfigure}
-	\end{figure}
+	Per esempi di query DNS, si veda la figura \ref{fig:dns-query}.
 
 	Si distinguono i seguenti ruoli:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{Server Top-Level Domain}: mantiene le informazioni dei nomi di dominio che appartengono a un certo TLD, restituisce le informazioni
 		sui name server di competenza dei sottodomini.
 		\item \textbf{Server Radice}: responsabile dei record della zona radice e restituisce le informazioni sui name server di TLD.
@@ -676,9 +531,7 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	definiti come una quadrupla formata dai campi ``name", ``value", ``type", ``ttl" (time to leave).
 
 	Dal parametro ``type" dipende il significato della coppia ``name" e ``value"; si citano alcuni esempi:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{A}: ``name" sta per hostname, value per indirizzo IP.
 		\item \textbf{CNAME}: ``name" sta per hostname (o un suo sinonimo), ``value" per il nome canonico dell'host.
 		\item \textbf{NS}: ``name" sta per nome di dominio, ``value" per l'authorative name server per quel dominio.
@@ -686,15 +539,12 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	\end{itemize}
 
 	Il protocollo DNS ha le seguenti caratteristiche:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item Usa connessione \textbf{UDP sulla porta 53}.
 		\item \textbf{Permette} uso di \textbf{TCP} (tipicamente usata per messaggi di grandi dimensioni tra server DNS)
-		\item \textbf{Messaggi di query e reply hanno lo stesso formato}.
+		\item \textbf{Messaggi di query e reply hanno lo stesso formato}. Per la struttura dei messaggi, si veda la figura \ref{fig:dns-messaggio}.
 		\item Ha un \textbf{header} formato dai seguenti campi:
-		\begin{itemize}[topsep=0pt]
-			\itemsep-0.3em
+		\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 			\item \textbf{identification}: intero a 16bit uguale per la coppia query, reply.
 			\item \textbf{flags}: 0 se query, 1 se risposta.
 			\item \textbf{autorevolezza} della risposta.
@@ -706,25 +556,13 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	\end{itemize}
 
 	Essendo per natura DNS altamente centralizzato, una query attraversa una serie di server prima di restituire il risultato: in questo modo, si introduce il
-	rischio di ``DNS hijacking'' (consiste nel restituire risposte non corrette alle query, si reindirizza il client verso siti malevoli).
-
-	\begin{figure}[!h]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.265]{images/dns-messaggio.png}
-			\caption{Struttura di un messaggio DNS.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.35]{images/dns-hijacking.png}
-			\caption{DNS hijacking.}
-		\end{subfigure}
-	\end{figure}
-
+	rischio di ``DNS hijacking'' (consiste nel restituire risposte non corrette alle query, si reindirizza il client verso siti malevoli). Si veda la figura
+	\ref{fig:dns-hijacking}.
 
 	Per interrogazioni a server DNS si usa il tool "dig".
 	\item \textbf{File Transfer Protocol}: ha le seguenti caratteristiche:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\addcontentsline{toc}{paragraph}{FTP}
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item Permette control connection (i.e scambio di comandi e risposte tra client e server). Segue il protocollo Telnet.
 
 		Il client FTP contatta il server FTP alla porta 21, ottiene l’autorizzazione sulla connessione di controllo e invia i comandi su di questa
@@ -742,30 +580,17 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item Fa uso di codici di ritorno.
 		\item Il collegamento pu\`o essere anonimo (si parla di ``anonymous FTP") o reso sicuro con TLS.
 		\item Implementa pi\`u modalita di trasmissione, come:
-		\begin{itemize}[topsep=0pt]
-			\itemsep-0.3em
+		\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 			\item \textbf{Stream mode}: FTP invia i dati a TCP con un flusso continuo di bit.
 			\item \textbf{Block mode}: FTP invia i dati a TCP suddivisi in blocchi. Ogni blocco è preceduto da un header.
 			\item \textbf{Compressed mode}: si trasmette il file compresso.
 			\end{itemize}
 	\end{itemize}
 
-	\begin{figure}[!h]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.26]{images/ftp-overview.png}
-			\caption{FTP: overview.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.25]{images/ftp-modello.png}
-			\caption{Modello FTP.}
-		\end{subfigure}
-	\end{figure}
+	Si veda la figura \ref{fig:ftp}.
 
-	
 	I comandi messi a disposizione sono i seguenti:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep -0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{USER} \textless{username}\textgreater{.}
 		\item \textbf{PASS} \textless{password}\textgreater{.}
 		\item \textbf{LIST}: elenca i file della directory corrente.
@@ -779,10 +604,9 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	\end{itemize}
 \end{itemize}
 
-\subsubsection*{Transport Layer.}
+\subsubsection{Transport Layer.}
 Si danno le seguenti definizioni:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{Multiplexing}: provvede all'``accorpamento” dei flussi dati dai processi verso la rete, li ``imbusta" con un preambolo. \`E
 	basato sui socket address dei processi.
 	\item \textbf{Demultiplexing}: provvede allo ``smistamento” dei pacchetti fra la rete e le applicazioni (i.e. dirige i dati ricevuti al
@@ -796,24 +620,11 @@ Si danno le seguenti definizioni:
 	destinazione", ``numero di porta di destinazione".
 \end{itemize}
 
-\begin{figure}[h!]
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.24]{images/demultiplexing-senza-connessione.png}
-		\caption{Demultiplexing senza connessione.}
-	\end{subfigure}
-	\begin{subfigure}{0.49 \linewidth} \centering
-		\includegraphics[scale=0.24]{images/demultiplexing-orientato-alla-connessione.png}
-		\caption{Demultiplexing orientato alla connessione.}
-	\end{subfigure}
-\end{figure}
 Offre i seguenti servizi:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 	\item \textbf{Multiplexing}.
 	\item \textbf{Demultiplexing}: se ne distinguono due tipi:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{senza connessione} (\textbf{UDP}): lo strato di trasporto dell'host ricevente consegna il segmento UDP alla socket
 		identificata dal socket address destinazione; i datagrammi inviati da mittenti differenti e con stessa destinazione vengono consegnati
 		alla stessa socket.
@@ -821,11 +632,12 @@ Offre i seguenti servizi:
 		segmento alla socket appropriata (e.g. un server Web pu\`o creare una socket per ogni client connesso); un host server pu\`o supportare
 		pi\`u socket alla volta.
 	\end{itemize}
+	Si veda la figura \ref{fig:demultiplexing}.
 	
 	\item \textbf{Protocollo TCP}: ha le seguenti caratteristiche:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	\phantomsection
+	\addcontentsline{toc}{paragraph}{TCP}
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item \textbf{Orientato allo stream}: i dati sono un flusso di byte ordinati ma non strutturati; numera i byte (NON i segmenti). Si
 		definiscono in merito ``numero di sequenza" associato a un segmento il numero (nel flusso) del primo byte del segmento e ``numero di
 		riscontro" il numero dell'ultimo byte correttamente ricevuto + 1.
@@ -838,14 +650,13 @@ Offre i seguenti servizi:
 		\item Implementa meccanismi di controllo di flusso (i.e. evita di spedire pi\`u dati di quanti il ricevitore possa elaborare).
 		\item Implementa meccanismi di controllo di congestione (i.e. gestisce opportunamente situazioni di sovraccarico della rete).
 		\item Suddivide il flusso di byte in segmenti in modo indipendente dal programma applicativo che li ha generati (si parla di ``trasferimento
-		bufferizzato").
+		bufferizzato"); si veda in merito la figura \ref{fig:tcp-trasferimento}.
 	\end{itemize}
 
-	Un segmento TCP permette ``selective acknowledgement" (nel campo ``Opzioni", non supportato da tutte le implementazioni) che permette di
-	specificare quali segmenti sono stati ricevuti, e supporta i seguenti flags (in grassetto i pi\`u importanti):
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
+	Per il formato dei segmenti TCP si veda la figura \ref{fig:tcp-segmento}; un segmento TCP permette ``selective acknowledgement" (nel campo ``Opzioni",
+	non supportato da tutte le implementazioni) che permette di specificare quali segmenti sono stati ricevuti, e supporta i seguenti flags (in grassetto i
+	pi\`u importanti):
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 		\item URG: Il campo Puntatore Urgente contiene dati significativi da trasferire in via prioritaria.
 		\item \textbf{ACK}: Il campo Numero di Riscontro contiene dati significativi.
 		\item PSH: Funzione Push (trasferimento immediato dei dati in un segmento dal trasporto al livello applicativo).
@@ -853,79 +664,402 @@ Offre i seguenti servizi:
 		\item \textbf{SYN}: Sincronizza il Numero di Sequenza. Messo a 1 durante l'handshake.
 		\item \textbf{FIN}: Non ci sono altri dati dal mittente, implica la chiusura della connessione.
 	\end{itemize}
-\pagebreak
-	\begin{figure}[h!]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.25]{images/tcp-trasferimento-bufferizzato.png}
-			\caption{Trasferimento bufferizzato.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.25]{images/tcp-formato-segmenti.png}
-			\caption{Formato dei segmenti TCP.}
-		\end{subfigure}
-	\end{figure}
 
 	Si individuano tre fasi nella gestione di una connessione:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
-		\item \textbf{Handshake}: fase di setup iniziale, viene detto \textbf{a tre vie} per il numero di passaggi necessari.
+	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
+		\item \textbf{Handshake}: fase di setup iniziale, viene detto \textbf{a tre vie} per il numero di passaggi necessari. Si veda la figura
+		\ref{fig:tcp-handshake}.
 		
 		I primi segmenti non hanno carico utile, non portano nessuna informazione. All'arrivo del primo segmento, il server inizializza due buffer (memorie di
 		scambio) e le variabili, necessari per il controllo del flusso e della congestione; all'arrivo del riscontro del primo segmento, il client alloca due
 		buffer e le variabili, necessari per il controllo del flusso e della congestione; alla ricezione del terzo segmento, la connessione \`e instaurata.
 
-		\begin{figure}[h!]
-			\begin{subfigure}{0.49 \linewidth} \centering
-				\includegraphics[scale=0.3]{images/tcp-3way-handshake-semplificato.png}
-				\caption{Handshake a 3 vie: vista semplificata.}
-			\end{subfigure}
-			\begin{subfigure}{0.49 \linewidth} \centering
-				\includegraphics[scale=0.265]{images/tcp-3way-handshake.png}
-				\caption{Handshake a 3 vie.}
-			\end{subfigure}
-		\end{figure}
+		\item \textbf{Trasferimento dati}: si distinguono due ruoli:
+		\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
+			\item \textbf{Mittente}: TCP riceve i dati dall'applicazione, incapsula i dati in uno o pi\`u segmenti, assegna il numero di sequenza e
+			avvia il timer di ritrasmissione. I dati vengono ritrasmessi se e solo se o si raggiunge il valore di \textbf{timeout} o si ricevono \textbf{tre
+			ACK duplicati}: nel primo caso, si ritrasmette il segmento che non \`e stato riscontrato (e che ha causato il timeout), poi si riavvia il timer;
+			nel secondo caso, il segmento successivo a quello riscontrato \`e andato perso, si fa ``ritrasmissione veloce" (``fast retransmission") prima della
+			scadenza del timer (si veda in merito la figura \ref{fig:tcp-ritrasmissione-veloce}).
 
-		\item \textbf{Trasferimento dati}.
+			Nel caso di segmenti fuori sequenza, i dati possono essere temporaneamente memorizzati dall’entit\`a TCP destinataria (TCP non dice come il destinatario
+			deve gestire i pacchetti fuori \linebreak sequenza); nelle versioni più recenti si implementa ``SACK": i pacchetti ricevuti fuori sequenza vengono memorizzati
+			e il riscontro di pacchetti fuori sequenza e duplicati viene inviato in OPTIONS.
+
+			Per uno schema riassuntivo delle funzionalit\`a del mittente, si veda la figura \ref{fig:tcp-fsm-mittente}.
+			\item \textbf{Destinatario}: si danno le seguenti regole:
+			\begin{itemize}
+				\itemsep-0.3em
+				\item[i.] Tutti i segmenti inviati per trasmettere dati includono ACK.
+				\item[ii.] Se il destinatario non ha dati da inviare e riceve un segmento ``in ordine'' allora ritarda l'invio di ACK di 500ms a meno che non
+				riceva un nuovo segmento.
+				\item[iii.] Se il destinatario riceve il segmento atteso e il precedente non \`e stato ancora riscontrato, allora invia immediatamente ACK.
+				\item[iv.] Se il destinatario riceve un segmento fuori sequenza, allora invia immediatamente ACK indicando il prossimo numero atteso.
+				\item[v.] Se il destinatario riceve un segmento che era mancante (un ``buco'' in una sequenza), allora invia immediatamente ACK indicando il
+				prossimo numero atteso.
+				\item[vi.] Se il destinatario riceve un segmento duplicato, allora invia immediatamente ACK indicando il prossimo numero atteso.
+			\end{itemize}
+
+			Per uno schema riassuntivo delle funzionalit\`a del destinatario, si veda la figura \ref{fig:tcp-fsm-destinatario}.
+		\end{itemize}
+
+		Per alcuni esempi, si vedano le figure \ref{fig:tcp-caso-ok}, \ref{fig:tcp-riscontro-smarrito}, \ref{fig:tcp-segmento-smarrito},
+		\ref{fig:tcp-riscontro-smarrito-ritrasmissione}.
+		
 		\item \textbf{Chiusura della connessione}: client e server chiudono ciascuno il proprio lato della connessione, viene inviato un segmento TCP con
 		bit FIN uguale a 1; ciascuno risponde al FIN con un ACK (eventualmente, ACK pu\`o venire combinato col proprio FIN). Risulta possibile anche lo
 		scambio simultaneo di FIN.
 
-		Si implementa inoltre lo stato di ``half-close'': uno dei due processi smette di inviare dati mentre ne sta ancora ricevendo.
-
-		\begin{figure}[h!]
-			\begin{subfigure}{0.49 \linewidth} \centering
-				\includegraphics[scale=0.215]{images/tcp-half-close.png}
-				\caption{Half-close.}
-			\end{subfigure}
-			\begin{subfigure}{0.49 \linewidth} \centering
-				\includegraphics[scale=0.215]{images/tcp-chiusura-3way-handshake.png}
-				\caption{Chiusura con handshake a 3 vie (comune nel caso di modelli client-server del tipo).}
-			\end{subfigure}
-		\end{figure}
-		\pagebreak
-
+		Si implementa inoltre lo stato di ``half-close'': uno dei due processi smette di inviare dati mentre ne sta ancora ricevendo; si veda in proposito
+		la figura \ref{fig:tcp-half-close}.
+		
+		Per alcuni esempi, si vedano le figure \ref{fig:chiusura-3way}, \ref{fig:tcp-chiusura}, \ref{fig:tcp-apertura-chiusura}.
 	\end{itemize}
-
-	\begin{figure}[h!]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.28]{images/tcp-chiusura.png}
-			\caption{Chiusura della connessione.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.35]{images/tcp-apertura-chiusura.png}
-			\caption{Apertura e chiusura della connessione.}
-		\end{subfigure}
-	\end{figure}
 
 	Durante una connessione TCP vengono attraversati pi\`u stati dai dispositivi terminali, tra questi si menziona lo stato \textbf{TIME\textunderscore{WAIT}}:
 	indica che il dispositivo si trova adesso in attesa per un periodo di tempo lungo due volte la ``Maximum Segment Lifetime" in modo tale da assicurarsi che
 	l'altro endpoint abbia riconosciuto la richiesta di chiusura della connessione; questo stato viene utilizzato per consentire l'eliminazione di segmenti
 	duplicati in rete e implementare in maniera affidabile la terminazione della connessione in entrambe le direzioni.
-	
 
 	\item \textbf{Protocollo UDP}:
+	\addcontentsline{toc}{paragraph}{UDP}
 \end{itemize}
+
+\pagebreak
+
+\begin{figure}[h!]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.35]{images/lan-obsoleta.png}
+		\caption{LAN con cavo convidiso.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.4]{images/lan-moderna.png}
+		\caption{LAN con switch.}
+	\end{subfigure}
+	\caption{Esempi di LAN.}
+	\label{fig:LAN}
+\end{figure}
+
+\begin{figure}[h!]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[width=80mm,height=10mm]{images/wan-puntopunto.png}
+		\caption{WAN punto-punto.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.35]{images/wan-commutazione.png}
+		\caption{WAN a commutazione.}
+	\end{subfigure}
+	\caption{Esempi di WAN.}
+	\label{fig:WAN}
+\end{figure}
+
+\begin{figure}[h!]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/commutazione-circuito.png}
+		\caption{Rete a commutazione di circuito.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/commutazione-pacchetto.png}
+		\caption{Rete a commutazione di pacchetto.}
+	\end{subfigure}
+	\caption{Tipi di reti.}
+	\label{fig:tipi-reti}
+\end{figure}
+
+\begin{figure}[h!]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.28]{images/internet-semplificata.png}
+		\caption{Internet: rete di reti - versione semplificata.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.28]{images/internet-completa.png}
+		\caption{Internet: rete di reti - versione moderna.}
+	\end{subfigure}
+	\caption{Internet.}
+	\label{fig:internet}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[h!]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.22]{images/stack-protocollare-iso_osi.png}
+		\caption{Pila di protocolli.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.22]{images/gerarchia-layer-iso_osi.png}
+		\caption{Gerarchia di strati (o "layer").}
+	\end{subfigure}
+	\caption{Modello ISO/OSI.}
+	\label{fig:iso-osi}
+\end{figure}
+
+\begin{figure}[h!]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.18]{images/livello-fisico-tcp_ip.png}
+		\caption{Comunicazione in una internet - livello fisico.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.18]{images/incapsulamento-tcp_ip.png}
+		\caption{Comunicazione in una internet - incapsulamento.}
+	\end{subfigure}
+	\caption{Comunicazione in una internet.}
+	\label{fig:comunicazione-internet}
+\end{figure}
+
+\begin{figure}[h!]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.18]{images/trasporto-applicazioni-comuni.png}
+		\caption{Tipo di trasporto richiesto da applicazioni comuni.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.18]{images/applicazioni-internet.png}
+		\caption{Esempi di applicazioni Internet e i relativi protocolli.}
+	\end{subfigure}
+	\caption{Esempi di applicazioni Internet.}
+	\label{fig:applicazioni-internet}
+\end{figure}
+
+\begin{figure}[h!]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/http-request.png}
+		\caption{HTTP Request Message.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/http-response.png}
+		\caption{HTTP Response Message.}
+	\end{subfigure}
+	\caption{Messaggi HTTP.}
+	\label{fig:messaggi-http}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[h!]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/telnet.png}
+		\caption{TELNET: Login da remoto.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/telnet-nvt.png}
+		\caption{TELNET: NVT.}
+	\end{subfigure}
+	\caption{TELNET.}
+	\label{fig:telnet}
+\end{figure}
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.28]{images/smtp.png}
+		\caption{Modello SMTP.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.2]{images/smtp-aliasing.png}
+		\caption{Server postale con gestione degli alias.}
+	\end{subfigure}
+	\caption{SMTP.}
+	\label{fig:smtp}
+\end{figure}
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.275]{images/smtp-mime.png}
+		\caption{Esempio di uso del protocollo MIME.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.32]{images/smtp-sessione.png}
+		\caption{Esempio di sessione SMTP.}
+	\end{subfigure}
+	\caption{SMTP: esempi di sessioni.}
+	\label{fig:smtp-esempi}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.25]{images/dns-servizio.png}
+	\caption{DNS: servizio di risoluzione.}
+	\label{fig:dns-servizio}
+\end{figure}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.45]{images/dns-gerarchia-nameserver.png}
+	\caption{Gerarchia dei name server.}
+	\label{fig:dns-nameserver}
+\end{figure}
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.35]{images/dns-query-ricorsiva.png}
+		\caption{Query DNS risolta ricorsivamente.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.35]{images/dns-query-iterativa.png}
+		\caption{Query DNS risolta iterativamente.}
+	\end{subfigure}
+	\caption{Query DNS.}
+	\label{fig:dns-query}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/dns-messaggio.png}
+	\caption{Struttura di un messaggio DNS.}
+	\label{fig:dns-messaggio}
+\end{figure}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.35]{images/dns-hijacking.png}
+	\caption{DNS hijacking.}
+	\label{fig:dns-hijacking}
+\end{figure}
+
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.26]{images/ftp-overview.png}
+		\caption{FTP: overview.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/ftp-modello.png}
+		\caption{Modello FTP.}
+	\end{subfigure}
+	\caption{FTP.}
+	\label{fig:ftp}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.24]{images/demultiplexing-senza-connessione.png}
+		\caption{Demultiplexing senza connessione.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.24]{images/demultiplexing-orientato-alla-connessione.png}
+		\caption{Demultiplexing orientato alla connessione.}
+	\end{subfigure}
+	\caption{Demultiplexing.}
+	\label{fig:demultiplexing}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.3]{images/tcp-trasferimento-bufferizzato.png}
+	\caption{TCP: trasferimento bufferizzato.}
+	\label{fig:tcp-trasferimento}
+\end{figure}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/tcp-formato-segmenti.png}
+	\caption{Formato dei segmenti TCP.}
+	\label{fig:tcp-segmento}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.35 \linewidth} \centering
+		\includegraphics[scale=0.3]{images/tcp-3way-handshake-semplificato.png}
+		\caption{Handshake a 3 vie: vista semplificata.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.64 \linewidth} \centering
+		\includegraphics[scale=0.35]{images/tcp-3way-handshake.png}
+		\caption{Handshake a 3 vie.}
+	\end{subfigure}
+	\caption{TCP: handshake.}
+	\label{fig:tcp-handshake}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.55]{images/tcp-ritrasmissione-veloce.png}
+	\caption{TCP: ritrasmissione veloce.}
+	\label{fig:tcp-ritrasmissione-veloce}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.45]{images/tcp-fsm-mittente.png}
+	\caption{TCP: FSM mittente.}
+	\label{fig:tcp-fsm-mittente}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.45]{images/tcp-fsm-destinatario.png}
+	\caption{TCP: FSM destinatario.}
+	\label{fig:tcp-fsm-destinatario}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.43]{images/tcp-caso-ok.png}
+	\caption{TCP: operativit\`a normale.}
+	\label{fig:tcp-caso-ok}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.4]{images/tcp-riscontro-smarrito.png}
+	\caption{TCP: riscontro smarrito.}
+	\label{fig:tcp-riscontro-smarrito}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.4]{images/tcp-riscontro-smarrito-ritrasmissione.png}
+	\caption{TCP: riscontro smarrito corretto con ritrasmissione.}
+	\label{fig:tcp-riscontro-smarrito-ritrasmissione}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.45]{images/tcp-segmento-smarrito.png}
+	\caption{TCP: segmento smarrito.}
+	\label{fig:tcp-segmento-smarrito}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/tcp-half-close.png}
+	\caption{TCP: half-close.}
+	\label{fig:tcp-half-close}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.35]{images/tcp-chiusura-3way-handshake.png}
+	\caption{TCP: chiusura con handshake a 3 vie (comune nel caso di modelli client-server del tipo richiesta/risposta).}
+	\label{fig:chiusura-3way}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.55]{images/tcp-apertura-chiusura.png}
+	\caption{Apertura e chiusura della connessione.}
+	\label{fig:tcp-apertura-chiusura}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.45]{images/tcp-chiusura.png}
+	\caption{Chiusura della connessione.}
+	\label{fig:tcp-chiusura}
+\end{figure}
 
 \end{sloppypar}
 \end{document}
