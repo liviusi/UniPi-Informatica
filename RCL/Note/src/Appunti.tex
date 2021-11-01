@@ -741,7 +741,27 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item \`E un protocollo stateful.
 		\item Fa uso di codici di ritorno.
 		\item Il collegamento pu\`o essere anonimo (si parla di ``anonymous FTP") o reso sicuro con TLS.
+		\item Implementa pi\`u modalita di trasmissione, come:
+		\begin{itemize}[topsep=0pt]
+			\itemsep-0.3em
+			\item \textbf{Stream mode}: FTP invia i dati a TCP con un flusso continuo di bit.
+			\item \textbf{Block mode}: FTP invia i dati a TCP suddivisi in blocchi. Ogni blocco è preceduto da un header.
+			\item \textbf{Compressed mode}: si trasmette il file compresso.
+			\end{itemize}
 	\end{itemize}
+
+	\begin{figure}[!h]
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.26]{images/ftp-overview.png}
+			\caption{FTP: overview.}
+		\end{subfigure}
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.25]{images/ftp-modello.png}
+			\caption{Modello FTP.}
+		\end{subfigure}
+	\end{figure}
+
+	
 	I comandi messi a disposizione sono i seguenti:
 	\vspace{-3.5mm}
 	\begin{itemize}
@@ -786,7 +806,6 @@ Si danno le seguenti definizioni:
 		\caption{Demultiplexing orientato alla connessione.}
 	\end{subfigure}
 \end{figure}
-\pagebreak
 Offre i seguenti servizi:
 \begin{itemize}[topsep=0pt]
 	\itemsep-0.3em
@@ -819,9 +838,22 @@ Offre i seguenti servizi:
 		\item Implementa meccanismi di controllo di flusso (i.e. evita di spedire pi\`u dati di quanti il ricevitore possa elaborare).
 		\item Implementa meccanismi di controllo di congestione (i.e. gestisce opportunamente situazioni di sovraccarico della rete).
 		\item Suddivide il flusso di byte in segmenti in modo indipendente dal programma applicativo che li ha generati (si parla di ``trasferimento
-		bufferizzato".
+		bufferizzato").
 	\end{itemize}
 
+	Un segmento TCP permette ``selective acknowledgement" (nel campo ``Opzioni", non supportato da tutte le implementazioni) che permette di
+	specificare quali segmenti sono stati ricevuti, e supporta i seguenti flags (in grassetto i pi\`u importanti):
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item URG: Il campo Puntatore Urgente contiene dati significativi da trasferire in via prioritaria.
+		\item \textbf{ACK}: Il campo Numero di Riscontro contiene dati significativi.
+		\item PSH: Funzione Push (trasferimento immediato dei dati in un segmento dal trasporto al livello applicativo).
+		\item RST: Reset della connessione, implica una chiusura forzata della connessione.
+		\item \textbf{SYN}: Sincronizza il Numero di Sequenza. Messo a 1 durante l'handshake.
+		\item \textbf{FIN}: Non ci sono altri dati dal mittente, implica la chiusura della connessione.
+	\end{itemize}
+\pagebreak
 	\begin{figure}[h!]
 		\begin{subfigure}{0.49 \linewidth} \centering
 			\includegraphics[scale=0.25]{images/tcp-trasferimento-bufferizzato.png}
@@ -833,18 +865,64 @@ Offre i seguenti servizi:
 		\end{subfigure}
 	\end{figure}
 
-	Un segmento TCP permette ``selective acknowledgement" (nel campo ``Opzioni", non supportato da tutte le implementazioni) che permette di
-	specificare quali segmenti sono stati ricevuti, e supporta i seguenti flags (in grassetto i pi\`u importanti):
+	Si individuano tre fasi nella gestione di una connessione:
 	\vspace{-3.5mm}
 	\begin{itemize}
 		\itemsep-0.3em
-		\item URG: Il campo Puntatore Urgente contiene dati significativi da trasferire in via prioritaria.
-		\item \textbf{ACK}: Il campo Numero di Riscontro contiene dati significativi
-		\item PSH: Funzione Push (trasferimento immediato dei dati in un segmento dal trasporto al livello applicativo).
-		\item RST: Reset della connessione, implica una chiusura forzata della connessione.
-		\item \textbf{SYN}: Sincronizza il Numero di Sequenza. Messo a 1 durante l'handshake.
-		\item \textbf{FIN}: Non ci sono altri dati dal mittente, implica la chiusura della connessione.
+		\item \textbf{Handshake}: fase di setup iniziale, viene detto \textbf{a tre vie} per il numero di passaggi necessari.
+		
+		I primi segmenti non hanno carico utile, non portano nessuna informazione. All'arrivo del primo segmento, il server inizializza due buffer (memorie di
+		scambio) e le variabili, necessari per il controllo del flusso e della congestione; all'arrivo del riscontro del primo segmento, il client alloca due
+		buffer e le variabili, necessari per il controllo del flusso e della congestione; alla ricezione del terzo segmento, la connessione \`e instaurata.
+
+		\begin{figure}[h!]
+			\begin{subfigure}{0.49 \linewidth} \centering
+				\includegraphics[scale=0.3]{images/tcp-3way-handshake-semplificato.png}
+				\caption{Handshake a 3 vie: vista semplificata.}
+			\end{subfigure}
+			\begin{subfigure}{0.49 \linewidth} \centering
+				\includegraphics[scale=0.265]{images/tcp-3way-handshake.png}
+				\caption{Handshake a 3 vie.}
+			\end{subfigure}
+		\end{figure}
+
+		\item \textbf{Trasferimento dati}.
+		\item \textbf{Chiusura della connessione}: client e server chiudono ciascuno il proprio lato della connessione, viene inviato un segmento TCP con
+		bit FIN uguale a 1; ciascuno risponde al FIN con un ACK (eventualmente, ACK pu\`o venire combinato col proprio FIN). Risulta possibile anche lo
+		scambio simultaneo di FIN.
+
+		Si implementa inoltre lo stato di ``half-close'': uno dei due processi smette di inviare dati mentre ne sta ancora ricevendo.
+
+		\begin{figure}[h!]
+			\begin{subfigure}{0.49 \linewidth} \centering
+				\includegraphics[scale=0.215]{images/tcp-half-close.png}
+				\caption{Half-close.}
+			\end{subfigure}
+			\begin{subfigure}{0.49 \linewidth} \centering
+				\includegraphics[scale=0.215]{images/tcp-chiusura-3way-handshake.png}
+				\caption{Chiusura con handshake a 3 vie (comune nel caso di modelli client-server del tipo).}
+			\end{subfigure}
+		\end{figure}
+		\pagebreak
+
 	\end{itemize}
+
+	\begin{figure}[h!]
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.28]{images/tcp-chiusura.png}
+			\caption{Chiusura della connessione.}
+		\end{subfigure}
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.35]{images/tcp-apertura-chiusura.png}
+			\caption{Apertura e chiusura della connessione.}
+		\end{subfigure}
+	\end{figure}
+
+	Durante una connessione TCP vengono attraversati pi\`u stati dai dispositivi terminali, tra questi si menziona lo stato \textbf{TIME\textunderscore{WAIT}}:
+	indica che il dispositivo si trova adesso in attesa per un periodo di tempo lungo due volte la ``Maximum Segment Lifetime" in modo tale da assicurarsi che
+	l'altro endpoint abbia riconosciuto la richiesta di chiusura della connessione; questo stato viene utilizzato per consentire l'eliminazione di segmenti
+	duplicati in rete e implementare in maniera affidabile la terminazione della connessione in entrambe le direzioni.
+	
 
 	\item \textbf{Protocollo UDP}:
 \end{itemize}
