@@ -563,7 +563,8 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 
 	I mail server moderni permettono la negoziazione per l'invio di dati in codifica binaria (quindi a 8bit), se non ha successo si inviano caratteri ASCII 7bit
 	seguendo il \textbf{protocollo MIME}. MIME fornisce regole di codifica e decodifica per trasformare caratteri speciali e contenuti multimediali in caratteri
-	ASCII 7bit (in questo modo, si garantisce la retrocompatibilit\`a con i mail server e non con gli user agent).
+	ASCII 7bit (in questo modo, si garantisce la retrocompatibilit\`a con i mail server e non con gli user agent), permette inoltre l'uso di pi\`u codifiche
+	all'interno dello stesso messaggio con il tipo ``multipart'', che specifica il ``boundary'' (confine) tra ciascuna.
 
 	Per indicare la fine di un messaggio si usa la seguenza di caratteri ``\textless{CLRF}\textgreater{.}\textless{CLRF}\textgreater{"}. Vengono messi a
 	disposizione i seguenti comandi:
@@ -574,7 +575,7 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item \textbf{MAIL FROM:}\textless{\textbf{reverse-path}\textgreater{\textless{CRLF}\textgreater{;}}}
 		\item \textbf{RCPT TO:}\textless{\textbf{forward-path}\textgreater{CRLF\textgreater{;}}}
 		\item \textbf{DATA};
-		\item \textbf{QUIT};
+		\item \textbf{QUIT}.
 	\end{itemize}
 
 	\begin{figure}[!h]
@@ -602,32 +603,8 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item \textbf{Dominio}: sottoalbero nello spazio dei nomi di dominio che viene identificato dal nome di dominio del nodo in cima al sottoalbero.
 		\item \textbf{Sottodomini}: insieme dei domini in cui si pu\`o suddividere un dominio.
 		\item \textbf{Name server}: programma che gestisce la conversione da nome di dominio a indirizzo IP.
-		\item \textbf{Server Radice}: responsabile dei record della zona radice e restituisce le informazioni sui name server di TLD.
-		\item \textbf{Server Top-Level Domain}: mantiene le informazioni dei nomi di dominio che appartengono a un certo TLD, restituisce le informazioni
-		sui name server di competenza dei sottodomini.
-		\item \textbf{Server di Competenza} (\textbf{Authoritative Name Server}): autorità per una certa zona, memorizza nome e indirizzo IP di un insieme di
-		host dei quali può effettuare traduzioni nome/indirizzo; per una certa zona ci possono essere server di competenza primari e secondari:
-		quelli primari mantengono il file di zona, quelli secondari ricevono il file di zona e offrono il servizio di risoluzione.
-		\item \textbf{Local Name Servers}: non appartengono strettamente alla gerarchia dei server, ogni ISP (università, società, ISP) ha il proprio; a questi
-		vengono inizialmente rivolte le query DNS: operano da proxy e inoltrano la query in una gerarchia di server DNS.
 	\end{itemize}
 
-	Concretamente, DNS \`e un meccanismo che specifica la sintassi dei nomi e le regole per gestirli, consente la conversioni da nomi a indirizzi e viceversa.
-	\`E costituito da:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
-		\item \textbf{Schema di assegnazione dei nomi} gerarchico e basato su domini.
-		\item \textbf{Database distribuito} contenente i nomi e le corrispondenze con gli indirizzi IP implementato con una gerarchia di name server.
-		\item \textbf{Protocollo per la distribuzione delle informazioni sui nomi tra name server}: host, router, name server comunicano per risolvere nomi
-		(traduzione nome/indirizzo) utilizzando tipicamente UDP con porta 53.
-	\end{itemize}
-
-	A livello pratico, garantire una struttura gerarchica per i nomi permette di delegarne l'assegnazione a singoli organizzazioni e distribuire la conversione
-	di nomi e indirizzi.
-
-	Lo spazio dei domini ha una struttura ad albero; ogni nodo dell'albero dello spazio dei domini ha un nome di dominio, ossia una sequenza di diverse
-	etichette separate da punti (e.g. ``lab3''.``di''.``unipi''.``it'').
 
 	DNS offre i seguenti servizi:
 	\vspace{-3.5mm}
@@ -639,6 +616,109 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item \textbf{Distribuzione carico}: un hostname canonico può corrispondere a più indirizzi IP, il DNS restituisce la lista variandone l'ordine per
 		ogni risposta.
 	\end{itemize}
+
+	Concretamente, DNS \`e costituito da:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item \textbf{Schema di assegnazione dei nomi} gerarchico e basato su domini.
+		\item \textbf{Database distribuito} contenente i nomi e le corrispondenze con gli indirizzi IP implementato con una gerarchia di name server (``record
+		DNS'').
+		\item \textbf{Protocollo per la distribuzione delle informazioni sui nomi tra name server}: host, router, name server comunicano per risolvere nomi
+		(traduzione nome/indirizzo) utilizzando tipicamente UDP con porta 53.
+	\end{itemize}
+
+	\begin{figure}[!h]
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.35]{images/dns-servizio.png}
+			\caption{DNS: servizio di risoluzione.}
+		\end{subfigure}
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.32]{images/dns-gerarchia-nameserver.png}
+			\caption{Gerarchia dei name server.}
+		\end{subfigure}
+	\end{figure}
+
+	A livello pratico, garantire una struttura gerarchica per i nomi permette di delegarne l'assegnazione a singoli organizzazioni e distribuire la conversione
+	di nomi e indirizzi.
+
+	Lo spazio dei domini ha una struttura ad albero; ogni nodo dell'albero ha un \textbf{nome di dominio}, ossia una sequenza di diverse
+	etichette (i.e. stringhe) separate da punti (e.g. ``lab3''.``di''.``unipi''.``it''). Inoltre, si definisce \textbf{zona} la regione (tipicamente una parte
+	contigua dell’albero) di cui \`e responsabile un name server; per esempio, in ``di.unipi.it'' zona e dominio coincidono, lo stesso discorso non vale per 
+	``unipi.it''.
+
+	\begin{figure}[!h]
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.35]{images/dns-query-ricorsiva.png}
+			\caption{Query DNS risolta ricorsivamente.}
+		\end{subfigure}
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.35]{images/dns-query-iterativa.png}
+			\caption{Query DNS risolta iterativamente.}
+		\end{subfigure}
+	\end{figure}
+
+	Si distinguono i seguenti ruoli:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item \textbf{Server Top-Level Domain}: mantiene le informazioni dei nomi di dominio che appartengono a un certo TLD, restituisce le informazioni
+		sui name server di competenza dei sottodomini.
+		\item \textbf{Server Radice}: responsabile dei record della zona radice e restituisce le informazioni sui name server di TLD.
+		\item \textbf{Server di Competenza} (\textbf{Authoritative Name Server}): autorità per una certa zona, memorizza nome e indirizzo IP di un insieme di
+		host dei quali può effettuare traduzioni nome/indirizzo; per una certa zona ci possono essere server di competenza primari e secondari:
+		quelli primari mantengono il file di zona, quelli secondari ricevono il file di zona e offrono il servizio di risoluzione.
+		\item \textbf{Local Name Servers}: non appartengono strettamente alla gerarchia dei server, ogni ISP (università, società, ISP) ha il proprio; a questi
+		vengono inizialmente rivolte le query DNS: operano da proxy e inoltrano la query in una gerarchia di server DNS.
+	\end{itemize}
+
+	Spesso, i server DNS implementano al loro interno un meccanismo di caching su cui salvano dei record corrispondenti ai risultati delle query; i record vengono
+	definiti come una quadrupla formata dai campi ``name", ``value", ``type", ``ttl" (time to leave).
+
+	Dal parametro ``type" dipende il significato della coppia ``name" e ``value"; si citano alcuni esempi:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item \textbf{A}: ``name" sta per hostname, value per indirizzo IP.
+		\item \textbf{CNAME}: ``name" sta per hostname (o un suo sinonimo), ``value" per il nome canonico dell'host.
+		\item \textbf{NS}: ``name" sta per nome di dominio, ``value" per l'authorative name server per quel dominio.
+		\item \textbf{MX}: ``name" sta per nome di dominio, ``value" per il nome canonico del server di posta associato a quel dominio.
+	\end{itemize}
+
+	Il protocollo DNS ha le seguenti caratteristiche:
+	\vspace{-3.5mm}
+	\begin{itemize}
+		\itemsep-0.3em
+		\item Usa connessione \textbf{UDP sulla porta 53}.
+		\item \textbf{Permette} uso di \textbf{TCP} (tipicamente usata per messaggi di grandi dimensioni tra server DNS)
+		\item \textbf{Messaggi di query e reply hanno lo stesso formato}.
+		\item Ha un \textbf{header} formato dai seguenti campi:
+		\begin{itemize}[topsep=0pt]
+			\itemsep-0.3em
+			\item \textbf{identification}: intero a 16bit uguale per la coppia query, reply.
+			\item \textbf{flags}: 0 se query, 1 se risposta.
+			\item \textbf{autorevolezza} della risposta.
+		\end{itemize}
+		\item \textbf{Domande}: campi per il nome richiesto e il tipo di query
+		\item \textbf{Risposte}: RR nella risposta alla domanda
+		\item \textbf{Competenza}: record relative ai server di competenza
+		\item \textbf{Informazioni} aggiuntive
+	\end{itemize}
+
+	Essendo per natura DNS altamente centralizzato, una query attraversa una serie di server prima di restituire il risultato: in questo modo, si introduce il
+	rischio di ``DNS hijacking'' (consiste nel restituire risposte non corrette alle query, si reindirizza il client verso siti malevoli).
+
+	\begin{figure}[!h]
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.265]{images/dns-messaggio.png}
+			\caption{Struttura di un messaggio DNS.}
+		\end{subfigure}
+		\begin{subfigure}{0.49 \linewidth} \centering
+			\includegraphics[scale=0.35]{images/dns-hijacking.png}
+			\caption{DNS hijacking.}
+		\end{subfigure}
+	\end{figure}
+
 
 	Per interrogazioni a server DNS si usa il tool "dig".
 	\item \textbf{File Transfer Protocol}: ha le seguenti caratteristiche:
@@ -679,57 +759,6 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 	\end{itemize}
 \end{itemize}
 
-\pagebreak
-
-\section*{Strato Applicativo DNS.}
-
-Quando un programma (es. browser) deve trasformare un nome in
-un indirizzo IP chiama un programma detto resolver, passando il
-nome come parametro di ingresso.
-Il resolver interroga il local name server, che cerca il nome nelle sue
-tabelle e restituisce l’indirizzo al resolver oppure inoltra la query
-alla gerarchia DNS.
-
-INSERIRE IMMAGINI QUERY RICORSIVA, QUERY ITERATIVA.
-
-Una volta appresa una associazione, questa viene salvata su una cache i cui record vengono cancellati dopo un certo tempo detto ``timeout-ttl".
-
-I record sono una quadrupla definita come ``name", ``value", ``type", ``ttl".
-
-Dal parametro ``type" dipende il significato della coppia ``name" e ``value"; si citano alcuni esempi:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
-	\item \textbf{A}: ``name" sta per hostname, value per indirizzo IP.
-	\item \textbf{CNAME}: ``name" sta per hostname (o un suo sinonimo), ``value" per il nome canonico dell'host.
-	\item \textbf{NS}: ``name" sta per nome di dominio, ``value" per l'authorative name server per quel dominio.
-	\item \textbf{MX}: ``name" sta per nome di dominio, ``value" per il nome canonico del server di posta associato a quel dominio.
-\end{itemize}
-
-Il protocollo DNS ha le seguenti caratteristiche:
-\begin{itemize}[topsep=0pt]
-	\itemsep-0.3em
-	\item Usa connessione UDP sulla porta 53.
-	\item Permette uso di TCP (tipicamente usata per messaggi di grandi dimensioni tra server DNS)
-	\item Messaggi di query e reply hanno lo stesso formato.
-	\item Ha un header formato dai seguenti campi:
-	\vspace{-3.5mm}
-	\begin{itemize}
-		\itemsep-0.3em
-		\item identification: intero a 16bit uguale per la coppia query, reply.
-		\item flags: 0 se query, 1 se risposta.
-		\item autorevolezza della risposta.
-	\end{itemize}
-	\item Domande: campi per il nome richiesto e il tipo di query
-	\item Risposte: RR nella risposta alla domanda
-	\item Competenza: record relative ai server di competenza
-	\item Informazioni aggiuntive
-\end{itemize}
-
-INSERIRE IMMAGINE MESSAGGI DNS.
-
-
-\pagebreak
-
 \subsubsection*{Transport Layer.}
 Si danno le seguenti definizioni:
 \begin{itemize}[topsep=0pt]
@@ -747,6 +776,17 @@ Si danno le seguenti definizioni:
 	destinazione", ``numero di porta di destinazione".
 \end{itemize}
 
+\begin{figure}[h!]
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.24]{images/demultiplexing-senza-connessione.png}
+		\caption{Demultiplexing senza connessione.}
+	\end{subfigure}
+	\begin{subfigure}{0.49 \linewidth} \centering
+		\includegraphics[scale=0.24]{images/demultiplexing-orientato-alla-connessione.png}
+		\caption{Demultiplexing orientato alla connessione.}
+	\end{subfigure}
+\end{figure}
+\pagebreak
 Offre i seguenti servizi:
 \begin{itemize}[topsep=0pt]
 	\itemsep-0.3em
@@ -762,17 +802,6 @@ Offre i seguenti servizi:
 		segmento alla socket appropriata (e.g. un server Web pu\`o creare una socket per ogni client connesso); un host server pu\`o supportare
 		pi\`u socket alla volta.
 	\end{itemize}
-
-	\begin{figure}[h!]
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.22]{images/demultiplexing-senza-connessione.png}
-			\caption{Demultiplexing senza connessione.}
-		\end{subfigure}
-		\begin{subfigure}{0.49 \linewidth} \centering
-			\includegraphics[scale=0.22]{images/demultiplexing-orientato-alla-connessione.png}
-			\caption{Demultiplexing orientato alla connessione.}
-		\end{subfigure}
-	\end{figure}
 	
 	\item \textbf{Protocollo TCP}: ha le seguenti caratteristiche:
 	\vspace{-3.5mm}
@@ -792,7 +821,6 @@ Offre i seguenti servizi:
 		\item Suddivide il flusso di byte in segmenti in modo indipendente dal programma applicativo che li ha generati (si parla di ``trasferimento
 		bufferizzato".
 	\end{itemize}
-\pagebreak
 
 	\begin{figure}[h!]
 		\begin{subfigure}{0.49 \linewidth} \centering
