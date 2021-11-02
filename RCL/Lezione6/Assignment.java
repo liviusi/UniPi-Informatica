@@ -91,7 +91,7 @@ public class Assignment
 					System.out.println("NEW REQUEST: " + request);
 					if (request.startsWith(GET_STRING))
 					{
-						final String fileName = tmp.substring(0, tmp.indexOf(" "));
+						final String fileName = java.net.URLDecoder.decode(tmp.substring(0, tmp.indexOf(" ")), "UTF-8");
 						// locate fileName, read its contents and send it
 						final File f = new File(fileName);
 						System.out.println(fileName + " has been requested.");
