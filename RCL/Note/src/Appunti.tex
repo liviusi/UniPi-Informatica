@@ -703,8 +703,8 @@ Offre i seguenti servizi:
 			Per uno schema riassuntivo delle funzionalit\`a del destinatario, si veda la figura \ref{fig:tcp-fsm-destinatario}.
 		\end{itemize}
 
-		Per alcuni esempi, si vedano le figure \ref{fig:tcp-caso-ok}, \ref{fig:tcp-riscontro-smarrito}, \ref{fig:tcp-segmento-smarrito},
-		\ref{fig:tcp-riscontro-smarrito-ritrasmissione}.
+		Per alcuni esempi, si vedano le figure \ref{fig:tcp-caso-ok}, \ref{fig:tcp-riscontro-smarrito}, \ref{fig:tcp-riscontro-smarrito-ritrasmissione}
+		e \ref{fig:tcp-segmento-smarrito}.
 		
 		\item \textbf{Chiusura della connessione}: client e server chiudono ciascuno il proprio lato della connessione, viene inviato un segmento TCP con
 		bit FIN uguale a 1; ciascuno risponde al FIN con un ACK (eventualmente, ACK pu\`o venire combinato col proprio FIN). Risulta possibile anche lo
@@ -713,7 +713,7 @@ Offre i seguenti servizi:
 		Si implementa inoltre lo stato di ``half-close'': uno dei due processi smette di inviare dati mentre ne sta ancora ricevendo; si veda in proposito
 		la figura \ref{fig:tcp-half-close}.
 		
-		Per alcuni esempi, si vedano le figure \ref{fig:chiusura-3way}, \ref{fig:tcp-chiusura}, \ref{fig:tcp-apertura-chiusura}.
+		Per alcuni esempi, si vedano le figure \ref{fig:chiusura-3way}, \ref{fig:tcp-apertura-chiusura} e \ref{fig:tcp-chiusura}.
 	\end{itemize}
 
 	Durante una connessione TCP vengono attraversati pi\`u stati dai dispositivi terminali, tra questi si menziona lo stato \textbf{TIME\textunderscore{WAIT}}:
