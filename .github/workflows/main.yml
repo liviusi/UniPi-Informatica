@@ -10,26 +10,17 @@ jobs:
     - name: check-if-modified-in
       run: |
         git diff --name-only HEAD^ HEAD > files.txt
-        # echo "::set-output name=run-ecc::false"
-        # echo "::set-output name=run-cri::false"
-        # echo "::set-output name=run-commit::false"
         while IFS= read -r file
         do
-          if [[ -f $file ]]; then
-          # echo "$file is not a new file."
-          :
-          else
-          # echo "$file is a new file."
-            if echo "$file" | grep 'CRI/'; then
-              echo "::set-output name=run-cri::true"
-              echo "::set-output name=run-commit::true"
-            else
-              if echo "$file" | grep 'ECC/'; then
-              echo "::set-output name=run-ecc::true"
-              echo "::set-output name=run-commit::true"
-              fi
-            fi
-          fi
+        	if [[ $file == "CRI/Lezioni"* ]]; then
+        		echo "::set-output name=run-cri::true"
+        		echo "::set-output name=run-commit::true"
+        	else
+        		if echo "$file" | grep 'ECC/'; then
+        		echo "::set-output name=run-ecc::true"
+        		echo "::set-output name=run-commit::true"
+        		fi
+        	fi
         done < files.txt
 
   merge-notes-cri:
