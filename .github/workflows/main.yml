@@ -4,8 +4,7 @@ jobs:
   check-modified-since:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout-repo
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           fetch-depth: 2
       - name: check-if-modified-in
