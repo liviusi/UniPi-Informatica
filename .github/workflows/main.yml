@@ -4,70 +4,73 @@ jobs:
   check-modified-since:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: check-if-modified-in
-        run: |
-          git diff --name-only HEAD^ HEAD
-          while IFS= read -r file
-          do
-            if [[ -f $file ]]; then
-              # echo "$file is not a new file."
-              :
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+    - name: check-if-modified-in
+      run: |
+        git diff --name-only HEAD^ HEAD
+        while IFS= read -r file
+        do
+          if [[ -f $file ]]; then
+            # echo "$file is not a new file."
+            :
+          else
+            # echo "$file is a new file."
+            if echo "$file" | grep 'CRI/'; then
+              echo "::set-output name=run-cri::true"
+              echo "::set-output name=run-commit::true"
             else
-              # echo "$file is a new file."
-              if echo "$file" | grep 'CRI/'; then
-                echo "::set-output name=run-cri::true"
-              else
-                if echo "$file" | grep 'ECC/'; then
-                  echo "::set-output name=run-ecc::true"
-              fi
-              break
+              if echo "$file" | grep 'ECC/'; then
+                echo "::set-output name=run-ecc::true"
+                echo "::set-output name=run-commit::true"
             fi
-          done
+            break
+          fi
+        done
 
   merge-notes-cri:
-      runs-on: ubuntu-latest
-      needs: check-modified-since
-      if: needs.check-modified-since.run-cri == 'true'
-      steps:
-      - name: install-required-packages
-        run: sudo apt-get install -y poppler-utils
-      - name: clear-folders-internals
-        run: rm -f CRI/Lezioni.pdf
-      - name: cri-merge-lesson-notes
-        run: pdfunite CRI/Lezioni/*.pdf CRI/Lezioni.pdf
-      - name: cri-commit-new-file
-        run: |
-          git config --local user.email "unipi-informatica@github.com"
-          git config --local user.name "UniPi Informatica Workflow"
-          git add CRI/Lezioni.pdf
-          git commit -m "Aggiornato il file."
+    runs-on: ubuntu-latest
+    needs: check-modified-since
+    if: needs.check-modified-since.run-cri == 'true'
+    steps:
+    - name: install-required-packages
+      run: sudo apt-get install -y poppler-utils
+    - name: clear-folders-internals
+      run: rm -f CRI/Lezioni.pdf
+    - name: cri-merge-lesson-notes
+      run: pdfunite CRI/Lezioni/*.pdf CRI/Lezioni.pdf
+    - name: cri-commit-new-file
+      run: |
+        git config --local user.email "unipi-informatica@github.com"
+        git config --local user.name "UniPi Informatica Workflow"
+        git add CRI/Lezioni.pdf
+        git commit -m "Aggiornato il file."
 
   merge-notes-ecc:
-      runs-on: ubuntu-latest
-      needs: check-modified-since
-      if: needs.check-modified-since.run-ecc == 'true'
-      steps:
-      - name: install-required-packages
-        run: sudo apt-get install -y poppler-utils
-      - name: clear-folders-internals
-        run: rm -f ECC/Lezioni.pdf
-      - name: merge-lesson-notes-ecc
-        run: pdfunite ECC/Lezioni/*.pdf ECC/Lezioni.pdf
-      - name: ecc-commit-new-file
-        run: |
-          git config --local user.email "unipi-informatica@github.com"
-          git config --local user.name "UniPi Informatica Workflow"
-          git add ECC/Lezioni.pdf
-          git commit -m "Aggiornato il file."
+    runs-on: ubuntu-latest
+    needs: check-modified-since
+    if: needs.check-modified-since.run-ecc == 'true'
+    steps:
+    - name: install-required-packages
+      run: sudo apt-get install -y poppler-utils
+    - name: clear-folders-internals
+      run: rm -f ECC/Lezioni.pdf
+    - name: merge-lesson-notes-ecc
+      run: pdfunite ECC/Lezioni/*.pdf ECC/Lezioni.pdf
+    - name: ecc-commit-new-file
+      run: |
+        git config --local user.email "unipi-informatica@github.com"
+        git config --local user.name "UniPi Informatica Workflow"
+        git add ECC/Lezioni.pdf
+        git commit -m "Aggiornato il file."
 
   commit:
     runs-on: ubuntu-latest
     needs: [merge-notes-cri, merge-notes-ecc]
+    if: needs.check-modified-since.run-commit == 'true'
     steps:
-      name: force-commit
+    - name: force-commit
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
