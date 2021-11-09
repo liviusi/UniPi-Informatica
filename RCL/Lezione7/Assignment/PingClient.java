@@ -57,31 +57,38 @@ public class PingClient
 					System.exit(1);
 				}
 				final DatagramPacket response = new DatagramPacket(new byte[RESPONSE_LENGTH], RESPONSE_LENGTH);
-				try { dSocket.receive(response); }
-				catch (SocketTimeoutException t) // response has not been sent on time
+				while (true)
 				{
-					System.out.println(message + " RTT: *");
-					lostPacketsNo++;
-					continue;
+					try { dSocket.receive(response); }
+					catch (SocketTimeoutException t) // response has not been sent on time
+					{
+						System.out.println(message + " RTT: *");
+						lostPacketsNo++;
+						break;
+					}
+					catch (IOException e)
+					{
+						System.err.println("Fatal error occurred while attempting to receive " + message + ".");
+						System.exit(1);
+					}
+					if (message.equals(new String(response.getData(), 0, response.getLength())))
+					{
+						diffTime[i] = System.currentTimeMillis() - sentAtTime;
+						if (i != 0)
+						{
+							minTime = Math.min(diffTime[i], minTime);
+							maxTime = Math.max(diffTime[i], maxTime);
+						}
+						else
+						{
+							minTime = diffTime[i];
+							maxTime = diffTime[i];
+						}
+						sum += diffTime[i];
+						System.out.println(message + " RTT: " + diffTime[i] + " ms");
+						break;
+					}
 				}
-				catch (IOException e)
-				{
-					System.err.println("Fatal error occurred while attempting to receive " + message + ".");
-					System.exit(1);
-				}
-				diffTime[i] = System.currentTimeMillis() - sentAtTime;
-				if (i != 0)
-				{
-					minTime = Math.min(diffTime[i], minTime);
-					maxTime = Math.max(diffTime[i], maxTime);
-				}
-				else
-				{
-					minTime = diffTime[i];
-					maxTime = diffTime[i];
-				}
-				sum += diffTime[i];
-				System.out.println(message + " RTT: " + diffTime[i] + " ms");
 			}
 			catch (SocketException e)
 			{
