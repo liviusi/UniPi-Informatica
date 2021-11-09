@@ -89,17 +89,6 @@ public class PingServer
 			System.exit(1);
 		}
 		final ExecutorService pool = new ThreadPoolExecutor(COREPOOLSIZE, MAXIMUMPOOLSIZE, KEEPALIVETIME, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
-		Thread terminationHandler = new Thread()
-		{
-			public void run()
-			{
-				pool.shutdown();
-				try { if (!pool.awaitTermination(TIMEOUT, TimeUnit.MILLISECONDS)) pool.shutdownNow(); }
-				catch (Exception e) { pool.shutdownNow(); }
-			}
-		};
-		Runtime.getRuntime().addShutdownHook(terminationHandler);
-		final Random random = new Random(seed);
 		DatagramSocket dSocket = null;
 		try { dSocket =  new DatagramSocket(portNo); }
 		catch (SocketException e)
@@ -107,6 +96,19 @@ public class PingServer
 			System.err.println("ERR - arg 1");
 			System.exit(1);
 		}
+		final DatagramSocket dSocketHandler = dSocket;
+		Thread terminationHandler = new Thread()
+		{
+			public void run()
+			{
+				pool.shutdown();
+				try { if (!pool.awaitTermination(TIMEOUT, TimeUnit.MILLISECONDS)) pool.shutdownNow(); }
+				catch (Exception e) { pool.shutdownNow(); }
+				dSocketHandler.close();
+			}
+		};
+		Runtime.getRuntime().addShutdownHook(terminationHandler);
+		final Random random = new Random(seed);
 		while (true)
 		{
 			DatagramPacket request = new DatagramPacket(new byte[REQUEST_LENGTH], REQUEST_LENGTH);
