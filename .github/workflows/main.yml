@@ -3,6 +3,10 @@ on: [push]
 jobs:
   check-modified-since:
     runs-on: ubuntu-latest
+    outputs:
+      run-cri: ${{ steps.check-if-modified-in.outputs.run-cri }}
+      run-ecc: ${{ steps.check-if-modified-in.outputs.run-ecc }}
+      run-commit: ${{ steps.check-if-modified-in.outputs.run-commit }}
     steps:
     - uses: actions/checkout@v2
       with:
