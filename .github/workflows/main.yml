@@ -70,6 +70,6 @@ jobs:
     steps:
       name: force-commit
       uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          force: true
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        force: true
