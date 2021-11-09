@@ -4,10 +4,10 @@
 
 \usepackage[]{graphicx}
 \usepackage{setspace}
-\usepackage{mathptmx}
+\usepackage{fontspec}
+\usepackage{amsmath}
+\setmainfont{TeX Gyre Termes}
 \singlespace % interlinea singola
-% If multiple images are to be added, a folder (path) with all the images can be added here 
-\graphicspath{ {images/} }
 
 \usepackage{hyperref}
 \hypersetup{
@@ -96,7 +96,7 @@
 	\centering
 	\vspace{1cm}
 
-    \includegraphics[scale=0.60]{unipi-logo.png}
+    \includegraphics[scale=0.60]{images/unipi-logo.png}
     
 	{\normalsize \noindent Dipartimento di Informatica \\
 	             Corso di Laurea in Informatica \par}
@@ -682,14 +682,13 @@ Offre i seguenti servizi:
 			nel secondo caso, il segmento successivo a quello riscontrato \`e andato perso, si fa ``ritrasmissione veloce" (``fast retransmission") prima della
 			scadenza del timer (si veda in merito la figura \ref{fig:tcp-ritrasmissione-veloce}).
 
-			Nel caso di segmenti fuori sequenza, i dati possono essere temporaneamente memorizzati dall’entit\`a TCP destinataria (TCP non dice come il destinatario
-			deve gestire i pacchetti fuori \linebreak sequenza); nelle versioni più recenti si implementa ``SACK": i pacchetti ricevuti fuori sequenza vengono memorizzati
+			Nel caso di segmenti fuori sequenza, i dati possono essere memorizzati dall’entit\`a TCP destinataria (nota: TCP non dice come il destinatario
+			deve gestire i pacchetti fuori sequenza) temporaneamente; nelle versioni più recenti si implementa ``SACK": i pacchetti ricevuti fuori sequenza vengono memorizzati
 			e il riscontro di pacchetti fuori sequenza e duplicati viene inviato in OPTIONS.
 
 			Per uno schema riassuntivo delle funzionalit\`a del mittente, si veda la figura \ref{fig:tcp-fsm-mittente}.
 			\item \textbf{Destinatario}: si danno le seguenti regole:
 			\begin{itemize}
-				\itemsep-0.3em
 				\item[i.] Tutti i segmenti inviati per trasmettere dati includono ACK.
 				\item[ii.] Se il destinatario non ha dati da inviare e riceve un segmento ``in ordine'' allora ritarda l'invio di ACK di 500ms a meno che non
 				riceva un nuovo segmento.
@@ -705,7 +704,43 @@ Offre i seguenti servizi:
 
 		Per alcuni esempi, si vedano le figure \ref{fig:tcp-caso-ok}, \ref{fig:tcp-riscontro-smarrito}, \ref{fig:tcp-riscontro-smarrito-ritrasmissione}
 		e \ref{fig:tcp-segmento-smarrito}.
-		
+
+		Si definisce \textbf{RTT} il tempo trascorso dall'invio di un segmento a quando se ne riceve il riscontro.
+
+		Il tempo di timeout \textbf{RTO} deve essere maggiore di RTT, dipende dalla sua stima e dalla stima della sua variabilit\`a
+
+		\( RTT_{estimated} =  (1 - \alpha) * RTT_{estimated} + \alpha * RTT_{sample} \) con tipicamente \( \alpha = 0.125\),
+
+		\(RTT_{dev} = (1 - \beta) * RTT_{dev} + \beta * | RTT_{sample} - RTT_{estimated} | \) con tipicamente \( \beta = 0.25 \);
+
+		\( RTO = RTO_{estimated} + 4 * RTT_{dev}\).
+
+		In molte implementazioni, dopo un errore (e.g. ACK non ricevuto) si raddoppia il timeout.
+
+		Si definisce inoltre \textbf{finestra di trasmissione} (o \textbf{sliding window}) una finestra sovrapposta alla sequenza da trasmettere, negoziata
+		dinamicamente e fatta avanzare alla ricezione di un ACK; analogamente, per il processo destinatario di definisce la \textbf{finestra di ricezione}.
+		Si vedano le figure \ref{fig:tcp-finestra-di-trasmissione}, \ref{fig:tcp-finestra-di-ricezione}.
+
+		Concretamente, il meccanismo di controllo di flusso sopra menzionato consiste nella capacit\`a del processo mittente di evitare di saturare il buffer
+		del ricevitore; viene implementato utilizzando - lato mittente - la \textbf{finestra di ricezione} (o \textbf{rwnd}): viene comunicato nel campo
+		``window'' dell'header TCP e indica quanto spazio \`e ancora a disposizione nel buffer del destinatario. Quando vale zero, il mittente invia dei
+		segmenti ``sonda'' da 1byte per ricevere un aggiornamento sulla sua dimensione. Si veda la figura \ref{fig:tcp-rwnd}.
+
+		Invece, il meccanismo di controllo di congestione consiste nella capacit\`a dei sistemi terminali di stimare la capacit\`a della rete, \`e basato
+		sulla \textbf{congestion window} (o \textbf{cwnd}) - misurata in \textbf{Maximum Segment Size} (massima quantit\`a di dati trasportabili da un
+		segmento, dipende dalla massima unit\`a trasmissiva e viene scelto in modo tale che il segmento stia dentro un singolo frame di collegamento quando
+		incapsulato in un pacchetto IP); l'algoritmo utilizzato \`e costituito da tre passi:
+		\begin{itemize}
+			\item \textbf{Partenza lenta} (o \textbf{slow start}):
+			\item \textbf{Incremento additivo e decremento moltiplicativo} (o \textbf{AIMD}): il TCP del mittente aumenta la propria finestra di congestione a
+			ogni ACK ricevuto in modo tale da avere per ogni RTT una crescita pari a 1MSS; la dimezza a ogni evento di perdita.
+			% Si veda la figura \ref{fig:tcp-aimd}.
+			\item \textbf{Ripresa veloce} (o \textbf{fast recovery}):
+			\item \textbf{Reazione ai timeout}:
+		\end{itemize}
+
+		Di fatto, la dimensione della finestra di invio \`e il minimo tra rwnd e cwnd.
+
 		\item \textbf{Chiusura della connessione}: client e server chiudono ciascuno il proprio lato della connessione, viene inviato un segmento TCP con
 		bit FIN uguale a 1; ciascuno risponde al FIN con un ACK (eventualmente, ACK pu\`o venire combinato col proprio FIN). Risulta possibile anche lo
 		scambio simultaneo di FIN.
@@ -723,6 +758,30 @@ Offre i seguenti servizi:
 
 	\item \textbf{Protocollo UDP}:
 	\addcontentsline{toc}{paragraph}{UDP}
+	Si danno in merito le seguenti definizioni:
+	\begin{itemize}[topsep=0pt, itemsep=0pt]
+		\item \textbf{Checksum}: \`e un meccanismo di controllo dell'errore end-to-end; prevede l'eliminazione di pacchetti corrotti senza che il mittente riceva
+		una notifica a riguardo.
+	\end{itemize}
+	Ha le seguenti caratteristiche:
+	\begin{itemize}[topsep=0pt, itemsep=0pt]
+		\item \`E orientato al messaggio: ogni datagramma risulta indipendente dal precedente.
+		\item \`E un servizio di consegna a massimo sforzo: i datagrammi possono andare persi o essere inviati fuori sequenza.
+		\item Non prevede l'uso di una connessione (quindi non si introduce ritardo - TCP prevedeva almeno 1RTT per l'handshake iniziale); l'header \`e lungo
+		8byte.
+		\item Non prevede meccanismi di controllo di congestione o di flusso.
+		\item Il checksum \`e facoltativo. Si faccia riferimento alla figura \ref{fig:udp-checksum} per la struttura del campo checksum.
+	\end{itemize}
+	Viene usato spesso in applicazioni multimediali con tolleranza a piccole perdite e sensibilit\`a alla frequenza, nel DNS e in SNMP.
+
+	Per la struttura dei datagrammi UDP si faccia riferimento alla figura \ref{fig:udp-datagramma}.
+
+	Per l'uso del campo checksum si prendono in considerazione due ruoli:
+	\begin{itemize}[topsep=0pt, itemsep=0pt]
+		\item \textbf{Mittente}: viene inizialmente azzerato; si tratta il contenuto del datagramma UDP come una sequenza di parole da 16bit e si assegna al campo
+		la somma delle parole in complemento a uno (i.e. viene negato).
+		\item \textbf{Ricevente}: viene calcolata la checksum del segmento ricevuto; se non vale 0 allora il messaggio \`e corrotto e viene scartato.
+	\end{itemize}
 \end{itemize}
 
 \pagebreak
@@ -1031,6 +1090,29 @@ Offre i seguenti servizi:
 
 \begin{figure}[!h]
 	\centering
+	\includegraphics[scale=0.5]{images/tcp-finestra-di-trasmissione.png}
+	\caption{TCP: finestra di trasmissione.}
+	\label{fig:tcp-finestra-di-trasmissione}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/tcp-finestra-di-ricezione.png}
+	\caption{TCP: finestra di ricezione.}
+	\label{fig:tcp-finestra-di-ricezione}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.35]{images/tcp-rwnd.png}
+	\caption{TCP: esempio di comunicazione con rwnd.}
+	\label{fig:tcp-rwnd}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
 	\includegraphics[scale=0.5]{images/tcp-half-close.png}
 	\caption{TCP: half-close.}
 	\label{fig:tcp-half-close}
@@ -1060,6 +1142,21 @@ Offre i seguenti servizi:
 	\caption{Chiusura della connessione.}
 	\label{fig:tcp-chiusura}
 \end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/udp-checksum.png}
+	\caption{UDP: struttura del campo checksum.}
+	\label{fig:udp-checksum}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/udp-datagramma.png}
+	\caption{UDP: formato di un datagramma.}
+	\label{fig:udp-datagramma}
+\end{figure}
+
 
 \end{sloppypar}
 \end{document}
