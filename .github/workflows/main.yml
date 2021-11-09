@@ -10,9 +10,9 @@ jobs:
     - name: check-if-modified-in
       run: |
         git diff --name-only HEAD^ HEAD > files.txt
-        echo "::set-output name=run-ecc::false"
-        echo "::set-output name=run-cri::false"
-        echo "::set-output name=run-commit::false"
+        # echo "::set-output name=run-ecc::false"
+        # echo "::set-output name=run-cri::false"
+        # echo "::set-output name=run-commit::false"
         while IFS= read -r file
         do
           if [[ -f $file ]]; then
