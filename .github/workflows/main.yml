@@ -13,10 +13,12 @@ jobs:
         while IFS= read -r file
         do
         	if [[ $file == "CRI/Lezioni"* ]]; then
+            echo "New lesson found in CRI: $file"
         		echo "::set-output name=run-cri::true"
         		echo "::set-output name=run-commit::true"
         	else
-        		if echo "$file" | grep 'ECC/'; then
+        		if [[ $file == "ECC/Lezioni"* ]]; then
+            echo "New lesson found in ECC: $file"
         		echo "::set-output name=run-ecc::true"
         		echo "::set-output name=run-commit::true"
         		fi
