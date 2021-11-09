@@ -9,25 +9,28 @@ jobs:
         fetch-depth: 2
     - name: check-if-modified-in
       run: |
-        git diff --name-only HEAD^ HEAD
+        git diff --name-only HEAD^ HEAD > files.txt
+        echo "::set-output name=run-ecc::false"
+        echo "::set-output name=run-cri::false"
+        echo "::set-output name=run-commit::false"
         while IFS= read -r file
         do
           if [[ -f $file ]]; then
-            # echo "$file is not a new file."
-            :
+          # echo "$file is not a new file."
+          :
           else
-            # echo "$file is a new file."
+          # echo "$file is a new file."
             if echo "$file" | grep 'CRI/'; then
               echo "::set-output name=run-cri::true"
               echo "::set-output name=run-commit::true"
             else
               if echo "$file" | grep 'ECC/'; then
-                echo "::set-output name=run-ecc::true"
-                echo "::set-output name=run-commit::true"
+              echo "::set-output name=run-ecc::true"
+              echo "::set-output name=run-commit::true"
+              fi
             fi
-            break
           fi
-        done
+        done < files.txt
 
   merge-notes-cri:
     runs-on: ubuntu-latest
