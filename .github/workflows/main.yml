@@ -35,7 +35,7 @@ jobs:
   merge-notes-cri:
     runs-on: ubuntu-latest
     needs: check-modified-since
-    if: needs.check-modified-since.run-cri == 'true'
+    if: needs.check-modified-since.outputs.run-cri == 'true'
     steps:
     - name: install-required-packages
       run: sudo apt-get install -y poppler-utils
@@ -53,7 +53,7 @@ jobs:
   merge-notes-ecc:
     runs-on: ubuntu-latest
     needs: check-modified-since
-    if: needs.check-modified-since.run-ecc == 'true'
+    if: needs.check-modified-since.outputs.run-ecc == 'true'
     steps:
     - name: install-required-packages
       run: sudo apt-get install -y poppler-utils
@@ -71,7 +71,7 @@ jobs:
   commit:
     runs-on: ubuntu-latest
     needs: [merge-notes-cri, merge-notes-ecc]
-    if: needs.check-modified-since.run-commit == 'true'
+    if: needs.check-modified-since.outputs.run-commit == 'true'
     steps:
     - name: force-commit
       uses: ad-m/github-push-action@master
