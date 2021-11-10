@@ -39,7 +39,7 @@ jobs:
     - name: install-required-packages
       run: sudo apt-get install -y poppler-utils
     - name: setup-env
-      run: echo "::set-env name=VERSION::$(echo $(date '+%Y-%m-%d'))"
+      run: echo "NOW::$(date +'%Y-%m-%dT)" >> $GITHUB_ENV
     - name: cri-merge-lesson-notes
       run: pdfunite CRI/Lezioni/*.pdf CRI-Lezioni.pdf
     - name: ecc-merge-lesson-notes
@@ -49,5 +49,5 @@ jobs:
       with:
         prerelease: false
         artifacts: "CRI-Lezioni.pdf,ECC-Lezioni.pdf"
-        tag: "v${{ env.VERSION }}"
+        tag: "v${{ env.NOW }}"
         token: ${{ secrets.GITHUB_TOKEN }}
