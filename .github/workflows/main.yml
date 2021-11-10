@@ -1,12 +1,10 @@
-name: Merge miscellaneous files
+name: MAIN
 on: [push]
 jobs:
   check-modified-since:
     runs-on: ubuntu-latest
     outputs:
-      run-cri: ${{ steps.check-if-modified-in.outputs.run-cri }}
-      run-ecc: ${{ steps.check-if-modified-in.outputs.run-ecc }}
-      run-commit: ${{ steps.check-if-modified-in.outputs.run-commit }}
+      run-merge: ${{ steps.check-if-modified-in.outputs.run-merge }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -19,57 +17,37 @@ jobs:
         do
         	if [[ $file == "CRI/Lezioni"* ]]; then
             echo "New lesson found in CRI: $file"
-        		echo "::set-output name=run-cri::true"
-        		echo "::set-output name=run-commit::true"
+        		echo "::set-output name=run-merge::true"
+            break
         	else
         		if [[ $file == "ECC/Lezioni"* ]]; then
-            echo "New lesson found in ECC: $file"
-        		echo "::set-output name=run-ecc::true"
-        		echo "::set-output name=run-commit::true"
+              echo "New lesson found in ECC: $file"
+        		  echo "::set-output name=run-merge::true"
+              break
         		fi
         	fi
         done < files.txt
 
-  merge-notes-cri:
+  merge-notes:
     runs-on: ubuntu-latest
     needs: check-modified-since
-    if: always() && ${{ needs.check-modified-since.outputs.run-cri == 'true' }}
+    if: always() && ${{ needs.check-modified-since.outputs.run-merge == 'true' }}
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 2
     - name: install-required-packages
       run: sudo apt-get install -y poppler-utils
-    - name: clear-folders-internals
-      run: rm -f CRI/Lezioni.pdf
+    - name: setup-env
+      run: echo "::set-env name=VERSION::$(echo $(date '+%Y-%m-%d'))"
     - name: cri-merge-lesson-notes
-      run: pdfunite CRI/Lezioni/*.pdf CRI/Lezioni.pdf
+      run: pdfunite CRI/Lezioni/*.pdf CRI-Lezioni.pdf
+    - name: ecc-merge-lesson-notes
+      run: pdfunite ECC/Lezioni/*.pdf ECC-Lezioni.pdf
     - name: publish-notes
       uses: ncipollo/release-action@v1
       with:
         prerelease: false
-        artifacts: "CRI/Lezioni.pdf"
-        tag: "v${{ env.VERSION }}"
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-  merge-notes-ecc:
-    runs-on: ubuntu-latest
-    needs: check-modified-since
-    if: always() && ${{ needs.check-modified-since.outputs.run-ecc == 'true' }}
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 2
-    - name: install-required-packages
-      run: sudo apt-get install -y poppler-utils
-    - name: clear-folders-internals
-      run: rm -f ECC/Lezioni.pdf
-    - name: merge-lesson-notes-ecc
-      run: pdfunite ECC/Lezioni/*.pdf ECC/Lezioni.pdf
-    - name: publish-notes
-      uses: ncipollo/release-action@v1
-      with:
-        prerelease: false
-        artifacts: "ECC/Lezioni.pdf"
+        artifacts: "CRI-Lezioni.pdf,ECC-Lezioni.pdf"
         tag: "v${{ env.VERSION }}"
         token: ${{ secrets.GITHUB_TOKEN }}
