@@ -7,6 +7,7 @@ import java.net.SocketException;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +21,8 @@ public class PingServer
 
 	public static final int REQUEST_LENGTH = 1024;
 	public static final int BOUND = 100; // used when generating random values
+	public static final String ACTION_NOT_SENT = "ACTION: not sent" ;
+	public static final String ACTION_DELAYED = "ACTION: delayed";
 
 	// returns whether stringPortNo is a legal port
 	public static int assignPort(String stringPortNo) throws IllegalArgumentException
@@ -53,12 +56,21 @@ public class PingServer
 
 		public void run()
 		{
-			if (shouldBeLost) return;
+			if (shouldBeLost)
+			{
+				System.out.printf("%s> %s %s\n", request.getSocketAddress().toString().substring(1), new String(request.getData(), 0, request.getLength()), ACTION_NOT_SENT);
+				return;
+			}
 			DatagramPacket response = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort()); // echoes back the request
 			try { Thread.sleep(latency); }
 			catch (InterruptedException e) { } // ignore
 			try { dSocket.send(response); }
-			catch (IOException e) { } // ignore
+			catch (IOException e)
+			{
+				System.out.printf("%s> %s %s\n", request.getSocketAddress().toString().substring(1), new String(request.getData(), 0, request.getLength()), ACTION_NOT_SENT);
+				return;
+			}
+			System.out.printf("%s> %s %s %d ms\n", request.getSocketAddress().toString().substring(1), new String(request.getData(), 0, request.getLength()), ACTION_DELAYED, latency);
 		}
 	}
 	public static void main(String[] args)
@@ -114,7 +126,15 @@ public class PingServer
 			DatagramPacket request = new DatagramPacket(new byte[REQUEST_LENGTH], REQUEST_LENGTH);
 			try { dSocket.receive(request); }
 			catch (IOException e) { }
-			pool.submit(new Thread(new ClientHandler(dSocket, request, random.nextInt(BOUND), random.nextInt(BOUND))));
+			while (true)
+			{
+				try
+				{
+					pool.execute(new Thread(new ClientHandler(dSocket, request, random.nextInt(BOUND), random.nextInt(BOUND))));
+					break;
+				}
+				catch (RejectedExecutionException e) { if (pool.isTerminated()) break; }
+			}
 		}
 	}
 }
