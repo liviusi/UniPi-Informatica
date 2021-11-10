@@ -22,7 +22,7 @@ public class PingClient
 		}
 		final String hostname = args[0];
 		int portNo = 0, lostPacketsNo = 0;
-		long[] diffTime = new long[SEQ_NO];
+		long diffTime = 0;
 		long minTime = 0, maxTime = 0, sum = 0;
 		InetAddress host = null;
 		try
@@ -71,21 +71,21 @@ public class PingClient
 						System.err.println("Fatal error occurred while attempting to receive " + message + ".");
 						System.exit(1);
 					}
-					if (message.equals(new String(response.getData(), 0, response.getLength())))
+					if (message.equals(new String(response.getData(), 0, response.getLength()))) // check whether the very same message has been received
 					{
-						diffTime[i] = System.currentTimeMillis() - sentAtTime;
+						diffTime = System.currentTimeMillis() - sentAtTime;
 						if (i != 0)
 						{
-							minTime = Math.min(diffTime[i], minTime);
-							maxTime = Math.max(diffTime[i], maxTime);
+							minTime = Math.min(diffTime, minTime);
+							maxTime = Math.max(diffTime, maxTime);
 						}
 						else
 						{
-							minTime = diffTime[i];
-							maxTime = diffTime[i];
+							minTime = diffTime;
+							maxTime = diffTime;
 						}
-						sum += diffTime[i];
-						System.out.println(message + " RTT: " + diffTime[i] + " ms");
+						sum += diffTime;
+						System.out.println(message + " RTT: " + diffTime + " ms");
 						break;
 					}
 				}
