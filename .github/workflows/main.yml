@@ -35,6 +35,9 @@ jobs:
     needs: check-modified-since
     if: always() && ${{ needs.check-modified-since.outputs.run-cri == 'true' }}
     steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
     - name: install-required-packages
       run: sudo apt-get install -y poppler-utils
     - name: clear-folders-internals
@@ -53,6 +56,9 @@ jobs:
     needs: check-modified-since
     if: always() && ${{ needs.check-modified-since.outputs.run-ecc == 'true' }}
     steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
     - name: install-required-packages
       run: sudo apt-get install -y poppler-utils
     - name: clear-folders-internals
@@ -69,7 +75,7 @@ jobs:
   commit:
     runs-on: ubuntu-latest
     needs: [merge-notes-cri, merge-notes-ecc]
-    if: always() && needs.check-modified-since.outputs.run-commit == 'true'
+    if: always() && ${{ needs.check-modified-since.outputs.run-commit == 'true' }}
     steps:
     - name: force-commit
       uses: ad-m/github-push-action@master
