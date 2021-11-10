@@ -51,11 +51,7 @@ jobs:
   merge-notes-ecc:
     runs-on: ubuntu-latest
     needs: check-modified-since
-<<<<<<< HEAD
     if: always() && ${{ needs.check-modified-since.outputs.run-ecc == 'true' }}
-=======
-    if: always && ${{ needs.check-modified-since.outputs.run-ecc == 'true' }}
->>>>>>> bb80dcc87832856af9eb631c4e54556243357c4d
     steps:
     - name: install-required-packages
       run: sudo apt-get install -y poppler-utils
