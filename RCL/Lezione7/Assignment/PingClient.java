@@ -47,7 +47,7 @@ public class PingClient
 			{
 				dSocket.setSoTimeout(TIMEOUT);
 				final long sentAtTime = System.currentTimeMillis();
-				final String message = "PING " + i + sentAtTime;
+				final String message = "PING " + i + " " + sentAtTime;
 				final byte[] requestBuffer = message.getBytes();
 				final DatagramPacket request = new DatagramPacket(requestBuffer, requestBuffer.length, host, portNo);
 				try { dSocket.send(request); }
