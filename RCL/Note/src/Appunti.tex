@@ -11,10 +11,10 @@
 
 \usepackage{hyperref}
 \hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    filecolor=magenta,      
-    urlcolor=blue,
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,
+	urlcolor=blue,
 }
  
 % All page numbers positioned at the bottom of the page
@@ -34,11 +34,11 @@
 \titlespacing{\chapter}{0pt}{35pt}{\baselineskip}
 \usepackage{titlesec}
 \titleformat{\section}
-  [hang] % \textlessshape\textgreater
-  {\normalfont\bfseries\Large} % \textlessformat\textgreater
-  {} % \textlesslabel\textgreater
-  {0pt} % \textlesssep\textgreater
-  {} % \textlessbefore code\textgreater
+	[hang] % \textlessshape\textgreater
+	{\normalfont\bfseries\Large} % \textlessformat\textgreater
+	{} % \textlesslabel\textgreater
+	{0pt} % \textlesssep\textgreater
+	{} % \textlessbefore code\textgreater
 \renewcommand{\thesection}{} % Remove section references...
 \renewcommand{\thesection}{\arabic{section}} %... from sections
 \usepackage{titlesec}
@@ -68,27 +68,28 @@
 \usepackage{listings}
 
 \lstdefinestyle{code}{
-    language=bash,
-    backgroundcolor=\color{backcolour},   
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=2
+	language=bash,
+	backgroundcolor=\color{backcolour},
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,
+	breaklines=true,
+	captionpos=b,
+	keepspaces=true,
+	numbers=left,
+	numbersep=5pt,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	tabsize=2
 }
 
 \renewcommand*\contentsname{Indice.}
 \renewcommand{\figurename}{Figura}
+\renewcommand{\listfigurename}{Elenco delle figure.}
 \begin{document}
 \begin{sloppypar}
 \begin{titlepage}
@@ -96,26 +97,23 @@
 	\centering
 	\vspace{1cm}
 
-    \includegraphics[scale=0.60]{images/unipi-logo.png}
-    
+	\includegraphics[scale=0.60]{images/unipi-logo.png}
+
 	{\normalsize \noindent Dipartimento di Informatica \\
-	             Corso di Laurea in Informatica \par}
+			Corso di Laurea in Informatica \par}
 	
 	\vspace{2cm}
 	{\Huge \textbf{Reti di Calcolatori} \par }
 
-    \vspace{4cm}
+	\vspace{4cm}
 
 	{\normalsize Giacomo Trapani \\ Anno Accademico 2021/2022\par}
 
 	\pagebreak
 
 \end{titlepage}
-\begingroup
-\let\clearpage\relax
 \tableofcontents
 \listoffigures
-\endgroup
 \pagebreak
 \section*{Premessa.}
 Si danno le seguenti definizioni:
@@ -396,16 +394,17 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item Prevede un programma server che accetta le richieste e un programma client che effettua le richieste; quest'ultimo interagisce con il terminale
 		utente sull'host locale e scambia messaggi con il Telnet server.
 		\item Usa TCP e persiste per l'intera durata della sessione, il client si connette alla porta 23 del server.
-		\item Il client accetta le battute di tasti del terminale e le invia al server nel quale un software chiamato ``pseudo terminal driver" fa da entry point
-		del sistema operativo: consente di trasferire caratteri a un processo come se provenissero dal terminale.
+		\item Il client accetta le battute di tasti del terminale e le invia al server nel quale un software chiamato ``pseudo terminal driver" fa da entry
+		point del sistema operativo: consente di trasferire caratteri a un processo come se provenissero dal terminale.
 		Il client accetta i caratteri che il server manda indietro e li visualizza sul terminale utente.
-		\item  I messaggi di controllo iniziali sono usati per scambiare informazioni sulle caratteristiche degli host (si parla di ``Telnet option negotiation").
+		\item  I messaggi di controllo iniziali sono usati per scambiare informazioni sulle caratteristiche degli host (si parla di ``Telnet option
+		negotiation").
 		\item Il client invia (in chiaro) un login identifier e una password (non \`e sicuro, \`e stato sostituito da ``SSH").
 	\end{itemize}
 
 	Il terminale in esecuzione sia sul client sia sul server \`e un ``Network Virtual Terminal": gli host traducono le loro caratteristiche locali cos\`i da
-	apparire esternamente come un NVT e assumono che l’host remoto sia un NVT; si scambiano dati e comandi in formato 7-bit US-ASCII sullo stesso canale (prevede
-	dunque ``in-band signaling"), ogni carattere \`e inviato come un ottetto con il primo bit settato a 0 se si tratta di un dato, a 1 per i comandi.
+	apparire esternamente come un NVT e assumono che l’host remoto sia un NVT; si scambiano dati e comandi in formato 7-bit US-ASCII sullo stesso canale
+	(prevede dunque ``in-band signaling"), ogni carattere \`e inviato come un ottetto con il primo bit settato a 0 se si tratta di un dato, a 1 per i comandi.
 
 	Si veda la figura \ref{fig:telnet}.
 
@@ -427,10 +426,10 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		comunicare un eventuale insuccesso.
 		\item \`E indipendente dal sistema di trasmissione usato e richiede solo il \textbf{trasferimento di stream di byte ordinato e affidabile} (tipicamente,
 		si usano connessioni TCP su porta 25).
-		\item Ha la capacit\`a di \textbf{trasportare mail attraverso pi\`u reti} (i.e. un messaggio di mail può passare attraverso server intermedi nel percorso da
-		mittente a destinatario finale).
-		\item I messaggi sono costituiti da una componente \textbf{header} (i.e. linee di intestazione, tra cui ``To:'', ``From'', ``Subject'') e un \textbf{body}
-		(i.e. il corpo del messaggio formato da soli caratteri ASCII 7bit).
+		\item Ha la capacit\`a di \textbf{trasportare mail attraverso pi\`u reti} (i.e. un messaggio di mail può passare attraverso server intermedi nel
+		percorso da mittente a destinatario finale).
+		\item I messaggi sono costituiti da una componente \textbf{header} (i.e. linee di intestazione, tra cui ``To:'', ``From'', ``Subject'') e un
+		\textbf{body} (i.e. il corpo del messaggio formato da soli caratteri ASCII 7bit).
 		\item Le interazioni tra client e server sono del tipo \textbf{command}/\textbf{response}: a ogni comando (testo ASCII 7 bit) corrisponde una risposta
 		formata da codice di stato e opzionalmente una descrizione.
 		\item \`E un protocollo di tipo \textbf{push}.
@@ -527,8 +526,8 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		vengono inizialmente rivolte le query DNS: operano da proxy e inoltrano la query in una gerarchia di server DNS.
 	\end{itemize}
 
-	Spesso, i server DNS implementano al loro interno un meccanismo di caching su cui salvano dei record corrispondenti ai risultati delle query; i record vengono
-	definiti come una quadrupla formata dai campi ``name", ``value", ``type", ``ttl" (time to leave).
+	Spesso, i server DNS implementano al loro interno un meccanismo di caching su cui salvano dei record corrispondenti ai risultati delle query; i record
+	vengono definiti come una quadrupla formata dai campi ``name", ``value", ``type", ``ttl" (time to leave).
 
 	Dal parametro ``type" dipende il significato della coppia ``name" e ``value"; si citano alcuni esempi:
 	\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
@@ -683,8 +682,8 @@ Offre i seguenti servizi:
 			scadenza del timer (si veda in merito la figura \ref{fig:tcp-ritrasmissione-veloce}).
 
 			Nel caso di segmenti fuori sequenza, i dati possono essere memorizzati dall’entit\`a TCP destinataria (nota: TCP non dice come il destinatario
-			deve gestire i pacchetti fuori sequenza) temporaneamente; nelle versioni più recenti si implementa ``SACK": i pacchetti ricevuti fuori sequenza vengono memorizzati
-			e il riscontro di pacchetti fuori sequenza e duplicati viene inviato in OPTIONS.
+			deve gestire i pacchetti fuori sequenza) temporaneamente; nelle versioni più recenti si implementa ``SACK": i pacchetti ricevuti fuori sequenza
+			vengono memorizzati e il riscontro di pacchetti fuori sequenza e duplicati viene inviato in OPTIONS.
 
 			Per uno schema riassuntivo delle funzionalit\`a del mittente, si veda la figura \ref{fig:tcp-fsm-mittente}.
 			\item \textbf{Destinatario}: si danno le seguenti regole:
@@ -729,17 +728,23 @@ Offre i seguenti servizi:
 		Invece, il meccanismo di controllo di congestione consiste nella capacit\`a dei sistemi terminali di stimare la capacit\`a della rete, \`e basato
 		sulla \textbf{congestion window} (o \textbf{cwnd}) - misurata in \textbf{Maximum Segment Size} (massima quantit\`a di dati trasportabili da un
 		segmento, dipende dalla massima unit\`a trasmissiva e viene scelto in modo tale che il segmento stia dentro un singolo frame di collegamento quando
-		incapsulato in un pacchetto IP); l'algoritmo utilizzato \`e costituito da tre passi:
+		incapsulato in un pacchetto IP (i.e. sottraggo dalla massima unit\`a trasmissiva la dimensione in bytes dell'header TCP e dell'header IP); la frequenza
+		di invio dei dati non supera \( \frac{cwnd}{RTT} \)); di fatto, la dimensione della finestra di invio \`e il minimo tra rwnd e cwnd.
+		Si osserva inoltre che - indicando con W il valore massimo in byte della finestra - TCP offre come throughput medio \( \frac{0.75W}{RTT}\).
+		L'algoritmo utilizzato per il controllo di congestione \`e costituito da tre passi:
 		\begin{itemize}
-			\item \textbf{Partenza lenta} (o \textbf{slow start}):
+			\item \textbf{Partenza lenta} (o \textbf{slow start}): tipicamente, la finestra di congestione viene posta pari a 1MSS; per ogni ACK non duplicato
+			si incrementa di 1MSS. Gli ACK ritardati rallentano la velocit\`a di incremento della finestra (si veda la figura \ref{fig:tcp-slow-start}).
 			\item \textbf{Incremento additivo e decremento moltiplicativo} (o \textbf{AIMD}): il TCP del mittente aumenta la propria finestra di congestione a
-			ogni ACK ricevuto in modo tale da avere per ogni RTT una crescita pari a 1MSS; la dimezza a ogni evento di perdita.
-			% Si veda la figura \ref{fig:tcp-aimd}.
-			\item \textbf{Ripresa veloce} (o \textbf{fast recovery}):
-			\item \textbf{Reazione ai timeout}:
-		\end{itemize}
+			ogni ACK ricevuto in modo tale da avere per ogni RTT una crescita pari a 1MSS; tipicamente, la dimezza a ogni evento di perdita.
+			Si veda la figura \ref{fig:tcp-aimd}; si rimanda inoltre alle figure \ref{fig:tcp-reno-fsm}, \ref{fig:tcp-reno-esempio}), \ref{fig:tcp-tahoe-fsm}
+			e \ref{fig:tcp-tahoe-esempio} per le differenze tra le varianti TCP Reno e TCP Tahoe.
 
-		Di fatto, la dimensione della finestra di invio \`e il minimo tra rwnd e cwnd.
+			Questo meccanismo permette - nel caso in cui N connessioni abbiano stesso MSS e RTT, non ci siano altri protocolli sullo stesso link e che
+			questo abbia capacit\`a Rbit al secondo - che ogni connessione tenda a trasmettere \(\frac{R}{N}\) bit al secondo.
+			\item \textbf{Ripresa veloce} (o \textbf{fast recovery}).
+			\item \textbf{Reazione ai timeout}.
+		\end{itemize}
 
 		\item \textbf{Chiusura della connessione}: client e server chiudono ciascuno il proprio lato della connessione, viene inviato un segmento TCP con
 		bit FIN uguale a 1; ciascuno risponde al FIN con un ACK (eventualmente, ACK pu\`o venire combinato col proprio FIN). Risulta possibile anche lo
@@ -1109,6 +1114,54 @@ Offre i seguenti servizi:
 	\includegraphics[scale=0.35]{images/tcp-rwnd.png}
 	\caption{TCP: esempio di comunicazione con rwnd.}
 	\label{fig:tcp-rwnd}
+\end{figure}
+
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.3]{images/tcp-slow-start.png}
+	\caption{TCP: slow start.}
+	\label{fig:tcp-slow-start}
+\end{figure}
+
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.3]{images/tcp-reno-fsm.png}
+	\caption{TCP Reno: macchina a stati.}
+	\label{fig:tcp-reno-fsm}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.35]{images/tcp-reno-esempio.png}
+	\caption{TCP Reno: esempio.}
+	\label{fig:tcp-reno-esempio}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.35]{images/tcp-tahoe-fsm.png}
+	\caption{TCP Tahoe: macchina a stati.}
+	\label{fig:tcp-tahoe-fsm}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.35]{images/tcp-tahoe-esempio.png}
+	\caption{TCP Tahoe: esempio.}
+	\label{fig:tcp-tahoe-esempio}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.45]{images/tcp-aimd.png}
+	\caption{TCP: AIMD.}
+	\label{fig:tcp-aimd}
 \end{figure}
 
 \begin{figure}[!h]
