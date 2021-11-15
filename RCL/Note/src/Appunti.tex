@@ -789,6 +789,51 @@ Offre i seguenti servizi:
 	\end{itemize}
 \end{itemize}
 
+\subsubsection{Network Layer.}
+Mette a disposizione il \textbf{protocollo IP}.
+\phantomsection
+\addcontentsline{toc}{paragraph}{IP}
+Ha le seguenti caratteristiche:
+\begin{itemize}[topsep=0pt, parsep=0pt, itemsep=0pt]
+	\item \`E di tipo connectionless.
+	\item \`E di tipo best effort: non garantisce n\'e la consegna dei pacchetti n\'e l'ordine.
+	\item Non \`e affidabile: non ci sono meccanismi di recupero di errore.
+	\item Non prevede garanzie sulla qualit\`a del servizio (QoS), sul tempo di consegna o sul controllo di flusso.
+\end{itemize}
+
+Mette a disposizione due funzioni: \textbf{inoltro} (trasferimento del pacchetto sull'appropriato collegamento di uscita) e \textbf{instradamento} (processo
+decisionale di scelta del percorso verso una destinazione); si vedano in merito le figure \ref{fig:ip-inoltro} e \ref{fig:ip-instradamento}.
+
+I datagrammi IP prevedono l'uso dei seguenti campi (si veda anche la figura \ref{fig:ip-datagramma}).
+\begin{itemize}[itemsep=0pt, topsep=0pt, parsep=0pt]
+	\item \textbf{Versione} (4bit): specifica la versione di IP usata (attualmente IPv4 o IPv6).
+	\item \textbf{Hlen} (lunghezza dell'header, 4 bit): lunghezza dell'intestazione espressa in parole da 32bit (tipicamente 0101, ossia 20bit).
+	\item \textbf{Tipo di servizio} (8bit): serve per ``colorare'' il datagramma IP (basso ritardo, affidabilit\`a, etc.); 6bit per \textbf{Differentiated
+	Services} (i pacchetti vengono marcati in base alla classe di servizio, i router avranno una politica di accodamento specifica per ciasuna; alcuni esempi
+	di classi di servizio sono telefonate, controlli, multimedia streaming etc.), 2bit per \textbf{Explicit Congestion Notification} (supporto a livello
+	rete e trasporto per la notifica di eventi di congestione).
+	\item \textbf{Lunghezza del datagramma} (16bit): \`e la lunghezza di tutto il datagramma in byte, header incluso; il massimo teorico \`e di 65535byte, nella
+	pratica di 1500byte.
+	\item \textbf{Identificatore} (16bit): \`e unico per ciascun datagramma, viene assegnato dall'host sorgente e usato dal destinatario per riconoscere i frammenti
+	di un datagramma da riassemblare.
+	\item \textbf{Flag} (3bit): il primo bit vale sempre 0, il secondo vale 1 se il pacchetto non deve essere frammentato (0 altrimenti), il terzo vale 1 se e
+	solo se il pacchetto \`e l'ultimo frammento.
+	\item \textbf{Offset} (13bit): indica la posizione relativa (come multiplo di 8byte) del frammento all'interno del datagramma.
+	\item \textbf{Tempo di vita} (8 bit): ad ogni passaggio da un router viene decrementato, quando raggiunge lo zero viene scartato. Assicura che un pacchetto
+	non rimanga in ciclo nella rete.
+	\item \textbf{Protocollo} (8bit): in ricezione all'host destinatario indica quale protocollo dello strato superiore deve ricevere i dati.
+	\item \textbf{Checksum dell'intestazione} (16bit): viene calcolato il checksum della sola intestazione (ponendo questo campo pari a zero) ad ogni
+	router (il TTL cambia ad ogni hop!). Se si ottiene un errore si scarta il datagramma.
+	\item \textbf{Indirizzi sorgente e destinazione} (32bit): indirizzi IP del mittente e del destinatario.
+	\item \textbf{Opzioni} (lunghezza variabile, multiplo di 32bit): uso sporadico, da 0 a 40 byte.
+	\item \textbf{Dati}: dati trasportati dal datagramma IP.
+\end{itemize}
+
+Nel caso in cui la MTU non risulta sufficiente per trasmettere per intero un datagramma, IP prevede la possibilit\`a di frammentare (ved. figura
+\ref{fig:ip-frammentazione}); IPv6 non implementa questo meccanismo, in IPv4 \`e fortemente sconsigliato.
+
+Per il meccanismo di indirizzamento, IP prevede l'uso di \textbf{indirizzi IP}, 32bit scritti in notazione decimale puntata.
+
 \pagebreak
 
 \begin{figure}[h!]
@@ -1210,6 +1255,37 @@ Offre i seguenti servizi:
 	\label{fig:udp-datagramma}
 \end{figure}
 
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.35]{images/ip-inoltro.png}
+	\caption{IP: inoltro.}
+	\label{fig:ip-inoltro}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/ip-instradamento.png}
+	\caption{IP: instradamento.}
+	\label{fig:ip-instradamento}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/ip-frammentazione.png}
+	\caption{IP: frammentazione.}
+	\label{fig:ip-frammentazione}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/ip-datagramma.png}
+	\caption{IP: formato di un datagramma.}
+	\label{fig:ip-datagramma}
+\end{figure}
 
 \end{sloppypar}
 \end{document}
