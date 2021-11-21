@@ -15,12 +15,12 @@ jobs:
         git diff --name-only HEAD^ HEAD > files.txt
         while IFS= read -r file
         do
-        	if [[ $file == "CRI/Lezioni"* ]]; then
+        	if [[ $file == "CRI/"* ]]; then
             echo "New lesson found in CRI: $file"
         		echo "::set-output name=run-merge::true"
             break
         	else
-        		if [[ $file == "ECC/Lezioni"* ]]; then
+        		if [[ $file == "ECC/"* ]]; then
               echo "New lesson found in ECC: $file"
         		  echo "::set-output name=run-merge::true"
               break
@@ -41,9 +41,9 @@ jobs:
     - name: setup-env
       run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
     - name: cri-merge-lesson-notes
-      run: pdfunite CRI/Lezioni/*.pdf CRI-Lezioni.pdf
+      run: pdfunite CRI/*.pdf CRI-Lezioni.pdf
     - name: ecc-merge-lesson-notes
-      run: pdfunite ECC/Lezioni/*.pdf ECC-Lezioni.pdf
+      run: pdfunite ECC/*.pdf ECC-Lezioni.pdf
     - name: publish-notes
       uses: ncipollo/release-action@v1
       with:
