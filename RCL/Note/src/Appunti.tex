@@ -6,6 +6,7 @@
 \usepackage{setspace}
 \usepackage{fontspec}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \setmainfont{TeX Gyre Termes}
 \singlespace % interlinea singola
 
@@ -19,6 +20,8 @@
  
 % All page numbers positioned at the bottom of the page
 \usepackage{fancyhdr}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
 \fancyhf{} % clear all header and footers
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0pt} % remove the header rule
@@ -578,7 +581,7 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item \`E un protocollo stateful.
 		\item Fa uso di codici di ritorno.
 		\item Il collegamento pu\`o essere anonimo (si parla di ``anonymous FTP") o reso sicuro con TLS.
-		\item Implementa pi\`u modalita di trasmissione, come:
+		\item Implementa pi\`u modalit\`a di trasmissione, come:
 		\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
 			\item \textbf{Stream mode}: FTP invia i dati a TCP con un flusso continuo di bit.
 			\item \textbf{Block mode}: FTP invia i dati a TCP suddivisi in blocchi. Ogni blocco è preceduto da un header.
@@ -783,28 +786,72 @@ Offre i seguenti servizi:
 
 	Per l'uso del campo checksum si prendono in considerazione due ruoli:
 	\begin{itemize}[topsep=0pt, itemsep=0pt]
-		\item \textbf{Mittente}: viene inizialmente azzerato; si tratta il contenuto del datagramma UDP come una sequenza di parole da 16bit e si assegna al campo
-		la somma delle parole in complemento a uno (i.e. viene negato).
+		\item \textbf{Mittente}: viene inizialmente azzerato; si tratta il contenuto del datagramma UDP come una sequenza di parole da 16bit e si assegna al
+		campo la somma delle parole in complemento a uno (i.e. viene negato).
 		\item \textbf{Ricevente}: viene calcolata la checksum del segmento ricevuto; se non vale 0 allora il messaggio \`e corrotto e viene scartato.
 	\end{itemize}
 \end{itemize}
 
 \subsubsection{Network Layer.}
+\`E implementato nei dispositivi intermedi e offre una astrazione che permette a host e reti eterogenee di funzionare (logicamente) come una singola rete;
 Mette a disposizione il \textbf{protocollo IP}.
 \phantomsection
 \addcontentsline{toc}{paragraph}{IP}
 Ha le seguenti caratteristiche:
 \begin{itemize}[topsep=0pt, parsep=0pt, itemsep=0pt]
-	\item \`E di tipo connectionless.
-	\item \`E di tipo best effort: non garantisce n\'e la consegna dei pacchetti n\'e l'ordine.
+	\item \`E di tipo \textbf{connectionless}: non esiste un circuito n\'e fisico n\'e virtuale tra due sistemi terminali a livello IP.
+	\item \`E di tipo \textbf{best effort}: non garantisce n\'e la consegna dei pacchetti n\'e l'ordine.
 	\item Non \`e affidabile: non ci sono meccanismi di recupero di errore.
 	\item Non prevede garanzie sulla qualit\`a del servizio (QoS), sul tempo di consegna o sul controllo di flusso.
+	\item Altri servizi sono aggiungibili medianti estensioni (e.g. DiffServ \`e un modello di QoS implementato dai router).
 \end{itemize}
 
-Mette a disposizione due funzioni: \textbf{inoltro} (trasferimento del pacchetto sull'appropriato collegamento di uscita) e \textbf{instradamento} (processo
-decisionale di scelta del percorso verso una destinazione); si vedano in merito le figure \ref{fig:ip-inoltro} e \ref{fig:ip-instradamento}.
+Mette a disposizione due funzioni: \textbf{inoltro} o \textbf{forwarding} (trasferimento del pacchetto sull'appropriato collegamento di uscita, usa la ``tabella
+di inoltro'') e \textbf{instradamento} o \textbf{routing} (processo decisionale di scelta del percorso verso una destinazione, determina i valori da inserire
+nella tabella di inoltro tramite algoritmi di ``routing''); si vedano in merito le figure \ref{fig:ip-inoltro} e \ref{fig:ip-instradamento}.
 
-I datagrammi IP prevedono l'uso dei seguenti campi (si veda anche la figura \ref{fig:ip-datagramma}).
+Si distinguono due tipi di routing: \textbf{decentralizzato} (prevede che l'algoritmo di routing sia in esecuzione su ciascun router e che questi si scambino
+messaggi) e \textbf{centralizzato} (si parla di \textbf{Software Defined Networking}, un controller remoto interagisce con Control Agents locali: questi
+inviano informazioni su traffico e collegamenti, ricevono i valori da inserire nella tabella di inoltro); si vedano in merito le figure
+fig:ip-routing-decentralizzato e fig:ip-routing-centralizzato (per ulteriori informazioni riguardo ai routers, si rimanda alla
+\hyperref[Routers]{\underline{sezione dedicata}}).
+
+Si distinguono inoltre due meccanismi: \textbf{routing statico} (le righe della tabella vengono compilate manualmente da un operatore) e
+\textbf{routing dinamico} (protocolli specifici provvedono automaticamente alla compilazione della tabella).
+
+Gli algoritmi di routing si distinguono in \textbf{globali} (si basano sulla conoscenza completa della rete in questione) e \textbf{decentralizzati} (nessun
+nodo conosce la topologia dell'intera rete, ogni nodo ha informazioni su se stesso e i propri vicini con cui scambia informazioni); un esempio di algoritmo
+decentralizzato \`e quello di \textbf{distance vector} basato sull'equazione di Bellman-Ford (\( d_{i,j} = \min(d_{i,j}, (c_{i,k} + d_{k,j})) \)) di cui
+si fornisce di seguito lo pseudocodice:
+
+\begin{algorithmic}
+	\Function{DistanceVector}{}
+		\State $D[$self$] \gets 0$
+		\For{$i \gets 1$ to $N$}
+			\If{Vicino(self, i)}
+				\State $ D[$i$] \gets c[$self$][$i$] $
+			\Else
+				\State $ c[$self$][$i$] \gets \infty $
+			\EndIf
+		\EndFor
+		\ForAll{n : Neighbor(self)}
+			\State Send(D, n)
+		\EndFor
+		\While{true}
+			\State Wait(Receive(D), NewCost)
+			\For{$i \gets 1$ to $N$}
+			\EndFor
+		\EndWhile
+	\EndFunction
+\end{algorithmic}
+
+% aggiungere figure ^
+
+Anche al livello di rete vengono implementati \textbf{multiplexing} e \textbf{demultiplexing} (ad esempio, l'intestazione dei datagrammi contiene un campo
+in cui viene codificato il protocollo a cui deve essere consegnato il payload).
+
+Il modello datagram (senza connessione) per la consegna dei dati permette \textbf{segmentazione} e \textbf{riunificazione} dei pacchetti, \textbf{controllo
+degli errori} e \textbf{verifica del TTL}; i datagrammi IP prevedono l'uso dei seguenti campi (si veda anche la figura \ref{fig:ip-datagramma}).
 \begin{itemize}[itemsep=0pt, topsep=0pt, parsep=0pt]
 	\item \textbf{Versione} (4bit): specifica la versione di IP usata (attualmente IPv4 o IPv6).
 	\item \textbf{Hlen} (lunghezza dell'header, 4 bit): lunghezza dell'intestazione espressa in parole da 32bit (tipicamente 0101, ossia 20bit).
@@ -814,8 +861,8 @@ I datagrammi IP prevedono l'uso dei seguenti campi (si veda anche la figura \ref
 	rete e trasporto per la notifica di eventi di congestione).
 	\item \textbf{Lunghezza del datagramma} (16bit): \`e la lunghezza di tutto il datagramma in byte, header incluso; il massimo teorico \`e di 65535byte, nella
 	pratica di 1500byte.
-	\item \textbf{Identificatore} (16bit): \`e unico per ciascun datagramma, viene assegnato dall'host sorgente e usato dal destinatario per riconoscere i frammenti
-	di un datagramma da riassemblare.
+	\item \textbf{Identificatore} (16bit): \`e unico per ciascun datagramma, viene assegnato dall'host sorgente e usato dal destinatario per riconoscere i
+	frammenti di un datagramma da riassemblare.
 	\item \textbf{Flag} (3bit): il primo bit vale sempre 0, il secondo vale 1 se il pacchetto non deve essere frammentato (0 altrimenti), il terzo vale 1 se e
 	solo se il pacchetto \`e l'ultimo frammento.
 	\item \textbf{Offset} (13bit): indica la posizione relativa (come multiplo di 8byte) del frammento all'interno del datagramma.
@@ -832,7 +879,75 @@ I datagrammi IP prevedono l'uso dei seguenti campi (si veda anche la figura \ref
 Nel caso in cui la MTU non risulta sufficiente per trasmettere per intero un datagramma, IP prevede la possibilit\`a di frammentare (ved. figura
 \ref{fig:ip-frammentazione}); IPv6 non implementa questo meccanismo, in IPv4 \`e fortemente sconsigliato.
 
-Per il meccanismo di indirizzamento, IP prevede l'uso di \textbf{indirizzi IP}, 32bit scritti in notazione decimale puntata.
+Per il meccanismo di indirizzamento, IP prevede l'uso di \textbf{indirizzi IP}, 32bit scritti in notazione decimale puntata formati da un \textbf{prefisso}
+(che indica la rete) e \textbf{suffisso} (che indica l'host all'interno della rete).
+\phantomsection
+\addcontentsline{toc}{paragraph}{Indirizzi IP}
+Inizialmente si erano divisi gli indirizzi IP facendo \textbf{classful addressing}:
+\begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+	\item \textbf{Classe A}: 7bit per reti IP, 24bit (0.0.0.0 - 127.255.255.255)
+	\item \textbf{Classe B}: 14bit per reti IP, 16bit host id (128.0.0.0 - 191.255.255.255)
+	\item \textbf{Classe C}: 21bit per reti IP, 8bit per host id (192.0.0.0 - 223.255.255.255)
+	\item \textbf{Classe D}: riservata a multicasting (224.0.0.0 - 239.255.255.255)
+	\item \textbf{Classe E}: riservata per usi futuri (240.0.0.0 - 255.255.255)
+\end{itemize}
+Questa soluzione risulta poco flessibile nell'utilizzo dello scarso range di indirizzi disponibili, IPv6 risolve con indirizzi IP da 128bit, IPv4 con
+\textbf{classless addressing} (ved. figura \ref{fig:ip-classless-addressing}); per questi indirizzi si usa la notazione CIDR che prevede il formato
+``\textless{byte.byte.byte.byte}\textgreater{/}\textless{lunghezza del prefisso}\textgreater{ }'' dove il prefisso indica la parte dedicata all'indirizzo di
+rete, il resto identifica l'host all'interno di quella rete.
+
+Si definisce inoltre la \textbf{subnet mask}, un numero composto da 32bit in cui i primi n bit a sinistra identificano la rete e sono impostati a 1,
+i rimanenti a 0; serve a distinguere quale parte di un indirizzo IP identifica la rete e quale l'host. Partendo da subnet mask e indirizzo IP, l'indirizzo
+di rete si calcola facendo l'AND.
+
+Gli indirizzi IP vengono assegnati dall'ICANN agli ISP in blocchi di dimensione \(2^{k}\) con \( k \in \mathbb{N}\), che li dividono in blocchi di lunghezza
+\(2^{i}\) con \(i \in \mathbb{N} \wedge i \leq k\) contigui: in questo caso, la lunghezza del prefisso di rete vale \( 32 - i \); nel caso in cui le dimensioni
+dei blocchi non siano costanti, si assegnano in ordine decrescente (ordinando sulla dimensione del blocco). Si permette inoltre di aggregare blocchi di
+indirizzi per rendere efficiente l'instradamento.
+
+Inoltre, si definiscono i seguenti indirizzi speciali:
+\begin{itemize}[itemsep=0pt, topsep=0pt, parsep=0pt]
+	\item \textbf{This-host}: 0.0.0.0; usato quando un host ha necessit\`a di inviare un datagramma ma non conosce il proprio indirizzo IP.
+	\item \textbf{Limited-broadcast}: 255.255.255.255; usato quando un router o un host devono inviare un datagramma a tutti i dispositivi che si trovano
+	all’interno della rete, i router bloccano la propagazione alla sola rete locale.
+	\item \textbf{Loopback}: 127.0.0.1; il datagramma con questo indirizzo di destinazione non lascia l’host locale (localhost), tipicamente viene usato per
+	testing e debugging.
+	\item \textbf{Indirizzi privati}: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16; riservati per reti locali.
+	\item \textbf{Indirizzi multicast}: 224.0.0.0/4.
+\end{itemize}
+
+Per l'assegnazione di un indirizzo IP si distinguono due modalit\`a:
+\begin{itemize}[itemsep=0pt, parsep=0pt, topsep=0pt]
+	\item \textbf{Configurazione manuale}: l'amministratore configura direttamente nell'host l'indirizzo IP e inserisce informazioni di servizio (indirizzo
+	del gateway/router, netmask e indirizzo IP di almeno un server DNS).
+	\phantomsection
+	\addcontentsline{toc}{paragraph}{DHCP}
+	\item \textbf{DHCP}: l'host ottiene il proprio indirizzo IP e le altre informazioni (indirizzo del gateway, netmask e indirizzo IP di almeno un server DNS)
+	in modo automatico. \`E un protocollo client-server che implementa i seguenti passaggi (si rimanda inoltre alla figura \ref{fig:dhcp-esempio}):
+	\begin{itemize}
+		\item L’host invia in broadcast un messaggio \textbf{DHCP discover} [opzionale].
+		\item Il server DHCP risponde con un messaggio \textbf{DHCP offer} [opzionale].
+		\item L’host richiede un indirizzo IP inviando il messaggio \textbf{DHCP request}.
+		\item Il server DHCP invia un messaggio \textbf{DHCP ack} (se la richiesta va a buon fine).
+	\end{itemize}
+	Il protocollo di trasporto utilizzato \`e UDP.
+\end{itemize}
+
+\phantomsection
+\addcontentsline{toc}{paragraph}{Routers} \label{Routers}
+I router - fino ad adesso rappresentati come una scatola nera - hanno una struttura precisa per la quale si rimanda alla figura fig:routers-struttura. Si
+individuano le seguenti componenti nei routers:
+\begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+	\item \textbf{Porte di input}: hanno una copia della tabella di inoltro, usano i valori dell’header per determinare la porta di output; prevede accodamento
+	se la velocit\`a con cui arrivano i datagrammi supera quella di inoltro nella struttura di commutazione.
+	\item \textbf{Porte di output}: usano politiche di scheduling per definire l'ordine di trasmissione dei datagrammi, richiede buffering quando i datagrammi
+	arrivano dalla struttura di commutazione ad una velocit\`a maggiore di quella di trasmissione sul collegamento in uscita.
+	\item \textbf{Processore di routing}.
+	\item \textbf{Switching fabric} (o \textbf{struttura di commutazione}): mette in comunicazione porte di input e porte di output, per le tecnologie possibili
+	si rimanda alla figure fig:switching-fabric-memory, fig:switching-fabric-bus e fig:switching-fabric-crossbar.
+\end{itemize}
+
+% aggiungere figure ^
 
 \pagebreak
 
@@ -1285,6 +1400,21 @@ Per il meccanismo di indirizzamento, IP prevede l'uso di \textbf{indirizzi IP}, 
 	\includegraphics[scale=0.5]{images/ip-datagramma.png}
 	\caption{IP: formato di un datagramma.}
 	\label{fig:ip-datagramma}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/ip-classless-addressing.png}
+	\caption{IP: indirizzamento senza classi.}
+	\label{fig:ip-classless-addressing}
+\end{figure}
+
+\pagebreak
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/dhcp-esempio.png}
+	\caption{DHCP: esempio di sessione.}
+	\label{fig:dhcp-esempio}
 \end{figure}
 
 \end{sloppypar}
