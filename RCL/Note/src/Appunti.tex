@@ -419,7 +419,7 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item \textbf{Indirizzo email}: stringa che identifica un destinario, ha la struttura
 		``\textless{local-part}\textgreater{@}\textless{domain-name}\textgreater{"}:
 		la prima parte identifica il destinatario all'interno del mail server, la seconda (identifica) il mail server.
-		\item \textbf{Tipo MIME}: specifica la natura dei dati nel corpo di un'entità MIME.
+		\item \textbf{Tipo MIME}: specifica la natura dei dati nel corpo di un'entit\`a MIME.
 	\end{itemize}
 
 	Il protocollo ha le seguenti caratteristiche:
@@ -810,6 +810,21 @@ Mette a disposizione due funzioni: \textbf{inoltro} o \textbf{forwarding} (trasf
 di inoltro'') e \textbf{instradamento} o \textbf{routing} (processo decisionale di scelta del percorso verso una destinazione, determina i valori da inserire
 nella tabella di inoltro tramite algoritmi di ``routing''); si vedano in merito le figure \ref{fig:ip-inoltro} e \ref{fig:ip-instradamento}.
 
+Si distinguono due tipi di inoltro (si rimanda inoltre alla figura \ref{fig:ip-tabella-inoltro}):
+\begin{itemize}[itemsep=0pt, parsep=0pt, topsep=0pt]
+	\item \textbf{Inoltro diretto}: il pacchetto IP ha come destinazione un host appartenente alla stessa rete, non vengono coinvolte altre entit\`a. Siano
+	A l'host destinatario e B il mittente: B verifica che A appartiene alla stessa rete e consulta una tabella presente in ogni dispositivo terminale
+	in cui vengono salvate le coppie (MAC, indirizzo IP) di ogni dispositivo (presente nella stessa rete).
+	\item \textbf{Inoltro indiretto}: il pacchetto IP ha come destinazione un host appartentente a un'altra rete: si delega l'invio a un \textbf{router}. Siano
+	A l'host destinatario e B il mittente: B verifica che A non appartiene alla stessa rete, invia il datagramma al router la cui coppia (MAC, indirizzo IP)
+	\`e salvata nella tabella menzionata sopra.
+\end{itemize}
+La tabella viene detta \textbf{tabella di inoltro} e permette ``aggregazione degli indirizzi'' (i.e. riduce al minimo il numero di entries della tabella
+raccogliendo a fattor comune) e ``routing gerarchico'' (e.g. un ISP che divide i propri indirizzi in pi\`u blocchi non dichiara il loro indirizzo specifico
+bens\`i il proprio e, al momento opportuno, si occupa di inoltrare alla sottorete corretta), segue la regola del ``longer mask matching'' (i.e. ordina le
+entries della tabella in ordine decrescente sulla lunghezza della maschera e - quando si deve fare il pattern matching - sceglie il primo pattern valido,
+ossia il pi\`u specifico).
+
 Si distinguono due tipi di routing: \textbf{decentralizzato} (prevede che l'algoritmo di routing sia in esecuzione su ciascun router e che questi si scambino
 messaggi) e \textbf{centralizzato} (si parla di \textbf{Software Defined Networking}, un controller remoto interagisce con Control Agents locali: questi
 inviano informazioni su traffico e collegamenti, ricevono i valori da inserire nella tabella di inoltro); si vedano in merito le figure
@@ -932,6 +947,12 @@ Per l'assegnazione di un indirizzo IP si distinguono due modalit\`a:
 	\end{itemize}
 	Il protocollo di trasporto utilizzato \`e UDP.
 \end{itemize}
+
+Il \textbf{protocollo NAT} permette di inoltrare su Internet il traffico proveniente da sistemi attestati su sottoreti private, in cui sono assegnati indirizzi IP
+privati; l'accesso di una rete privata su Internet \`e realizzato attraverso un router abilitato alla NAT con almeno un indirizzo IP pubblico (quindi, ogni
+datagramma in uscita dal router di accesso ha come indirizzo IP sorgente pubblico quello del router). Per inviare le risposte all'host corretto, il router
+di accesso ha in memoria una \textbf{tabella di traduzione NAT} le cui righe contengono le associazioni ((IP privato, porta), (IP pubblico, porta assegnata
+dal router)). Si veda la figura \ref{fig:ip-nat}.
 
 \phantomsection
 \addcontentsline{toc}{paragraph}{Routers} \label{Routers}
@@ -1388,6 +1409,15 @@ individuano le seguenti componenti nei routers:
 
 \begin{figure}[!h]
 	\centering
+	\includegraphics[scale=0.35]{images/ip-tabella-inoltro.png}
+	\caption{IP: inoltro e tabella di inoltro.}
+	\label{fig:ip-tabella-inoltro}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
 	\includegraphics[scale=0.5]{images/ip-frammentazione.png}
 	\caption{IP: frammentazione.}
 	\label{fig:ip-frammentazione}
@@ -1410,6 +1440,14 @@ individuano le seguenti componenti nei routers:
 \end{figure}
 
 \pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/ip-tabella-nat.png}
+	\caption{IP: tabella di traduzione NAT.}
+	\label{fig:ip-nat}
+\end{figure}
+
 \begin{figure}[!h]
 	\centering
 	\includegraphics[scale=0.5]{images/dhcp-esempio.png}
