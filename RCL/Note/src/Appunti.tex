@@ -221,8 +221,9 @@ Si definiscono dunque i ritardi sopra elencati:
 Si definisce inoltre il ``ritardo end-to-end" come sommatoria del ritardo ai singoli nodi: \\\( R_{end-to-end} = \sum_{i=1}^{N} R_{nodo_i}\).
 
 Si ricorda l'esistenza dei comandi ``traceroute", che traccia un pacchetto dal proprio dispositivo all'host mostrando anche il numero di passaggi
-(salti) necessari per raggiungerlo assieme al ritardo dal mittente per ogni passaggio, e ``ping", che calcola il ritardo per la trasmissione dal
-dispositivo corrente all'host.
+(salti) necessari per raggiungerlo assieme al ritardo dal mittente per ogni passaggio (nello specifico, usa il protocollo UDP per inviare datagrammi
+configurati in modo tale da scatenare messaggi di errore dovuti a ``tempo scaduto" o ``porta destinazione non raggiungibile''),
+e ``ping", che calcola il ritardo per la trasmissione dal dispositivo corrente all'host.
 
 \section{Modelli stratificati.}
 Si definisce un ``protocollo" un insieme di regole che permettono a due entit\`a di comunicare; nei sistemi di comunicazione non \`e
@@ -267,7 +268,7 @@ alla rete e all'infrastruttura trasmissiva (realizzati a livello hardware e soft
 4.
 
 Il modello prevede inoltre l'incapsulamento: il flusso di informazioni - che ha origine al livello applicativo - discende verso i livelli inferiori e
-viene progressivamente arricchita mediante l'aggiunta di headers.
+viene progressivamente arricchito mediante l'aggiunta di headers.
 
 Si danno in proposito le seguenti definizioni:
 \begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
@@ -720,7 +721,7 @@ Offre i seguenti servizi:
 		In molte implementazioni, dopo un errore (e.g. ACK non ricevuto) si raddoppia il timeout.
 
 		Si definisce inoltre \textbf{finestra di trasmissione} (o \textbf{sliding window}) una finestra sovrapposta alla sequenza da trasmettere, negoziata
-		dinamicamente e fatta avanzare alla ricezione di un ACK; analogamente, per il processo destinatario di definisce la \textbf{finestra di ricezione}.
+		dinamicamente e fatta avanzare alla ricezione di un ACK; analogamente, per il processo destinatario si definisce la \textbf{finestra di ricezione}.
 		Si vedano le figure \ref{fig:tcp-finestra-di-trasmissione}, \ref{fig:tcp-finestra-di-ricezione}.
 
 		Concretamente, il meccanismo di controllo di flusso sopra menzionato consiste nella capacit\`a del processo mittente di evitare di saturare il buffer
@@ -948,11 +949,33 @@ Per l'assegnazione di un indirizzo IP si distinguono due modalit\`a:
 	Il protocollo di trasporto utilizzato \`e UDP.
 \end{itemize}
 
+\phantomsection
+\addcontentsline{toc}{paragraph}{Protocollo NAT} \label{Protocollo NAT}
 Il \textbf{protocollo NAT} permette di inoltrare su Internet il traffico proveniente da sistemi attestati su sottoreti private, in cui sono assegnati indirizzi IP
 privati; l'accesso di una rete privata su Internet \`e realizzato attraverso un router abilitato alla NAT con almeno un indirizzo IP pubblico (quindi, ogni
 datagramma in uscita dal router di accesso ha come indirizzo IP sorgente pubblico quello del router). Per inviare le risposte all'host corretto, il router
 di accesso ha in memoria una \textbf{tabella di traduzione NAT} le cui righe contengono le associazioni ((IP privato, porta), (IP pubblico, porta assegnata
 dal router)). Si veda la figura \ref{fig:ip-nat}.
+
+\phantomsection
+\addcontentsline{toc}{paragraph}{Protocollo ICMP} \label{Protocollo ICMP}
+Il \textbf{protocollo ICMP} interviene per la notifica di eventuali errori riscontrati a livello di trasporto (si parla in questo caso di
+\textbf{messaggio di segnalazione errore}) e per la gestione di alcune richieste a un host (\textbf{messaggio di richiesta}/\textbf{risposta}); un messaggio
+ICMP (di cui si menzionano solo i campi \textbf{tipo} e \textbf{codice}, utilizzati per definirne il significato) viene incapsulato all'interno di un
+datagramma IP, quindi tecnicamente il protocollo apparterrebbe allo strato superiore, ma \`e parte integrante dello strato di rete e viene supportato da
+chiunque implementi IP. Un pacchetto ICMP rispetta le seguenti regole:
+\begin{itemize}[itemsep=0pt, parsep=0pt, topsep=0pt]
+	\item Viene instradato con priorit\`a rispetto a un pacchetto IP ordinario.
+	\item \`E relativo solo al frammento con offset 0 (nel caso di pacchetti IP frammentati).
+	\item Non viene inviato in risposta a:
+	\begin{itemize}
+		\item Pacchetti IP con indirizzo mittente che non rappresenta in modo univoco un host.
+		\item Pacchetti IP con indirizzo destinazione IP broadcast o multicast.
+		\item Altri messaggi di errore ICMP (vengono invece inviati nel caso di messaggi di interrogazione).
+	\end{itemize}
+\end{itemize}
+I programmi ``ping'' e ``tracert'' sono basati su messaggi ICMP di richiesta e risposta eco: ping per calcolare l'RTT, tracert per tracciare il percorso
+fino a un host destinazione (incrementa progressivamente il TTL di un messaggio di eco fino a che non arriva al destinatario).
 
 \phantomsection
 \addcontentsline{toc}{paragraph}{Routers} \label{Routers}
