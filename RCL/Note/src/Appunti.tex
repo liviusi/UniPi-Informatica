@@ -829,39 +829,47 @@ ossia il pi\`u specifico).
 Si distinguono due tipi di routing: \textbf{decentralizzato} (prevede che l'algoritmo di routing sia in esecuzione su ciascun router e che questi si scambino
 messaggi) e \textbf{centralizzato} (si parla di \textbf{Software Defined Networking}, un controller remoto interagisce con Control Agents locali: questi
 inviano informazioni su traffico e collegamenti, ricevono i valori da inserire nella tabella di inoltro); si vedano in merito le figure
-fig:ip-routing-decentralizzato e fig:ip-routing-centralizzato (per ulteriori informazioni riguardo ai routers, si rimanda alla
+\ref{fig:ip-routing-decentralizzato} e \ref{fig:ip-routing-centralizzato} (per ulteriori informazioni riguardo ai routers, si rimanda alla
 \hyperref[Routers]{\underline{sezione dedicata}}).
 
 Si distinguono inoltre due meccanismi: \textbf{routing statico} (le righe della tabella vengono compilate manualmente da un operatore) e
 \textbf{routing dinamico} (protocolli specifici provvedono automaticamente alla compilazione della tabella).
 
 Gli algoritmi di routing si distinguono in \textbf{globali} (si basano sulla conoscenza completa della rete in questione) e \textbf{decentralizzati} (nessun
-nodo conosce la topologia dell'intera rete, ogni nodo ha informazioni su se stesso e i propri vicini con cui scambia informazioni); un esempio di algoritmo
-decentralizzato \`e quello di \textbf{distance vector} basato sull'equazione di Bellman-Ford (\( d_{i,j} = \min(d_{i,j}, (c_{i,k} + d_{k,j})) \)) di cui
-si fornisce di seguito lo pseudocodice:
+nodo conosce la topologia dell'intera rete, ogni nodo ha informazioni su se stesso e i propri vicini con cui scambia informazioni).
+Si cita l'algoritmo \textbf{Link State} come esempio di algoritmo globale, \`e basato sull'algoritmo di Dijkstra, prevede che ogni nodo calcoli il cammino
+di costo minimo da se stesso a tutti gli altri previa un ``link-state broadcast''. Come algoritmo decentralizzato (si cita) quello di
+\textbf{distance vector} basato sull'equazione di Bellman-Ford (\( d_{i,j} = \min(d_{i,j}, (c_{i,k} + d_{k,j})) \)), che incorre nel problema di
+\textbf{count to infinity}: siano A, B, C nodi, se A annuncia a B la distanza AC, B non pu\`o sapere se sia un nodo attraversato nel cammino di costo
+minimo A-C; il problema viene risolto utilizzando \textbf{split-horizon with poison reverse}, le rotte ricevute tramite un'interfaccia devono essere
+pubblicizzate indietro da quell'interfaccia con una metrica non raggiungibile (i.e. A annuncia come distanza verso C infinito).
 
-\begin{algorithmic}
-	\Function{DistanceVector}{}
-		\State $D[$self$] \gets 0$
-		\For{$i \gets 1$ to $N$}
-			\If{Vicino(self, i)}
-				\State $ D[$i$] \gets c[$self$][$i$] $
-			\Else
-				\State $ c[$self$][$i$] \gets \infty $
-			\EndIf
-		\EndFor
-		\ForAll{n : Neighbor(self)}
-			\State Send(D, n)
-		\EndFor
-		\While{true}
-			\State Wait(Receive(D), NewCost)
-			\For{$i \gets 1$ to $N$}
-			\EndFor
-		\EndWhile
-	\EndFunction
-\end{algorithmic}
-
-% aggiungere figure ^
+Nel caso concreto, i router sono organizzati in \textbf{sistemi autonomi} (i.e. un gruppo di router sotto lo stesso controllo amministrativo) e ciascuno
+di questi \`e libero di scegliere autonomamente protocolli e politiche di routing adottate (per quelle interne all'AS si parla di \textbf{Interior
+Gateway Protocol}, quelle verso l'esterno \textbf{Exterior Gateway Protocol}). Si definiscono tre tipi di AS:
+\begin{itemize}[itemsep=0pt, parsep=0pt, topsep=0pt]
+	\item \textbf{AS stub}: \`e collegato solo a un altro AS.
+	\item \textbf{AS multihomed}: \`e collegato a >1 altro AS, non trasporta il traffico di altri AS.
+	\item \textbf{AS di transito}: trasporta il traffico di altri AS.
+\end{itemize}
+Si descrivono inoltre due protocolli INTRA-AS (i.e. interno all'AS):
+\begin{itemize}[topsep=0pt, parsep=0pt, itemsep=0pt]
+	\item \textbf{Routing Information Protocol}: ha le seguenti caratteristiche:
+	\begin{itemize}
+		\item Usa il numero di sottoreti attraversate come metrica per la distanza (il limite superiore \`e 15).
+		\item Usa l'algoritmo di routing distance vector con poisoned reverse.
+		\item \`E un processo demone.
+		\item Usa UDP su porta 520.
+		\item Prevede che al minimo ogni 30s, ogni nodo annunci la propria tabella di inoltro ai vicini che aggiorneranno la propria mantenendo il cammino
+		di costo minimo.
+	\end{itemize}
+	\item \textbf{Open Shortest Path First}: ha le seguenti caratteristiche:
+	\begin{itemize}
+		\item Permette di decidere la metrica.
+		\item Usa l'algoritmo link state, quindi necessita di messaggi di broadcast.
+	\end{itemize}
+	Tipicamente si divide un AS in pi\`u aree, si faccia riferimento alla figura fig:ospf.
+\end{itemize}
 
 Anche al livello di rete vengono implementati \textbf{multiplexing} e \textbf{demultiplexing} (ad esempio, l'intestazione dei datagrammi contiene un campo
 in cui viene codificato il protocollo a cui deve essere consegnato il payload).
@@ -979,7 +987,7 @@ fino a un host destinazione (incrementa progressivamente il TTL di un messaggio 
 
 \phantomsection
 \addcontentsline{toc}{paragraph}{Routers} \label{Routers}
-I router - fino ad adesso rappresentati come una scatola nera - hanno una struttura precisa per la quale si rimanda alla figura fig:routers-struttura. Si
+I router - fino ad adesso rappresentati come una scatola nera - hanno una struttura precisa per la quale si rimanda alla figura \ref{fig:routers-struttura}. Si
 individuano le seguenti componenti nei routers:
 \begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
 	\item \textbf{Porte di input}: hanno una copia della tabella di inoltro, usano i valori dell’header per determinare la porta di output; prevede accodamento
@@ -988,10 +996,8 @@ individuano le seguenti componenti nei routers:
 	arrivano dalla struttura di commutazione ad una velocit\`a maggiore di quella di trasmissione sul collegamento in uscita.
 	\item \textbf{Processore di routing}.
 	\item \textbf{Switching fabric} (o \textbf{struttura di commutazione}): mette in comunicazione porte di input e porte di output, per le tecnologie possibili
-	si rimanda alla figure fig:switching-fabric-memory, fig:switching-fabric-bus e fig:switching-fabric-crossbar.
+	si rimanda alla figura \ref{fig:switching-fabric}.
 \end{itemize}
-
-% aggiungere figure ^
 
 \pagebreak
 
@@ -1441,9 +1447,32 @@ individuano le seguenti componenti nei routers:
 
 \begin{figure}[!h]
 	\centering
-	\includegraphics[scale=0.5]{images/ip-frammentazione.png}
+	\includegraphics[scale=0.35]{images/ip-frammentazione.png}
 	\caption{IP: frammentazione.}
 	\label{fig:ip-frammentazione}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.35]{images/ip-routing-decentralizzato.png}
+	\caption{IP: routing decentralizzato.}
+	\label{fig:ip-routing-decentralizzato}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.35]{images/ip-routing-centralizzato.png}
+	\caption{IP: routing centralizzato.}
+	\label{fig:ip-routing-centralizzato}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/ospf.png}
+	\caption{IP: OSPF.}
+	\label{fig:ospf}
 \end{figure}
 
 \pagebreak
@@ -1476,6 +1505,32 @@ individuano le seguenti componenti nei routers:
 	\includegraphics[scale=0.5]{images/dhcp-esempio.png}
 	\caption{DHCP: esempio di sessione.}
 	\label{fig:dhcp-esempio}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/routers-struttura.png}
+	\caption{Router: struttura.}
+	\label{fig:routers-struttura}
+\end{figure}
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.32 \linewidth} \centering
+		\includegraphics[scale=0.45]{images/switching-fabric-memory.png}
+		\caption{Switching fabric: memory.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.32 \linewidth} \centering
+		\includegraphics[scale=0.45]{images/switching-fabric-bus.png}
+		\caption{Switching fabric: bus.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.32 \linewidth} \centering
+		\includegraphics[scale=0.45]{images/switching-fabric-crossbar.png}
+		\caption{Switching fabric: crossbar.}
+	\end{subfigure}
+	\caption{Router: switching fabric.}
+	\label{fig:switching-fabric}
 \end{figure}
 
 \end{sloppypar}
