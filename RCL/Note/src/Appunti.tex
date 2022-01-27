@@ -1044,6 +1044,87 @@ In ultimo, si menziona \textbf{IPv6}:
 Supportare sia IPv4 sia IPv6 porta ad avere dei problemi legati al dual stack, si risolvono facendo IPv4-to-IPv6 \textbf{tunneling} (si veda in merito
 la figura \ref{fig:ip-tunneling}).
 
+\subsubsection{Link layer.}
+Si introduce la seguente terminologia:
+\begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+	\item \textbf{Frame}: incapsula un datagramma.
+	\item \textbf{Host} e \textbf{Router}: nodi.
+	\item \textbf{Collegamento} (o \textbf{link}): canale di comunicazione che collega nodi adiacenti lungo un cammino Pu\`o essere cablato o wireless.
+	Inoltre si distinguono in:
+	\begin{itemize}
+		\item \textbf{Punto-Punto}: \`e dedicato a due soli dispositivi (e.g. WAN, LAN, Ethernet).
+		\item \textbf{Broadcast}: \`e condiviso da pi\`u dispositivi: quando un nodo trasmette un frame, il canale lo diffonde e gli altri nodi ne
+		ricevono una copia (e.g. Wireless LAN, reti satellitari, Ethernet).
+	\end{itemize}
+	\item \textbf{Scheda di rete} (o \textbf{adaptor}): dispositivo che implementa il livello collegamento, si faccia riferimento alla figura
+	\ref{fig:link-adaptor}.
+\end{itemize}
+
+Si definisce \textbf{indirizzo MAC} un indirizzo del livello di collegamento, \`e associato alla scheda di rete ed \`e tipicamente permanente, per le
+LAN Ethernet \`e lungo 6byte, IEEE definisce e assegna i primi 24 bit, i restanti vengono gestiti dalle aziende e assegnati a livello locale.
+
+Il link layer offre i seguenti servizi:
+\begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+	\item \textbf{Framing}: un datagramma viene incapsulato all'interno di un frame (formati da un campo \textbf{dati}, \textbf{intestazione} ed eventuale
+	\textbf{trailer}). Permette di separare i vari messaggi durante la trasmissione da una sorgente a una destinazione (identificate con
+	\textbf{indirizzi MAC}).
+	\item Garantisce consegna affidabile: viene reputata non necessaria per i collegamenti che presentano un basso numero di errori sui bit (e.g. fibra ottica,
+	cavo coassiale e doppino intrecciato), utilizzata invece per collegamenti con elevato tasso di errori (e.g. comunicazione wireless).
+	\item Implementa meccanismi di controllo di flusso.
+	\item Implementa meccanismi di rilevazione e correzione degli errori utilizzando bit di controllo di errore.
+\end{itemize}
+
+Nella comunicazione tra adaptor si identificano due ruoli:
+\begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+	\item \textbf{Mittente}: incapsula il datagramma in un frame, aggiunge bit per error checking, trasmissione affidabile e controllo di flusso.
+	\item \textbf{Destinatario}: controlla i bit aggiunti, estrae il datagramma e lo passa al livello superiore.
+\end{itemize}
+
+Per regolare gli accessi a un canale condiviso si distinguono tre tipi di protocolli MAC:
+\begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+	\item \textbf{a suddivisione del canale}: si divide un canale in blocchi di risorse pi\`u piccoli e si alloca una risorsa a un nodo in modo esclusivo.
+	Si citano in proposito i protocolli:
+	\begin{itemize}
+		\item \textbf{Time Division Multiple Access}: si accede al canale per un certo intervallo di tempo diviso in ``time slot",
+		ogni stazione ha a disposizione un time slot di lunghezza fissa in ogni intervallo (sprecando dunque gli slot non utilizzati).
+		\item \textbf{Frequency Division Multiple Access}: lo spettro del canale viene diviso in bande di frequenza, se ne assegna una a ogni stazione
+		(sprecando quindi le bande di frequenza delle stazioni che non trasmettono).
+		\item \textbf{Code Division Multiple Access}: si assegna un codice a ogni stazione e lo si sovrappone alla forma d'onda, viene tipicamente usato
+		da reti cellulari.
+	\end{itemize}
+	Si veda inoltre la figura \ref{fig:link-suddivisione-canale}.
+	\item \textbf{ad accesso casuale}: il canale \`e condiviso, si implementano dei meccanismi per gestire eventi di collisione. Si citano in proposito
+	i protocolli:
+	\begin{itemize}
+		\item \textbf{Slotted ALOHA}: si divide un tempo in slot uguali e fissi, un nodo inizia a trasmettere all'inizio dello slot successivo e,
+		se non ci sono collisioni, ha finito, altrimenti ritrasmette con probabilit\`a p negli slot successivi finch\'e non ha successo. I vantaggi sono
+		la semplicit\`a, la decentralizzazione (i nodi sono sincronizzati solo sugli slot) e che un nodo possa trasmettere alla massima velocit\`a
+		consentita; gli svantaggi le collisioni, lo spreco di slot e il fatto che - in media - un canale trasmetta con successo il 37\% del tempo se
+		molti nodi sono attivi contemporaneamente.
+		\item \textbf{Unslotted ALOHA}: non si sincronizzano i nodi sugli slot, ogni nodo trasmette non appena ha dati da inviare.
+		\item \textbf{Carrier Sense Multiple Access}: si trasmette solo se il canale \`e libero, si attene altrimenti. Le collisioni possono ancora avvenire,
+		si introducono meccanismi di \textbf{collision detection} e si interrompe la trasmissione non appena se ne rilevano.
+	\end{itemize}
+	Si veda inoltre la figura \ref{fig:link-accesso-casuale}.
+	\item \textbf{a rotazione}: si implementa un sistema di turnazione. Si distinguono due meccanismi:
+	\begin{itemize}
+		\item \textbf{Polling}: un nodo ``master'' invita i nodi ``slave'' a trasmettere a rotazione.
+		\item \textbf{Token passing}: pu\`o trasmettere solo il nodo che possiede il messaggio ``token'', che viene fatto girare da un nodo all'altro.
+	\end{itemize}
+\end{itemize}
+
+Per la trasmissione di messaggi risulta necessario conoscere l'indirizzo MAC degli host destinatari (di cui si conosce solo l'indirizzo IP), per questo si
+ricorre al \textbf{protocollo ARP}. Il protocollo prevede che ogni nodo IP nella LAN abbia una \textbf{tabella ARP}, in cui salvano la tripla (indirizzo IP,
+indirizzo MAC, TTL) e che si consulta ogni volta si vuole trasmettere un pacchetto; nel caso in cui l'indirizzo non sia presente nella tabella, il mittente
+invia una richiesta (per la sintassi di un pacchetto ARP si veda la figura \ref{fig:arp-pacchetto}) in broadcast alla propria sottorete e ricever\`a in
+unicast un messaggio risposta con l'indirizzo MAC del destinatario (tipicamente dal destinatario).
+
+All'interno del livello di trasporto si definiscono:
+\begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+	\item \textbf{Data-Link control}:
+	\item \textbf{Medium Access Control}:
+\end{itemize}
+
 \pagebreak
 
 \begin{figure}[h!]
@@ -1599,6 +1680,52 @@ la figura \ref{fig:ip-tunneling}).
 	\includegraphics[scale=0.5]{images/ipv6-messaggio.png}
 	\caption{IPv6: formato di un messaggio.}
 	\label{fig:ipv6-messaggio}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/link-adaptor.png}
+	\caption{Scheda di rete.}
+	\label{fig:link-adaptor}
+\end{figure}
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.44 \linewidth} \centering
+		\includegraphics[scale=0.3]{images/link-tdma.png}
+		\caption{TDMA.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.55 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/link-fdma.png}
+		\caption{FDMA.}
+	\end{subfigure}
+	\caption{Protocolli MAC: suddivisione del canale.}
+	\label{fig:link-suddivisione-canale}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.33 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/link-slotted-aloha.png}
+		\caption{Slotted ALOHA.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.33 \linewidth} \centering
+		\includegraphics[scale=0.2]{images/link-csma.png}
+		\caption{CSMA.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.33 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/link-aloha.png}
+		\caption{Unslotted ALOHA.}
+	\end{subfigure}
+	\caption{Protocolli MAC: accesso casuale.}
+	\label{fig:link-accesso-casuale}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.25]{images/arp-pacchetto.png}
+	\caption{ARP: formato di un pacchetto.}
+	\label{fig:arp-pacchetto}
 \end{figure}
 
 \end{sloppypar}
