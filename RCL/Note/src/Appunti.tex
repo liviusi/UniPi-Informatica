@@ -439,11 +439,11 @@ Si passa dunque alla trattazione dei protocolli implementati a questo livello:
 		\item \`E un protocollo di tipo \textbf{push}.
 	\end{itemize}
 
-	I mail server implementano una tecnica denominata ``spooling": al momento dell'invio di un messaggio, il sistema (client) copia messaggio, identificativo del
-	mittente, del destinatario e della macchina di destinazione e tempo di deposito in un'area di memoria detta ``spool"; il client stabilisce una connessione TCP
-	con la macchina destinazione, se questo ha successo allora la copia locale viene eliminata; il processo di trasferimento scandisce periodicamente lo spool ed
-	esegue la procedura di trasferimento dei messaggi non consegnati, dopo un intervallo di tempo definito dall'amministratore del server se un messaggio non
-	\`e stato ancora consegnato allora l'utente mittente viene notificato.
+	I mail server implementano una tecnica denominata ``spooling": al momento dell'invio di un messaggio, il sistema (client) copia messaggio, identificativo
+	del mittente, del destinatario e della macchina di destinazione e tempo di deposito in un'area di memoria detta ``spool"; il client stabilisce una
+	connessione TCP con la macchina destinazione, se questo ha successo allora la copia locale viene eliminata; il processo di trasferimento scandisce
+	periodicamente lo spool ed esegue la procedura di trasferimento dei messaggi non consegnati, dopo un intervallo di tempo definito dall'amministratore del
+	server se un messaggio non \`e stato ancora consegnato allora l'utente mittente viene notificato.
 
 	Si veda la figura \ref{fig:smtp}.
 
@@ -769,8 +769,8 @@ Offre i seguenti servizi:
 	\addcontentsline{toc}{paragraph}{UDP}
 	Si danno in merito le seguenti definizioni:
 	\begin{itemize}[topsep=0pt, itemsep=0pt]
-		\item \textbf{Checksum}: \`e un meccanismo di controllo dell'errore end-to-end; prevede l'eliminazione di pacchetti corrotti senza che il mittente riceva
-		una notifica a riguardo.
+		\item \textbf{Checksum}: \`e un meccanismo di controllo dell'errore end-to-end; prevede l'eliminazione di pacchetti corrotti senza che il mittente
+		riceva una notifica a riguardo.
 	\end{itemize}
 	Ha le seguenti caratteristiche:
 	\begin{itemize}[topsep=0pt, itemsep=0pt]
@@ -852,6 +852,8 @@ Gateway Protocol}, quelle verso l'esterno \textbf{Exterior Gateway Protocol}). S
 	\item \textbf{AS multihomed}: \`e collegato a >1 altro AS, non trasporta il traffico di altri AS.
 	\item \textbf{AS di transito}: trasporta il traffico di altri AS.
 \end{itemize}
+\phantomsection
+\addcontentsline{toc}{paragraph}{Protocolli INTRA-AS, INTER-AS}
 Si descrivono inoltre due protocolli INTRA-AS (i.e. interno all'AS):
 \begin{itemize}[topsep=0pt, parsep=0pt, itemsep=0pt]
 	\item \textbf{Routing Information Protocol}: ha le seguenti caratteristiche:
@@ -868,7 +870,39 @@ Si descrivono inoltre due protocolli INTRA-AS (i.e. interno all'AS):
 		\item Permette di decidere la metrica.
 		\item Usa l'algoritmo link state, quindi necessita di messaggi di broadcast.
 	\end{itemize}
-	Tipicamente si divide un AS in pi\`u aree, si faccia riferimento alla figura fig:ospf.
+	Tipicamente si divide un AS in pi\`u aree, si faccia riferimento alla figura \ref{fig:ospf}.
+\end{itemize}
+Come protocollo di trasporto INTER-AS (i.e. tra AS) si menziona \textbf{Border Gateway Protocol}, (si veda la figura \ref{fig:ip-sessione-bgp}) con le seguenti
+caratteristiche:
+\begin{itemize}[topsep=0pt, itemsep=0pt, parsep=0pt]
+	\item Fa aggregazione degli indirizzi, rappresenta le destinazioni con prefissi CIDR. In merito, si aggiunge che:
+	\begin{itemize}
+		\item Pubblicizzare un prefisso significa impegnarsi a instradare pacchetti destinati a reti in quel prefisso (e.g. un gateway di frontiera
+		che dichiara una sottorete A raggiungibile deve essere un nodo nel cammino verso A).
+		\item Le informazioni sulla raggiungibilit\`a devono essere distribuite (e.g. un gateway di frontiera di un sistema autonomo AS pubblica all'interno
+		di AS le informazioni ricevute da un altro gateway di frontiera e, se AS contiene altri gateway di frontiera, questi le pubblicheranno verso
+		l'esterno se permesso dalla politica di AS).
+	\end{itemize}
+	\item Prevede due tipi di sessioni:
+	\begin{itemize}
+		\item \textbf{eBGP session}: sessione esterna, connessione TCP semipermanente tra gateway di frontiera.
+		\item \textbf{iBGP session}: sessione interna, il gateway di frontiera informa i router interni.
+	\end{itemize}
+	\item Per la scelta del miglior percorso verso un nodo destinazione, si prendono in considerazione:
+	\begin{itemize}
+		\item Attributo \textbf{LOCAL\_PREF}, valore numerico che indica quanto l'amministratore di AS ``preferisca" passare da un certo nodo.
+		\item A parit\`a di AS, si sceglie sul minor numero di AS attraversati.
+		\item A parit\`a di AS attraversati, si sceglie quello pi\`u vicino, definito basandosi su una metrica stabilita dall'amministratore (si parla di
+		\textbf{hot potato routing}).
+	\end{itemize}
+	\item Usa dei messaggi che prendono il nome di \textbf{advertisement} (\textbf{ADV}), rappresentano un percorso (o \textbf{rotta}) con un \textbf{prefisso}
+	(di rete raggiungibile) e una serie di \textbf{attributi}, di cui si citano i due pi\`u importanti:
+	\begin{itemize}
+		\item \textbf{AS\_PATH}: indica la sequenza di AS attraversati per arrivare a destinazione, viene usato per scartare advertisement gi\`a ricevuti
+		e per scegliere il percorso ritenuto migliore (la metrica usata dipende da scelte amministrative).
+		\item \textbf{NEXT\_HOP}: indica l'indirizzo IP del primo router lungo un percorso a un prefisso di rete che non appartiene al proprio AS (i.e.
+		l'indirizzo del router di frontiera a cui viene delegata la consegna di un pacchetto).
+	\end{itemize}
 \end{itemize}
 
 Anche al livello di rete vengono implementati \textbf{multiplexing} e \textbf{demultiplexing} (ad esempio, l'intestazione dei datagrammi contiene un campo
@@ -959,8 +993,8 @@ Per l'assegnazione di un indirizzo IP si distinguono due modalit\`a:
 
 \phantomsection
 \addcontentsline{toc}{paragraph}{Protocollo NAT} \label{Protocollo NAT}
-Il \textbf{protocollo NAT} permette di inoltrare su Internet il traffico proveniente da sistemi attestati su sottoreti private, in cui sono assegnati indirizzi IP
-privati; l'accesso di una rete privata su Internet \`e realizzato attraverso un router abilitato alla NAT con almeno un indirizzo IP pubblico (quindi, ogni
+Il \textbf{protocollo NAT} permette di inoltrare su Internet il traffico proveniente da sistemi attestati su sottoreti private, in cui sono assegnati indirizzi
+IP privati; l'accesso di una rete privata su Internet \`e realizzato attraverso un router abilitato alla NAT con almeno un indirizzo IP pubblico (quindi, ogni
 datagramma in uscita dal router di accesso ha come indirizzo IP sorgente pubblico quello del router). Per inviare le risposte all'host corretto, il router
 di accesso ha in memoria una \textbf{tabella di traduzione NAT} le cui righe contengono le associazioni ((IP privato, porta), (IP pubblico, porta assegnata
 dal router)). Si veda la figura \ref{fig:ip-nat}.
@@ -998,6 +1032,17 @@ individuano le seguenti componenti nei routers:
 	\item \textbf{Switching fabric} (o \textbf{struttura di commutazione}): mette in comunicazione porte di input e porte di output, per le tecnologie possibili
 	si rimanda alla figura \ref{fig:switching-fabric}.
 \end{itemize}
+
+In ultimo, si menziona \textbf{IPv6}:
+\begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+	\item Risolve il problema dell'esaurimento degli indirizzi a 32bit: ne usa a 128bit.
+	\item Velocizza elaborazione e forwarding dei pacchetti: l'header ha lunghezza fissa ed elimina il campo checksum.
+	\item Elimina la frammentazione: aggiunge in ICMPv6 il messaggio ``packet too big'' per pacchetti troppi grandi.
+	\item Facilita QoS introducendo il campo ``flow label'' per etichettare i flussi.
+	\item Per il formato dei messaggi, si veda la figura \ref{fig:ipv6-messaggio}.
+\end{itemize}
+Supportare sia IPv4 sia IPv6 porta ad avere dei problemi legati al dual stack, si risolvono facendo IPv4-to-IPv6 \textbf{tunneling} (si veda in merito
+la figura \ref{fig:ip-tunneling}).
 
 \pagebreak
 
@@ -1475,6 +1520,13 @@ individuano le seguenti componenti nei routers:
 	\label{fig:ospf}
 \end{figure}
 
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/ip-sessione-bgp.png}
+	\caption{IP: sessione BGP.}
+	\label{fig:ip-sessione-bgp}
+\end{figure}
+
 \pagebreak
 
 \begin{figure}[!h]
@@ -1511,7 +1563,7 @@ individuano le seguenti componenti nei routers:
 
 \begin{figure}[!h]
 	\centering
-	\includegraphics[scale=0.5]{images/routers-struttura.png}
+	\includegraphics[scale=0.35]{images/routers-struttura.png}
 	\caption{Router: struttura.}
 	\label{fig:routers-struttura}
 \end{figure}
@@ -1531,6 +1583,22 @@ individuano le seguenti componenti nei routers:
 	\end{subfigure}
 	\caption{Router: switching fabric.}
 	\label{fig:switching-fabric}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.4]{images/ip-tunneling.png}
+	\caption{IP: IPv4-to-IPv6 tunneling.}
+	\label{fig:ip-tunneling}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.5]{images/ipv6-messaggio.png}
+	\caption{IPv6: formato di un messaggio.}
+	\label{fig:ipv6-messaggio}
 \end{figure}
 
 \end{sloppypar}
