@@ -1058,10 +1058,12 @@ Si introduce la seguente terminologia:
 	\end{itemize}
 	\item \textbf{Scheda di rete} (o \textbf{adaptor}): dispositivo che implementa il livello collegamento, si faccia riferimento alla figura
 	\ref{fig:link-adaptor}.
+	\item \textbf{indirizzo MAC}: un indirizzo del livello di collegamento, \`e associato alla scheda di rete ed \`e tipicamente permanente, per le
+	LAN Ethernet \`e lungo 6byte, IEEE definisce e assegna i primi 24 bit, i restanti vengono gestiti dalle aziende e assegnati a livello locale.
+	\item \textbf{Virtual Local Area Network}: sottogruppo logico interno a una LAN creato attraverso il software e non con uno spostamento fisico
+	dei dispositivi coinvolti. Concretamente, prevede il raggruppamento di dispositivi in un singolo dominio di broadcast a prescindere del segmento LAN
+	a cui appartengono.
 \end{itemize}
-
-Si definisce \textbf{indirizzo MAC} un indirizzo del livello di collegamento, \`e associato alla scheda di rete ed \`e tipicamente permanente, per le
-LAN Ethernet \`e lungo 6byte, IEEE definisce e assegna i primi 24 bit, i restanti vengono gestiti dalle aziende e assegnati a livello locale.
 
 Il link layer offre i seguenti servizi:
 \begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
@@ -1119,10 +1121,41 @@ indirizzo MAC, TTL) e che si consulta ogni volta si vuole trasmettere un pacchet
 invia una richiesta (per la sintassi di un pacchetto ARP si veda la figura \ref{fig:arp-pacchetto}) in broadcast alla propria sottorete e ricever\`a in
 unicast un messaggio risposta con l'indirizzo MAC del destinatario (tipicamente dal destinatario).
 
-All'interno del livello di trasporto si definiscono:
+Tra le tecnologie esistenti si cita \textbf{Ethernet}, con le seguenti caratteristiche:
 \begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
-	\item \textbf{Data-Link control}:
-	\item \textbf{Medium Access Control}:
+	\item Tipicamente prevede una \textbf{topologia a stella} (in passato se ne usava una con bus coassiale). Si veda in merito la figura
+	\ref{fig:ethernet-topologia}.
+	\item \`E \textbf{connectionless}, non c'\`e handshaking tra mittente e destinatario.
+	\item \`E \textbf{unreliable}, il nodo destinatario non invia ack or nack al mittente, i dati corrotti vengono recuperati solo se il trasferimento
+	affidabile viene implementato a un livello superiore.
+	\item Permette di rilevare dati corrotti.
+	\item Esistono molti standard differenti, dipendono dalla tecnologia utilizzata. Si citano \textbf{Fast Ethernet} e \textbf{Gigabit Ethernet}.
+	\item Per la struttura dei pacchetti si veda la figura \ref{fig:ethernet-pacchetto}.
+\end{itemize}
+
+Si citano di seguito alcuni \textbf{dispositivi di interconnessione}:
+\begin{itemize}[itemsep=0pt,topsep=0pt,parsep=0pt]
+	\item \textbf{Repeater}: opera a livello fisico, rigenera il segnale che ricevono.
+	\item \textbf{Hub}: repeater multi-porta.
+	\item \textbf{Switch}: rigenera il segnale che riceve e verifica l'indirizzo MAC contenuto in un frame. Ha le seguenti caratteristiche:
+	\begin{itemize}
+		\item \`E \textbf{trasparente}: gli host non sono a conoscenza della presenza di switch.
+		\item Ha un \textbf{ruolo attivo}: fa store and forward di frame Ethernet ed esaminano gli indirizzi MAC dei frame in arrivo inoltrandoli
+		opportunamente su uno o pi\`u collegamenti.
+		\item \`E un dispositivo \textbf{plug and play}, \textbf{self learning}: non deve essere configurato. Si veda in merito la figura
+		\ref{fig:switch-self-learning}.
+	\end{itemize}
+	Implementa la logica per le VLAN:
+	\begin{itemize}
+		\item \textbf{traffic isolation}: si partiziona il dominio di broadcast sulla base del numero di porta o dell'indirizzo MAC.
+		\item \textbf{dynamic membership}: prevede una gestione dinamica della membership a una certa VLAN.
+		\item \textbf{forwarding between VLANs}: usando un router come tramite, si fanno comunicare VLAN diverse.
+		\item \textbf{trunk port}: per far comunicare VLAN distribuite su 2 switch diversi (A, B) si sceglie una porta di A e le si assegna il compito
+		di inoltrare i messaggi a una porta di B.
+	\end{itemize}
+	Si veda la figura \ref{fig:switch-vlan}.
+	\item \textbf{Router}: rigenera il segnale che riceve, verifica l'indirizzo MAC contenuto in un frame e verifica gli indirizzi IP. Ha un indirizzo MAC
+	e un indirizzo IP per ogni interfaccia.
 \end{itemize}
 
 \pagebreak
@@ -1726,6 +1759,52 @@ All'interno del livello di trasporto si definiscono:
 	\includegraphics[scale=0.25]{images/arp-pacchetto.png}
 	\caption{ARP: formato di un pacchetto.}
 	\label{fig:arp-pacchetto}
+\end{figure}
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.5]{images/ethernet-bus-coassiale.png}
+		\caption{Bus coassiale.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.49 \linewidth} \centering
+		\includegraphics[scale=0.4]{images/ethernet-star.png}
+		\caption{Star.}
+	\end{subfigure}
+	\caption{Ethernet: topologia fisica.}
+	\label{fig:ethernet-topologia}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.45]{images/ethernet-pacchetto.png}
+	\caption{Ethernet: formato di un pacchetto.}
+	\label{fig:ethernet-pacchetto}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=0.45]{images/switch-self-learning.png}
+	\caption{Switch: costruzione della tabella di commutazione.}
+	\label{fig:switch-self-learning}
+\end{figure}
+
+\begin{figure}[!h]
+	\begin{subfigure}[t]{0.33 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/vlan-port-based.png}
+		\caption{VLAN: partizione port based.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.33 \linewidth} \centering
+		\includegraphics[scale=0.18]{images/vlan-switch-multipli.png}
+		\caption{VLAN: attraversare pi\`u switch.}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.33 \linewidth} \centering
+		\includegraphics[scale=0.25]{images/vlan-e-sottoreti.png}
+		\caption{VLAN: stessa sottorete.}
+	\end{subfigure}
+	\caption{Switch: VLAN.}
+	\label{fig:switch-vlan}
 \end{figure}
 
 \end{sloppypar}
