@@ -1,3 +1,7 @@
 [submodule "SOL/Laboratorio/SOL-Progetto-20-21"]
 	path = SOL/Laboratorio/SOL-Progetto-20-21
 	url = https://github.com/liviusi/SOL-Progetto-20-21.git
+
+[submodule "RCL/WINSOME"]
+	path = RCL/WINSOME
+	url = https://github.com/liviusi/WINSOME.git
