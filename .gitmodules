@@ -7,3 +7,6 @@
 [submodule "PI/Appunti"]
 	path = PI/Appunti
 	url = https://github.com/liviusi/Appunti-PI-UNIPI
+[submodule "kronecker-canonical-form"]
+	path = kronecker-canonical-form
+	url = https://github.com/liviusi/kronecker-canonical-form
